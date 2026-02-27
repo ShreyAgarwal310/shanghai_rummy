@@ -1,0 +1,91 @@
+.ui-button {
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 14px 16px;
+  min-height: 52px;
+  font-family: 'Inter', 'Roboto', 'Open Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.ui-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.ui-button:active {
+  transform: scale(0.98);
+}
+
+.ui-button:focus-visible {
+  outline: 2px solid #5fc3ff;
+  outline-offset: 2px;
+}
+
+.ui-button:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.ui-button--primary {
+  color: #ffffff;
+  background: linear-gradient(180deg, #4aa3ff 0%, #1e7fd6 100%);
+  border-color: rgba(74, 163, 255, 0.45);
+}
+
+.ui-button--primary:hover {
+  filter: brightness(1.04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(95, 195, 255, 0.45);
+}
+
+.ui-button--secondary {
+  color: #102634;
+  background: #e8edf1;
+  border-color: #c9d1d9;
+}
+
+.ui-button--secondary:hover {
+  border-color: #9ca9b6;
+}
+
+.ui-button--gold {
+  color: #ffffff;
+  background: linear-gradient(125deg, #b95f00 0%, #e28b00 48%, #ffc930 100%);
+  border: 1px solid rgba(155, 83, 0, 0.95);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 237, 175, 0.44),
+    inset 0 -1px 0 rgba(103, 41, 0, 0.35);
+}
+
+.ui-button--gold:hover {
+  filter: brightness(1.05);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 237, 175, 0.46),
+    0 0 0 1px rgba(255, 201, 48, 0.38);
+}
+
+.ui-button--icon {
+  width: 56px;
+  height: 56px;
+  min-height: 56px;
+  padding: 0;
+  border-radius: 12px;
+  color: #1c2f3e;
+  border-color: rgba(201, 209, 217, 0.8);
+  background: rgba(247, 247, 247, 0.95);
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-button--icon:hover {
+  filter: brightness(1.02);
+  border-color: #9ca9b6;
+}

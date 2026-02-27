@@ -1,0 +1,157 @@
+.home-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 24px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(55, 124, 84, 0.2), transparent 42%),
+    radial-gradient(circle at 76% 28%, rgba(0, 0, 0, 0.13), transparent 50%),
+    radial-gradient(circle at 50% 105%, rgba(0, 0, 0, 0.55), transparent 52%),
+    linear-gradient(180deg, rgba(7, 57, 39, 0.85) 0%, rgba(6, 51, 35, 0.96) 100%),
+    #0a3d2e;
+}
+
+.home-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  background-image:
+    radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2px, transparent 2.1px),
+    radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.18) 2px, transparent 2.1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+}
+
+.home-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(130% 75% at 50% 8%, rgba(255, 255, 255, 0.08), transparent 55%),
+    radial-gradient(130% 86% at 50% 100%, rgba(0, 0, 0, 0.58), transparent 53%);
+  pointer-events: none;
+}
+
+.home-title-block {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 16px 136px;
+}
+
+.home-title {
+  margin: 0;
+  color: #f0f0f0;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: clamp(2.2rem, 7vw, 5rem);
+  line-height: 1.06;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18), 0 10px 26px rgba(0, 0, 0, 0.44);
+}
+
+.home-subtitle {
+  margin: 10px 0 0;
+  color: #f6c944;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: clamp(1rem, 2.1vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 5px 18px rgba(0, 0, 0, 0.35);
+}
+
+.home-actions {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 24px;
+}
+
+.home-action-btn {
+  min-height: 162px;
+  padding: 16px 16px 14px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  border-radius: 12px;
+}
+
+.home-action-btn__icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.home-action-btn__label {
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 1200px) {
+  .home-actions {
+    gap: 16px;
+  }
+
+  .home-action-btn {
+    min-height: 148px;
+  }
+
+  .home-action-btn__label {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 980px) {
+  .home-title-block {
+    padding-bottom: 212px;
+  }
+
+  .home-actions {
+    grid-template-columns: repeat(2, minmax(142px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .home-page {
+    padding: 16px;
+  }
+
+  .home-title-block {
+    padding: 0 8px 300px;
+  }
+
+  .home-actions {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    grid-template-columns: repeat(2, minmax(132px, 1fr));
+    gap: 12px;
+  }
+
+  .home-action-btn {
+    min-height: 128px;
+  }
+
+  .home-action-btn__label {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 460px) {
+  .home-title-block {
+    padding-bottom: 362px;
+  }
+
+  .home-actions {
+    grid-template-columns: 1fr;
+  }
+}

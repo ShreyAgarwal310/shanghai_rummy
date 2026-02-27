@@ -1,0 +1,415 @@
+.host-room-page {
+  min-height: 100vh;
+  padding: 22px 24px 40px;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(55, 124, 84, 0.24), transparent 42%),
+    radial-gradient(circle at 76% 28%, rgba(0, 0, 0, 0.13), transparent 50%),
+    radial-gradient(circle at 50% 105%, rgba(0, 0, 0, 0.42), transparent 55%),
+    linear-gradient(180deg, rgba(10, 91, 58, 0.9) 0%, rgba(7, 72, 46, 0.94) 100%),
+    #0d5c39;
+}
+
+.host-room-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.16;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2px, transparent 2.1px),
+    radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.18) 2px, transparent 2.1px);
+  background-size: 50px 50px;
+}
+
+.host-room-page__back {
+  position: relative;
+  z-index: 2;
+  border: 1px solid #b85e08;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(180deg, #bf6a07 0%, #a95602 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 232, 178, 0.45);
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 1rem;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.host-room-shell {
+  position: relative;
+  z-index: 2;
+  width: min(95vw, 1180px);
+  margin: 30px auto 0;
+  display: grid;
+  grid-template-columns: 1.5fr minmax(290px, 0.9fr);
+  gap: 18px;
+}
+
+.host-room-card {
+  border: 5px solid #f28a0b;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f0e9cf 0%, #e8dfbc 100%);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+}
+
+.host-room-card--main {
+  padding: 22px;
+}
+
+.host-room-card--side {
+  padding: 18px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.host-room-card--empty {
+  width: min(95vw, 760px);
+  margin: 34px auto 0;
+  text-align: center;
+  padding: 28px;
+}
+
+.host-room-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.host-room-card__title {
+  margin: 0;
+  color: #7b3204;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+}
+
+.host-room-card__status {
+  margin: 0;
+  border-radius: 999px;
+  padding: 6px 12px;
+  color: #f4ffef;
+  font-size: 0.88rem;
+  letter-spacing: 0.03em;
+  background: #109345;
+}
+
+.host-room-card__aside-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.host-room-card__tag {
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 0.95rem;
+  color: #f4ffef;
+  background: #109345;
+}
+
+.host-room-card__code-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #d77907;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: rgba(255, 254, 248, 0.75);
+}
+
+.host-room-card__code-label {
+  margin: 0;
+  color: #8a3b0b;
+  font-size: 0.92rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.host-room-card__code-value {
+  margin: 4px 0 0;
+  color: #6b2a04;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.host-room-card__players {
+  margin-top: 16px;
+}
+
+.host-room-card__subtitle {
+  margin: 0;
+  color: #8a3b0b;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 1.5rem;
+}
+
+.host-room-table {
+  position: relative;
+  margin-top: 12px;
+  min-height: 420px;
+}
+
+.host-room-table__felt {
+  position: absolute;
+  inset: 16% 12%;
+  border-radius: 48%;
+  border: 3px solid #d77907;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.15), transparent 44%),
+    radial-gradient(circle at 62% 76%, rgba(0, 0, 0, 0.2), transparent 50%),
+    linear-gradient(180deg, #116b43 0%, #0b5836 100%);
+  box-shadow:
+    inset 0 8px 30px rgba(255, 255, 255, 0.14),
+    inset 0 -14px 26px rgba(0, 0, 0, 0.22),
+    0 12px 28px rgba(0, 0, 0, 0.24);
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.host-room-table__felt-title {
+  margin: 0;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  color: #f0f7f2;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+}
+
+.host-room-table__felt-subtitle {
+  margin: 3px 0 0;
+  color: rgba(240, 247, 242, 0.85);
+}
+
+.host-room-table__seats {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: absolute;
+  inset: 0;
+}
+
+.host-room-seat {
+  position: absolute;
+  width: 132px;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.host-room-seat__avatar {
+  width: 74px;
+  height: 74px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 4px solid #e8b97a;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.host-room-seat__avatar--occupied {
+  border-color: #1f8f55;
+  background: linear-gradient(180deg, rgba(242, 249, 244, 0.95) 0%, rgba(227, 235, 230, 0.92) 100%);
+}
+
+.host-room-seat__avatar--empty {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.host-room-seat__name {
+  margin: 7px 0 0;
+  color: #61280a;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.host-room-seat__meta {
+  margin: 2px 0 0;
+  color: #8a4b1f;
+  font-size: 0.9rem;
+}
+
+.host-room-seat--north {
+  top: 4%;
+  left: 50%;
+}
+
+.host-room-seat--north-east {
+  top: 20%;
+  left: 86%;
+}
+
+.host-room-seat--east {
+  top: 50%;
+  left: 92%;
+}
+
+.host-room-seat--south-east {
+  top: 80%;
+  left: 86%;
+}
+
+.host-room-seat--south {
+  top: 95%;
+  left: 50%;
+}
+
+.host-room-seat--south-west {
+  top: 80%;
+  left: 14%;
+}
+
+.host-room-seat--west {
+  top: 50%;
+  left: 8%;
+}
+
+.host-room-seat--north-west {
+  top: 20%;
+  left: 14%;
+}
+
+.host-room-card__detail {
+  margin: 0;
+  color: #7a3c0f;
+}
+
+.host-room-card__demo-tools {
+  display: grid;
+  gap: 8px;
+}
+
+.host-room-card__note {
+  margin: 2px 0 0;
+  color: #8f4718;
+  font-size: 0.98rem;
+}
+
+.host-room-card__actions {
+  margin-top: 8px;
+  display: grid;
+  gap: 10px;
+}
+
+.host-room-card__btn {
+  min-height: 50px;
+  border-radius: 9px;
+  border: 2px solid #8f4600;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff7e5;
+  cursor: pointer;
+  background: linear-gradient(180deg, #cc7307 0%, #b55d03 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 233, 186, 0.45);
+}
+
+.host-room-card__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.host-room-card__btn--secondary {
+  color: #fff;
+  border-color: #187242;
+  background: linear-gradient(180deg, #22a95b 0%, #177945 100%);
+}
+
+.host-room-card__btn--ghost {
+  color: #8d3e10;
+  border-color: rgba(141, 62, 16, 0.5);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.host-room-card__btn--inline {
+  min-height: 44px;
+  min-width: 120px;
+  font-size: 1rem;
+}
+
+.host-room-card__text {
+  margin: 10px 0 0;
+  color: #8f4718;
+}
+
+@media (max-width: 980px) {
+  .host-room-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .host-room-page {
+    padding: 14px;
+  }
+
+  .host-room-card--main,
+  .host-room-card--side {
+    padding: 14px;
+  }
+
+  .host-room-card__header,
+  .host-room-card__code-row {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .host-room-card__btn {
+    font-size: 1.08rem;
+  }
+
+  .host-room-table {
+    min-height: 390px;
+  }
+
+  .host-room-seat {
+    width: 110px;
+  }
+
+  .host-room-seat__avatar {
+    width: 62px;
+    height: 62px;
+  }
+
+  .host-room-seat--north {
+    top: 6%;
+  }
+
+  .host-room-seat--north-east {
+    top: 21%;
+    left: 83%;
+  }
+
+  .host-room-seat--east {
+    left: 88%;
+  }
+
+  .host-room-seat--south-east {
+    top: 79%;
+    left: 83%;
+  }
+
+  .host-room-seat--south {
+    top: 92%;
+  }
+
+  .host-room-seat--south-west {
+    top: 79%;
+    left: 17%;
+  }
+
+  .host-room-seat--west {
+    left: 12%;
+  }
+
+  .host-room-seat--north-west {
+    top: 21%;
+    left: 17%;
+  }
+}
