@@ -1,4 +1,6 @@
 """
+EMILY
+
 Computer Player Class
 
 Responsibility:
