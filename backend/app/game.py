@@ -1,2 +1,18 @@
-# the  main controller, console system
-# this class will include methods of round progression, overall score (and will update score), declares winner, decides when game ends
+"""
+Game Class
+
+Responsibility:
+- Controls the entire match across multiple rounds.
+- Tracks total scores for all players.
+- Tracks current round number.
+- Creates and starts new Round objects.
+- Updates total scores after each round.
+- Determines when the game ends.
+- Declares the overall winner.
+
+The Game class does NOT:
+- Handle individual turns.
+- Validate melds.
+- Control card drawing.
+- Contain user input logic.
+"""
