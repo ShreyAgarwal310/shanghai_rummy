@@ -18,5 +18,3 @@ The Game class does NOT:
 - Control card drawing.
 - Contain user input logic.
 """
-
-print('hello world')
