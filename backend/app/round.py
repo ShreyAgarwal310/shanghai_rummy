@@ -42,3 +42,19 @@ class Round:
         
         # Start the discard pile
         self.discard_pile.add_card(self.deck.draw())
+
+    def start(self):
+        """Main loop for the round."""
+        self.prepare_round()
+        
+        while not self.is_complete:
+            current_player = self.players[self.current_player_index]
+            
+            # calls method from player
+            current_player.take_turn(self.deck, self.discard_pile, self.contract)
+            
+            if current_player.hand.is_empty():
+                self.is_complete = True
+                print(f"Round Over! {current_player.name} went out.")
+            else:
+                self.next_turn()
