@@ -29,3 +29,13 @@ class Game:
         self.total_scores = {player.name: 0 for player in players}
         self.current_round_idx = 0
         self.game_over = False
+    
+    def update_total_scores(self, round_results):
+        for player_name, score in round_results.items():
+            self.total_scores[player_name] += score
+            print(f"{player_name} Score: {score} | Total: {self.total_scores[player_name]}")
+
+    def declare_winner(self):
+        # lowest score wins
+        winner = min(self.total_scores, key=self.total_scores.get)
+        print(f"GAME OVER. The winner is {winner} with {self.total_scores[winner]} points! Hurray!!!")
