@@ -58,3 +58,13 @@ class Round:
                 print(f"Round Over! {current_player.name} went out.")
             else:
                 self.next_turn()
+    
+    def next_turn(self):
+        self.current_player_index = (self.current_player_index + 1) % len(self.players)
+
+    def calculate_scores(self):
+        """Returns a dict of points from this round based on remaining cards."""
+        round_scores = {}
+        for player in self.players:
+            round_scores[player.name] = player.hand.calculate_value()
+        return round_scores
