@@ -32,3 +32,13 @@ class Round:
         self.discard_pile = DiscardPile()
         self.current_player_index = 0
         self.is_complete = False
+    
+    def prepare_round(self):
+        """Shuffles and deals 11 cards"""
+        self.deck.shuffle()
+        for _ in range(11):
+            for player in self.players:
+                player.hand.add_card(self.deck.draw())
+        
+        # Start the discard pile
+        self.discard_pile.add_card(self.deck.draw())
