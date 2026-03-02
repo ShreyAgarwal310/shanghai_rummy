@@ -18,3 +18,14 @@ The Game class does NOT:
 - Control card drawing.
 - Contain user input logic.
 """
+
+from app.round import Round
+from app.rules.contract import CONTRACTS # 7 rounds from contract.py
+
+class Game:
+    def __init__(self, players):
+        # store the players and set everyone's starting score to zero
+        self.players = players
+        self.total_scores = {player.name: 0 for player in players}
+        self.current_round_idx = 0
+        self.game_over = False
