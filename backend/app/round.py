@@ -18,3 +18,17 @@ The Round class does NOT:
 - Validate meld legality (RulesEngine handles this).
 - Contain direct user input logic.
 """
+
+
+from app.cards.deck import Deck
+from app.cards.discard_pile import DiscardPile
+
+class Round:
+    def __init__(self, players, round_number, contract):
+        self.players = players
+        self.round_number = round_number
+        self.contract = contract  
+        self.deck = Deck()
+        self.discard_pile = DiscardPile()
+        self.current_player_index = 0
+        self.is_complete = False
