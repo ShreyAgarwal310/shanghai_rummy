@@ -22,9 +22,12 @@ import hands
 import game
 import main
 
-def __init__(self, players):
-        self.players = players
-        self.game_start = False
+
+class Player:
+    def __init__(self, players):
+            self.players = players
+            self.game_start = False
+            self.score = 0
 
 
     if begin_game = True:

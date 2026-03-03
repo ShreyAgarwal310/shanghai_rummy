@@ -13,9 +13,9 @@ This file should contain NO game logic.
 It should only launch the application.
 """
 import game
-import hands
 import round
-import players
+import hands
+from players import human_player
 
 class Player:
 
