@@ -17,3 +17,17 @@ The Player class does NOT:
 - Validate game rules.
 - Directly manipulate the deck without Round mediation.
 """
+
+import hands
+import game
+import main
+
+def __init__(self, players):
+        self.players = players
+        self.game_start = False
+
+
+    if begin_game = True:
+        username = input('What is your username?')
+
+        #would keep the name in the database??
