@@ -65,6 +65,37 @@ class Card:
             return self._FACE_CARD_POINTS[rank]
 
         return int(rank)
+    
+    @property
+    def sort_value(self) -> int:
+        order = {
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "9": 9,
+            "10": 10,
+            "J": 11,
+            "Q": 12,
+            "K": 13,
+            "A": 14,
+            "JOKER": 15
+    }
+        return order[self.rank]
+
+    @property
+    def suit_value(self) -> int:
+        suit_order = {
+            "CLUBS": 1,
+            "DIAMONDS": 2,
+            "HEARTS": 3,
+            "SPADES": 4,
+            "JOKER": 5
+    }
+        return suit_order[self.suit]
 
     def __str__(self) -> str:
         if self.rank == "JOKER":
