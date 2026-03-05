@@ -34,3 +34,16 @@ class Hand:
     
     def get_card(self):
         return list(self.cards) #using list incase there are changes in the hand internal state
+    
+    def is_empty(self) -> bool:
+        return len(self.cards) == 0
+    
+    def calculate_value(self) -> int:
+        #sum of the remaining card pts to determine winner
+        return sum(card.point_value for card in self.cards)
+    
+    def __len__(self):
+        return len(self.cards)
+
+    def __repr__(self):
+        return f"Hand([{', '.join(str(c) for c in self.cards)}])"
