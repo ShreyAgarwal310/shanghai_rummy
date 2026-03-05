@@ -116,7 +116,7 @@
 
 .rules-book__sheet--right {
   display: grid;
-  grid-template-rows: auto auto auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto;
   gap: 10px;
 }
 
@@ -185,14 +185,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.rules-book__chapter {
-  margin: 0;
-  color: #7d5129;
-  font-size: 0.92rem;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-}
-
 .rules-book__page-title {
   margin: 0;
   font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
@@ -210,30 +202,21 @@
 
 .rules-book__page-content {
   color: #4a3a2b;
-  font-size: 1.06rem;
-  line-height: 1.56;
+  font-size: 1.03rem;
+  line-height: 1.58;
 }
 
 .rules-book__lead {
   font-size: 1.12rem;
 }
 
-.rules-book__lead::first-letter {
-  float: left;
-  margin: 0 8px 0 0;
-  font-size: 2.6rem;
-  line-height: 0.9;
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  color: #7b3204;
-}
-
 .rules-book__page-content p {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
 }
 
 .rules-book__page-content ol,
 .rules-book__page-content ul {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   padding-left: 20px;
 }
 
@@ -266,6 +249,48 @@
 .rules-book__spotlight p,
 .rules-book__spotlight ul {
   margin: 0;
+}
+
+.rules-book__info-grid {
+  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.rules-book__info-card {
+  border: 1px solid rgba(146, 98, 52, 0.34);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 8px 10px;
+}
+
+.rules-book__info-card h4 {
+  margin: 0;
+  color: #5e3517;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 1rem;
+}
+
+.rules-book__info-card p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #5a4127;
+}
+
+.rules-book__callout {
+  margin-top: 8px;
+  border-left: 4px solid rgba(88, 144, 185, 0.72);
+  border-radius: 6px;
+  background: rgba(232, 246, 255, 0.65);
+  padding: 8px 10px;
+  color: #334b5d;
+}
+
+.rules-book__callout--warning {
+  border-left-color: rgba(186, 94, 24, 0.8);
+  background: rgba(255, 238, 219, 0.72);
+  color: #5f3919;
 }
 
 .rules-book__contract-table {
@@ -313,6 +338,11 @@
   color: #5a3518;
   font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
   font-weight: 700;
+}
+
+.rules-book__split-list {
+  columns: 2;
+  column-gap: 24px;
 }
 
 .rules-book__tip {
@@ -392,7 +422,7 @@
   }
 
   .rules-book__sheet--right {
-    grid-template-rows: auto auto auto auto auto;
+    grid-template-rows: auto auto auto;
   }
 }
 
@@ -417,5 +447,9 @@
 
   .rules-book__page-title {
     font-size: clamp(1.6rem, 8vw, 2.15rem);
+  }
+
+  .rules-book__split-list {
+    columns: 1;
   }
 }

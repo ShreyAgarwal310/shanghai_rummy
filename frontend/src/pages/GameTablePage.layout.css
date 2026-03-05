@@ -1,0 +1,123 @@
+.game-table-page {
+  min-height: 100vh;
+  padding: 12px 14px 22px;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(74, 163, 255, 0.14), transparent 33%),
+    radial-gradient(circle at 84% 4%, rgba(255, 255, 255, 0.08), transparent 36%),
+    radial-gradient(circle at 50% 108%, rgba(0, 0, 0, 0.52), transparent 52%),
+    linear-gradient(180deg, rgba(9, 72, 50, 0.94) 0%, rgba(5, 49, 34, 0.98) 100%),
+    #0a3d2e;
+  color: #f3f8f5;
+}
+
+.game-table-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.11;
+  background-image:
+    radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.22) 2px, transparent 2.1px),
+    radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.28) 2px, transparent 2.1px);
+  background-size: 50px 50px;
+}
+
+.game-table-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.game-table-header__meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-table-header__chip {
+  margin: 0;
+  border: 1px solid rgba(201, 209, 217, 0.4);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: #dbebf7;
+  background: rgba(8, 30, 42, 0.4);
+}
+
+.game-table-header__chip--turn {
+  border-color: rgba(95, 195, 255, 0.58);
+  color: #e8f7ff;
+  background: rgba(30, 127, 214, 0.38);
+}
+
+.game-table-header__btn {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.game-table-header__btn:hover {
+  transform: translateY(-1px);
+}
+
+.game-table-header__btn:focus-visible {
+  outline: 2px solid #5fc3ff;
+  outline-offset: 2px;
+}
+
+.game-table-header__btn--back {
+  color: #102634;
+  border-color: #c9d1d9;
+  background: #e6edf2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.game-table-header__btn--rules {
+  color: #ffffff;
+  border-color: rgba(74, 163, 255, 0.42);
+  background: linear-gradient(180deg, #4aa3ff 0%, #1e7fd6 100%);
+  box-shadow: 0 2px 8px rgba(7, 24, 36, 0.34);
+}
+
+.game-table-layout {
+  position: relative;
+  z-index: 2;
+  width: min(99vw, 1880px);
+  margin: 12px auto 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.game-side-panel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(230px, 1fr));
+  gap: 10px;
+  align-content: stretch;
+}
+
+
+.game-board-row {
+  display: block;
+}
+
+.game-table-stage {
+  border: 1px solid rgba(201, 209, 217, 0.3);
+  border-radius: 18px;
+  padding: 12px;
+  background:
+    linear-gradient(180deg, rgba(4, 37, 25, 0.74) 0%, rgba(5, 26, 18, 0.85) 100%),
+    rgba(7, 45, 31, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.35);
+  display: grid;
+  gap: 14px;
+}

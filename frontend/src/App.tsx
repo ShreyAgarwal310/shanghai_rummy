@@ -4,6 +4,7 @@ import HostPage from './pages/HostPage'
 import HostRoomPage from './pages/HostRoomPage'
 import JoinPage from './pages/JoinPage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import GameTablePage from './pages/GameTablePage'
 import ProfilePage from './pages/ProfilePage'
 import RulesPage from './pages/RulesPage'
 import StatsPage from './pages/StatsPage'
@@ -25,6 +26,11 @@ function App() {
 
   if (window.location.pathname === '/join') {
     return <JoinPage />
+  }
+
+  if (window.location.pathname.startsWith('/game/')) {
+    const gameId = window.location.pathname.replace('/game/', '') || 'demo-table'
+    return <GameTablePage gameId={gameId} />
   }
 
   if (window.location.pathname === '/rules') {

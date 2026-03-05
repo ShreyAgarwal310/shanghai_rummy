@@ -4,7 +4,6 @@ import './JoinPage.css'
 
 function JoinPage() {
   const [gameCode, setGameCode] = useState('')
-  const [demoJoinNotice, setDemoJoinNotice] = useState('')
 
   const handleBackClick = () => {
     window.location.assign('/')
@@ -12,11 +11,15 @@ function JoinPage() {
 
   const handleCodeSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Placeholder: actual join validation/flow will be connected to backend later.
+    const normalizedCode = gameCode.trim()
+    if (!normalizedCode) {
+      return
+    }
+    window.location.assign(`/game/${normalizedCode}`)
   }
 
   const handleDemoJoinClick = () => {
-    setDemoJoinNotice('Demo table selected. Game board screen is the next step and will be connected next.')
+    window.location.assign('/game/demo-table')
   }
 
   return (
@@ -92,11 +95,6 @@ function JoinPage() {
           </article>
         </section>
 
-        {demoJoinNotice ? (
-          <p className="join-page__demo-notice" aria-live="polite">
-            {demoJoinNotice}
-          </p>
-        ) : null}
       </section>
     </main>
   )

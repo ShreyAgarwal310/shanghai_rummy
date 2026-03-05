@@ -44,6 +44,13 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
     window.location.assign('/')
   }
 
+  const handleStartGame = () => {
+    if (!game || !canStart) {
+      return
+    }
+    window.location.assign(`/game/${game.id}`)
+  }
+
   const handleAddDemoPlayer = () => {
     if (!game || players.length >= game.maxPlayers) {
       return
@@ -222,6 +229,7 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
               type="button"
               className="host-room-card__btn"
               disabled={!canStart}
+              onClick={handleStartGame}
               data-a11y-description="Start game becomes available at three or more players."
             >
               Start Game

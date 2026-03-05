@@ -17,20 +17,37 @@ const rulesBookPages: RulesBookPage[] = [
     content: (
       <>
         <p className="rules-book__lead">
-          Shanghai Rummy uses <strong>108 cards</strong> (two standard 52-card decks plus 4 Jokers).
+          Shanghai Rummy uses <strong>108 cards</strong>: two standard 52-card decks plus 4 Jokers.
         </p>
-        <p>Play with 3-6 players. Each round starts with 11 cards dealt to every player.</p>
-        <p>The first player to the dealer&apos;s left starts. Play continues clockwise.</p>
+        <div className="rules-book__info-grid">
+          <article className="rules-book__info-card">
+            <h4>Players</h4>
+            <p>3 to 6</p>
+          </article>
+          <article className="rules-book__info-card">
+            <h4>Starting Hand</h4>
+            <p>11 cards each</p>
+          </article>
+          <article className="rules-book__info-card">
+            <h4>Turn Order</h4>
+            <p>Clockwise</p>
+          </article>
+          <article className="rules-book__info-card">
+            <h4>Win Condition</h4>
+            <p>Lowest total score</p>
+          </article>
+        </div>
+        <p>The player to the dealer&apos;s left starts each round. Play continues clockwise until someone goes out.</p>
         <p>
-          Goal: finish each round by completing that round&apos;s contract, then end with the lowest total score after all
-          rounds.
+          Your objective in every round is to complete the current contract, then reduce your hand to zero cards when
+          allowed by the round rules.
         </p>
         <div className="rules-book__spotlight">
-          <h3>Quick Snapshot</h3>
+          <h3>Round Start Checklist</h3>
           <ul>
-            <li>Draw one card per turn</li>
-            <li>Make required contract</li>
-            <li>Discard to end turn</li>
+            <li>Confirm which contract is active</li>
+            <li>Check hand for early set/run patterns</li>
+            <li>Track key discards from each opponent</li>
           </ul>
         </div>
       </>
@@ -46,26 +63,35 @@ const rulesBookPages: RulesBookPage[] = [
           <h3>Key Vocabulary</h3>
           <ul>
             <li>
-              <strong>Set:</strong> same rank cards (e.g., Q-Q-Q)
+              <strong>Set:</strong> same rank cards (example: Q-Q-Q)
             </li>
             <li>
-              <strong>Run:</strong> consecutive cards in one suit (e.g., 7-8-9-10 hearts)
+              <strong>Run:</strong> consecutive cards in one suit (example: 7-8-9-10 hearts)
             </li>
             <li>
-              <strong>Natural:</strong> non-wild card used at face value
+              <strong>Natural:</strong> a non-wild card used as printed
             </li>
             <li>
-              <strong>Wild:</strong> Joker or other wild-card rule replacement
+              <strong>Wild:</strong> a Joker or other wild substitute allowed by table rules
             </li>
             <li>
-              <strong>Lay Down:</strong> placing your contract to the table
+              <strong>Lay Down:</strong> placing your full contract melds on the table
             </li>
             <li>
-              <strong>Lay Off:</strong> adding cards to melds already on table
+              <strong>Lay Off:</strong> adding legal cards to existing table melds
             </li>
           </ul>
         </div>
-        <p>Using consistent terms keeps buy requests, meld checks, and scoring decisions clean and fast.</p>
+        <div className="rules-book__info-grid">
+          <article className="rules-book__info-card">
+            <h4>Natural vs Wild</h4>
+            <p>Naturals define real rank/suit structure. Wilds fill missing slots.</p>
+          </article>
+          <article className="rules-book__info-card">
+            <h4>Lay Down vs Lay Off</h4>
+            <p>Lay down completes your contract. Lay off extends already-valid melds.</p>
+          </article>
+        </div>
       </>
     ),
   },
@@ -76,13 +102,17 @@ const rulesBookPages: RulesBookPage[] = [
     content: (
       <>
         <ol className="rules-book__steps">
-          <li>Draw 1 card (from the stock or top of discard).</li>
-          <li>Lay down your contract if you can, then add extra cards to legal melds when allowed.</li>
-          <li>Discard 1 card to end your turn.</li>
+          <li>Draw one card from deck or discard.</li>
+          <li>If eligible, lay down your contract melds.</li>
+          <li>If already laid down, lay off cards onto valid table melds.</li>
+          <li>Discard one card to end turn (unless round variant says otherwise).</li>
         </ol>
         <p>
-          You must satisfy your own contract before you can lay off cards to table melds. If the stock runs out,
-          reshuffle the discard pile (leave the top discard in place).
+          You must satisfy your own contract before laying off to other melds. If stock runs out, reshuffle discard
+          pile while keeping the top discard visible.
+        </p>
+        <p className="rules-book__callout">
+          In this app, backend turn state is authoritative. If an action is out of phase, it is rejected server-side.
         </p>
       </>
     ),
@@ -131,9 +161,9 @@ const rulesBookPages: RulesBookPage[] = [
             </tr>
           </tbody>
         </table>
-        <p>
-          Some house tables use a variant final-round finish rule. In this app, the in-game contract text is always
-          authoritative.
+        <p className="rules-book__callout">
+          In-game round text is always authoritative. If your table uses custom contracts, follow the live contract
+          indicator shown during play.
         </p>
       </>
     ),
@@ -144,12 +174,13 @@ const rulesBookPages: RulesBookPage[] = [
     tip: 'Buying can be powerful, but each buy increases hand size pressure for later discard timing.',
     content: (
       <>
-        <p>A buy is taking the top discard out of turn when the active player passes on that discard.</p>
-        <p>If you buy, you take the discard and also draw penalty card(s) from the stock.</p>
-        <p>
-          If multiple players request the same discard, priority follows turn order from the active player. Buy limits
-          vary by table and round, so the backend resolves all buy priority and limits.
-        </p>
+        <p>A buy is an out-of-turn request for the latest discard after the active player passes on it.</p>
+        <ol className="rules-book__steps">
+          <li>Discard appears on top of pile.</li>
+          <li>Eligible players request a buy during the buy window.</li>
+          <li>Priority resolves by table order/rules.</li>
+          <li>Winning player takes discard and draws required penalty card(s).</li>
+        </ol>
         <div className="rules-book__spotlight">
           <h3>Example</h3>
           <p>
@@ -157,6 +188,9 @@ const rulesBookPages: RulesBookPage[] = [
             stock.
           </p>
         </div>
+        <p className="rules-book__callout">
+          Buy limits and windows can differ by variant. This app resolves buy conflicts and legality on the backend.
+        </p>
       </>
     ),
   },
@@ -166,16 +200,18 @@ const rulesBookPages: RulesBookPage[] = [
     tip: 'Keep flexible middles for runs (like 6-7-8) and avoid locking too many wilds early.',
     content: (
       <>
-        <p>A set is same rank (different suits). A run is sequential cards in the same suit.</p>
-        <p>In standard Shanghai tables, aces are usually high in runs.</p>
-        <p>
-          Jokers are wild. Wild-card restrictions differ by table (for example, one Joker per meld in some versions),
-          so follow the round rules shown in-game.
-        </p>
-        <p>
-          If Joker replacement is enabled, a player may replace a Joker in a meld with the exact natural card and take
-          the Joker for immediate use in that turn.
-        </p>
+        <div className="rules-book__info-grid">
+          <article className="rules-book__info-card">
+            <h4>Set Rules</h4>
+            <p>Minimum 3 cards, same rank, wilds may fill missing cards.</p>
+          </article>
+          <article className="rules-book__info-card">
+            <h4>Run Rules</h4>
+            <p>Minimum 4 cards, same suit, consecutive ranks with legal wild placement.</p>
+          </article>
+        </div>
+        <p>Aces can be high or low in runs when allowed, but they cannot wrap around (Q-K-A-2 is invalid).</p>
+        <p>Jokers are wild. Some variants also treat specific cards as wild (for example, 2 of clubs).</p>
         <ul className="rules-book__icon-list">
           <li>
             <strong>Set:</strong> 9-9-9
@@ -187,6 +223,10 @@ const rulesBookPages: RulesBookPage[] = [
             <strong>Wild:</strong> Joker may substitute depending on table limits
           </li>
         </ul>
+        <p className="rules-book__callout">
+          If Joker replacement is enabled, the exact natural card can replace a Joker in a meld, then that Joker may be
+          reused immediately if rules allow.
+        </p>
       </>
     ),
   },
@@ -196,14 +236,11 @@ const rulesBookPages: RulesBookPage[] = [
     tip: 'Wait to lay down until your hand remains flexible enough to go out in as few turns as possible.',
     content: (
       <>
-        <p>
-          You generally cannot lay off until your own contract is down. After that, you may add legal cards to existing
-          table melds on your turn.
-        </p>
-        <p>
-          Most tables require all melds to remain valid after any add/rearrange action. If table meld manipulation is
-          allowed in your variant, every resulting meld must still be legal.
-        </p>
+        <ol className="rules-book__steps">
+          <li>Lay down only when your full contract is complete.</li>
+          <li>After laying down, you may lay off legal cards to table melds on your turn.</li>
+          <li>Every changed meld must remain valid after your move.</li>
+        </ol>
         <div className="rules-book__spotlight">
           <h3>Backend Ownership</h3>
           <p>
@@ -211,6 +248,9 @@ const rulesBookPages: RulesBookPage[] = [
             permissions.
           </p>
         </div>
+        <p className="rules-book__callout rules-book__callout--warning">
+          Common invalid layoff: adding a non-matching rank to a set, or breaking suit/sequence integrity in a run.
+        </p>
       </>
     ),
   },
@@ -220,14 +260,17 @@ const rulesBookPages: RulesBookPage[] = [
     tip: 'Plan your final discard early; many almost-complete hands fail because the exit card is trapped.',
     content: (
       <>
-        <p>To go out, you must satisfy the current contract and get rid of all cards (usually by a final discard).</p>
+        <p>To go out, you must satisfy the round contract and remove all cards from your hand as the round allows.</p>
         <p>
-          Once a player goes out, the round ends immediately. Remaining players keep penalty points for cards left in
-          hand.
+          In standard flow, this means ending with a legal final discard. Some variants allow different final-round
+          endings.
         </p>
         <p>
-          In many 7-round Shanghai variants, the final contract is three runs and no discard. Use your table&apos;s
-          configured round rule.
+          Once someone goes out, round scoring is immediate. Any cards left in other players&apos; hands count as penalty
+          points.
+        </p>
+        <p className="rules-book__callout">
+          In this app, going-out eligibility is backend validated against your laid-down status and remaining hand.
         </p>
       </>
     ),
@@ -238,20 +281,19 @@ const rulesBookPages: RulesBookPage[] = [
     tip: 'Low cards are safer to hold. Unused Jokers are expensive at scoring time.',
     content: (
       <>
-        <p>Standard penalty scoring at round end:</p>
+        <p>Penalty scoring in this implementation:</p>
         <div className="rules-book__score-grid">
-          <p>2-7</p>
-          <p>5 each</p>
-          <p>8-K</p>
-          <p>10 each</p>
+          <p>Jokers and wildcards</p>
+          <p>50 each</p>
           <p>Aces</p>
           <p>20 each</p>
-          <p>Jokers</p>
-          <p>50 each</p>
+          <p>10, J, Q, K</p>
+          <p>10 each</p>
+          <p>Other number cards</p>
+          <p>5 each</p>
         </div>
         <p>
-          Add scores across all rounds. Lowest total score wins the game. If your table uses house scoring, follow the
-          configured in-game values.
+          Total score is cumulative across rounds. Lowest overall score wins the game.
         </p>
       </>
     ),
@@ -262,8 +304,8 @@ const rulesBookPages: RulesBookPage[] = [
     tip: 'When in doubt, trust the in-game contract text and backend prompts over memory.',
     content: (
       <>
-        <p>Shanghai Rummy has table variants. Common differences include:</p>
-        <ul>
+        <p>Shanghai Rummy varies by table. Common differences include:</p>
+        <ul className="rules-book__split-list">
           <li>Number of rounds (often 7 or 10)</li>
           <li>Buy limits per player per round</li>
           <li>Wild-card restrictions per meld</li>
@@ -271,8 +313,11 @@ const rulesBookPages: RulesBookPage[] = [
           <li>Ace handling in runs (high-only vs flexible)</li>
         </ul>
         <p>
-          Tie handling is commonly lowest score wins, then shared placement or playoff round depending on house rule. In
-          this app, backend-configured rules are authoritative.
+          Tie handling is table-dependent: shared placement, tiebreak hand, or playoff round are all common.
+        </p>
+        <p className="rules-book__callout">
+          This app always follows backend-configured rules first. If screen text conflicts with memory, trust live game
+          prompts.
         </p>
       </>
     ),
@@ -281,13 +326,17 @@ const rulesBookPages: RulesBookPage[] = [
 
 function RulesPage() {
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const searchParams = new URLSearchParams(window.location.search)
+  const requestedReturnPath = searchParams.get('returnTo')
+  const backDestination = requestedReturnPath && requestedReturnPath.startsWith('/game/') ? requestedReturnPath : '/'
+  const backButtonLabel = backDestination === '/' ? 'Back to Lobby' : 'Back to Game'
 
   const currentPage = rulesBookPages[currentPageIndex]
   const isFirstPage = currentPageIndex === 0
   const isLastPage = currentPageIndex === rulesBookPages.length - 1
 
   const handleBackClick = () => {
-    window.location.assign('/')
+    window.location.assign(backDestination)
   }
 
   const goToPreviousPage = () => {
@@ -310,16 +359,16 @@ function RulesPage() {
         type="button"
         className="rules-page__back-btn"
         onClick={handleBackClick}
-        data-a11y-description="Return to the home lobby screen."
+        data-a11y-description={`Return to ${backDestination === '/' ? 'the home lobby screen' : 'your active game table'}.`}
       >
-        ← Back to Lobby
+        ← {backButtonLabel}
       </button>
 
       <section className="rules-book" aria-label="Shanghai Rummy Rules Book">
         <aside className="rules-book__sheet rules-book__sheet--left">
           <p className="rules-book__crest">Shanghai Rummy Handbook</p>
           <h1 className="rules-book__headline">The Rules</h1>
-          <h2 className="rules-book__legend-title">Legend</h2>
+          <h2 className="rules-book__legend-title">Contents</h2>
           <ol className="rules-book__legend-list">
             {rulesBookPages.map((page, index) => (
               <li key={page.title}>
@@ -327,7 +376,7 @@ function RulesPage() {
                   type="button"
                   className={`rules-book__legend-item ${index === currentPageIndex ? 'is-active' : ''}`}
                   onClick={() => setCurrentPageIndex(index)}
-                  data-a11y-description={`Open rules chapter ${index + 1}: ${page.title}.`}
+                  data-a11y-description={`Open rules page ${index + 1}: ${page.title}.`}
                 >
                   <span>Page {index + 1}</span>
                   <span>{page.title}</span>
@@ -338,7 +387,6 @@ function RulesPage() {
         </aside>
 
         <article className="rules-book__sheet rules-book__sheet--right">
-          <p className="rules-book__chapter">Chapter {currentPageIndex + 1}</p>
           <h2 className="rules-book__page-title">{currentPage.title}</h2>
           <p className="rules-book__subtitle">{currentPage.subtitle}</p>
           <div className="rules-book__page-content">{currentPage.content}</div>

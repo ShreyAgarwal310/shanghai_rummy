@@ -1,0 +1,168 @@
+@media (max-width: 1200px) {
+  .game-side-panel {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+
+  .game-panel-card--compact {
+    min-height: 188px;
+    max-height: 188px;
+  }
+
+  .game-demo-rail--dock {
+    width: min(270px, 28vw);
+  }
+}
+
+@media (max-width: 980px) {
+  .game-table-page {
+    padding: 12px;
+  }
+
+  .game-table-header {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .game-table-header__btn {
+    width: 100%;
+  }
+
+  .game-side-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .game-panel-card--compact {
+    min-height: 174px;
+    max-height: 174px;
+  }
+
+  .game-demo-rail--dock {
+    position: static;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+    margin-top: 10px;
+  }
+
+  .opponent-seats {
+    min-height: 220px;
+  }
+
+  .opponent-seat {
+    width: 142px;
+    padding: 6px;
+  }
+
+  .opponent-seat--north {
+    left: 50%;
+  }
+
+  .opponent-seat--north-east {
+    top: 64px;
+    left: 76%;
+  }
+
+  .opponent-seat--east {
+    top: 126px;
+    left: 86%;
+  }
+
+  .opponent-seat--west {
+    top: 126px;
+    left: 14%;
+  }
+
+  .opponent-seat--north-west {
+    top: 64px;
+    left: 24%;
+  }
+
+  .table-felt__piles {
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .table-felt__layout {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .table-felt__center {
+    order: -1;
+  }
+
+  .table-meld-lane {
+    min-height: 220px;
+  }
+
+  .table-meld-lane__list {
+    overflow: hidden;
+  }
+
+  .game-action-bar__buttons {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+
+  .game-end-card__stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .game-table-header__meta {
+    justify-content: start;
+  }
+
+  .game-table-header__chip {
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .opponent-seats {
+    display: none;
+  }
+
+  .game-table-stage {
+    padding: 10px;
+  }
+
+  .table-felt {
+    padding: 10px;
+  }
+
+  .table-pile {
+    min-width: 136px;
+  }
+
+  .table-pile__card,
+  .playing-card--pile {
+    width: 74px;
+    height: 108px;
+  }
+
+  .playing-card--hand {
+    width: 84px;
+    min-height: 124px;
+  }
+
+  .playing-card--meld {
+    width: 44px;
+    height: 62px;
+  }
+
+  .game-action-bar__buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .game-end-card {
+    padding: 14px;
+  }
+
+  .game-end-card__actions {
+    flex-direction: column;
+  }
+
+  .game-end-card__btn {
+    width: 100%;
+  }
+}

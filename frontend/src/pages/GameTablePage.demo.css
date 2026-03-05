@@ -1,0 +1,314 @@
+.game-demo-rail {
+  border: 1px solid rgba(201, 209, 217, 0.33);
+  border-radius: 14px;
+  padding: 11px;
+  background:
+    linear-gradient(180deg, rgba(7, 32, 45, 0.72) 0%, rgba(5, 24, 34, 0.78) 100%),
+    rgba(8, 25, 36, 0.74);
+  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.3);
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 100%;
+}
+
+.game-demo-rail--dock {
+  position: fixed;
+  top: 90px;
+  right: 12px;
+  width: min(300px, 24vw);
+  max-height: calc(100vh - 106px);
+  overflow-y: auto;
+  z-index: 12;
+}
+
+.game-demo-rail__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.game-demo-rail__header h3 {
+  margin: 0;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 1.1rem;
+  color: #eef6fd;
+}
+
+.game-demo-rail__header p {
+  margin: 0;
+  color: rgba(216, 232, 245, 0.86);
+  font-size: 0.8rem;
+}
+
+.game-demo-rail__text {
+  margin: 0;
+  font-size: 0.84rem;
+  color: rgba(216, 232, 245, 0.86);
+}
+
+.game-demo-rail__btn {
+  min-height: 40px;
+  border: 1px solid rgba(201, 209, 217, 0.44);
+  border-radius: 8px;
+  color: #f3f8f5;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(11, 40, 55, 0.72);
+}
+
+.game-demo-rail__btn:hover {
+  filter: brightness(1.06);
+}
+
+.game-demo-rail__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.game-demo-rail__btn:focus-visible {
+  outline: 2px solid #5fc3ff;
+  outline-offset: 2px;
+}
+
+.game-demo-rail__btn--primary {
+  border-color: rgba(95, 195, 255, 0.52);
+  background: linear-gradient(180deg, #4aa3ff 0%, #1e7fd6 100%);
+}
+
+.game-demo-rail__btn--danger {
+  border-color: rgba(255, 201, 48, 0.44);
+  background: linear-gradient(180deg, #c58a16 0%, #a6710f 100%);
+}
+
+.game-demo-rail__btn--ghost {
+  color: #0f2231;
+  border-color: rgba(201, 209, 217, 0.65);
+  background: rgba(231, 239, 246, 0.9);
+}
+
+.game-demo-rail__hint {
+  margin: 2px 0 0;
+  border-left: 3px solid rgba(255, 201, 48, 0.66);
+  border-radius: 5px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  color: rgba(245, 229, 191, 0.92);
+  background: rgba(94, 66, 20, 0.3);
+}
+
+.game-demo-result {
+  margin-top: 2px;
+  border: 1px solid rgba(201, 209, 217, 0.3);
+  border-radius: 9px;
+  padding: 8px;
+  background: rgba(11, 45, 65, 0.45);
+}
+
+.game-demo-result h4 {
+  margin: 0;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  color: #eff8ff;
+}
+
+.game-demo-result p {
+  margin: 6px 0 0;
+  font-size: 0.84rem;
+  color: rgba(229, 241, 250, 0.92);
+}
+
+.game-demo-result__list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.game-demo-result__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid rgba(201, 209, 217, 0.2);
+  padding-top: 4px;
+  font-size: 0.82rem;
+}
+
+.game-end-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  animation: game-end-fade-in 240ms ease;
+}
+
+.game-end-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 15, 22, 0.56);
+  backdrop-filter: blur(4px);
+}
+
+.game-end-card {
+  position: relative;
+  width: min(96vw, 940px);
+  border-radius: 18px;
+  border: 1px solid rgba(201, 209, 217, 0.4);
+  padding: 20px;
+  background:
+    radial-gradient(circle at 15% 8%, rgba(95, 195, 255, 0.22), transparent 42%),
+    radial-gradient(circle at 80% 88%, rgba(255, 201, 48, 0.18), transparent 46%),
+    linear-gradient(180deg, rgba(7, 36, 53, 0.95) 0%, rgba(4, 23, 34, 0.97) 100%);
+  box-shadow: 0 26px 55px rgba(0, 0, 0, 0.45);
+  display: grid;
+  gap: 14px;
+}
+
+.game-end-card__hero {
+  text-align: center;
+}
+
+.game-end-card__label {
+  margin: 0;
+  color: rgba(226, 240, 250, 0.86);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.86rem;
+}
+
+.game-end-card__winner {
+  margin: 4px 0 0;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: clamp(2.6rem, 7vw, 4.25rem);
+  line-height: 1.02;
+  color: #f8fbff;
+  text-shadow: 0 0 22px rgba(95, 195, 255, 0.35), 0 3px 16px rgba(0, 0, 0, 0.36);
+}
+
+.game-end-card__subtitle {
+  margin: 8px 0 0;
+  color: rgba(226, 240, 250, 0.92);
+  font-size: 1rem;
+}
+
+.game-end-card__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.game-end-stat {
+  border: 1px solid rgba(201, 209, 217, 0.34);
+  border-radius: 10px;
+  background: rgba(4, 27, 40, 0.54);
+  padding: 10px;
+}
+
+.game-end-stat h3 {
+  margin: 0;
+  color: rgba(221, 236, 247, 0.85);
+  font-size: 0.84rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.game-end-stat p {
+  margin: 7px 0 0;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 1.2rem;
+  color: #f2faff;
+}
+
+.game-end-stat span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: rgba(218, 235, 247, 0.84);
+}
+
+.game-end-card__leaderboard-wrap {
+  border: 1px solid rgba(201, 209, 217, 0.32);
+  border-radius: 10px;
+  background: rgba(3, 20, 29, 0.55);
+  padding: 10px 12px;
+}
+
+.game-end-card__leaderboard-title {
+  margin: 0 0 8px;
+  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
+  font-size: 1.24rem;
+  color: #edf8ff;
+}
+
+.game-end-card__leaderboard {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.game-end-card__leaderboard th {
+  text-align: left;
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(221, 236, 247, 0.84);
+  padding-bottom: 6px;
+}
+
+.game-end-card__leaderboard td {
+  padding: 7px 0;
+  border-top: 1px solid rgba(201, 209, 217, 0.2);
+  color: rgba(237, 247, 255, 0.95);
+}
+
+.game-end-card__leaderboard tr.is-winner td {
+  border-top-color: rgba(95, 195, 255, 0.45);
+  color: #f9fdff;
+  font-weight: 700;
+}
+
+.game-end-card__actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.game-end-card__btn {
+  min-height: 42px;
+  min-width: 150px;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 209, 217, 0.45);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.game-end-card__btn--primary {
+  color: #ffffff;
+  border-color: rgba(95, 195, 255, 0.52);
+  background: linear-gradient(180deg, #4aa3ff 0%, #1e7fd6 100%);
+}
+
+.game-end-card__btn--secondary {
+  color: #102634;
+  border-color: rgba(201, 209, 217, 0.65);
+  background: rgba(231, 239, 246, 0.95);
+}
+
+.game-end-card__btn:focus-visible {
+  outline: 2px solid #5fc3ff;
+  outline-offset: 2px;
+}
+
+@keyframes game-end-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
