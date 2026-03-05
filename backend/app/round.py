@@ -51,7 +51,7 @@ class Round:
             current_player = self.players[self.current_player_index]
             
             # calls method from player
-            current_player.take_turn(self.deck, self.discard_pile, self.contract)
+            current_player.take_turn(self)
             
             if current_player.hand.is_empty():
                 self.is_complete = True
@@ -63,8 +63,7 @@ class Round:
         self.current_player_index = (self.current_player_index + 1) % len(self.players)
 
     def calculate_scores(self):
-        """Returns a dict of points from this round based on remaining cards."""
-        round_scores = {}
-        for player in self.players:
-            round_scores[player.name] = player.hand.calculate_value()
-        return round_scores
+        return {
+            player.name: player.hand.calculate_value()
+            for player in self.players
+        }

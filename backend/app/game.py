@@ -29,6 +29,26 @@ class Game:
         self.total_scores = {player.name: 0 for player in players}
         self.current_round_idx = 0
         self.game_over = False
+
+    def start(self):
+        """Run all 10 rounds, then declare the winner."""
+        for round_idx, contract in enumerate(CONTRACTS):
+            print(f"\n{'='*40}")
+            print(f"  ROUND {round_idx + 1} — "
+                  f"{contract.required_sets} set(s), {contract.required_runs} run(s)")
+            print(f"{'='*40}")
+
+            for player in self.players:
+                player.reset_for_new_round()
+
+            round_ = Round(self.players, round_number=round_idx + 1, contract=contract)
+            round_.start()
+
+            self.update_total_scores(round_.calculate_scores())
+            self.current_round_idx += 1
+
+        self.game_over = True
+        self.declare_winner()
     
     def update_total_scores(self, round_results):
         for player_name, score in round_results.items():
