@@ -12,26 +12,13 @@ Responsibility:
 This file should contain NO game logic.
 It should only launch the application.
 """
-import game
-import round
-import hands
-from players import human_player
+from app.game import Game
+from app.players.human_player import HumanPlayer
 
-class Player:
-
-    def __init__(self, name, score):
-        self.name = name
-        self.score = score
-
-class Game:
-
-    def __init__(self, players):
-        self.players = players
-        self.game_start = False
-
-    def begin_game(self):
-        self.game_start = True
+if __name__ == "__main__":
+    players = [
+        HumanPlayer("Player 1"),
+        HumanPlayer("Player 2"),
+    ]
     game = Game(players)
-
-
-game.start()
+    game.start()

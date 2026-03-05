@@ -62,6 +62,16 @@ class Round:
     def next_turn(self):
         self.current_player_index = (self.current_player_index + 1) % len(self.players)
 
+    def handle_draw(self, player):
+        """Handle player drawing a card (from deck or discard). TODO: implement draw source choice."""
+        card = self.deck.draw()
+        if card:
+            player.hand.add_card(card)
+
+    def handle_play(self, player):
+        """Handle player playing melds and discarding. TODO: implement meld/discard flow."""
+        pass
+
     def calculate_scores(self):
         return {
             player.name: player.hand.calculate_value()

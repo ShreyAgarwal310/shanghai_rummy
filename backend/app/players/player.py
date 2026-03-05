@@ -18,29 +18,28 @@ The Player class does NOT:
 - Directly manipulate the deck without Round mediation.
 """
 
-import hands
-import game
-import main
+from abc import ABC, abstractmethod
 
-from abc import ABC, abstractclassmethod
+from app.hands import Hand
 
-class Player:
+
+class Player(ABC):
     def __init__(self, name):
-            self.name = name
-            self.hand = Hand()
-            self.score = 0
-            self.has_laid_down = False # works with rules engine
+        self.name = name
+        self.hand = Hand()
+        self.score = 0
+        self.has_laid_down = False  # works with rules engine
 
-    def reset_for_new_roud(self):
-          # this will be called by game before each round starts
-          self.hand = Hand()
-          self.has_laid_down = False
+    def reset_for_new_round(self):
+        """Called by Game before each round starts."""
+        self.hand = Hand()
+        self.has_laid_down = False
 
-        
-def take_turn (self, round):
+    @abstractmethod
+    def take_turn(self, current_round):
         pass
 
-def __repr__(self):
-       return f"{self.__class__.__name__}(name={self.name!r})"
+    def __repr__(self):
+        return f"{self.__class__.__name__}(name={self.name!r})"
 
         
