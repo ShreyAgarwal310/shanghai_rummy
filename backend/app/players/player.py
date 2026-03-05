@@ -22,15 +22,25 @@ import hands
 import game
 import main
 
+from abc import ABC, abstractclassmethod
 
 class Player:
-    def __init__(self, players):
-            self.players = players
-            self.game_start = False
+    def __init__(self, name):
+            self.name = name
+            self.hand = Hand()
             self.score = 0
+            self.has_laid_down = False # works with rules engine
 
+    def reset_for_new_roud(self):
+          # this will be called by game before each round starts
+          self.hand = Hand()
+          self.has_laid_down = False
 
-    if begin_game = True:
-        username = input('What is your username?')
+        
+def take_turn (self, round):
+        pass
 
-        #would keep the name in the database??
+def __repr__(self):
+       return f"{self.__class__.__name__}(name={self.name!r})"
+
+        
