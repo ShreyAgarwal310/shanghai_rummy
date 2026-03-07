@@ -20,8 +20,16 @@ The Round class does NOT:
 """
 
 
-from app.cards.deck import Deck
-from app.cards.discard_pile import DiscardPile
+try:
+    from app.cards.deck import Deck
+    from app.cards.discard_pile import DiscardPile
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from app.cards.deck import Deck
+    from app.cards.discard_pile import DiscardPile
 
 class Round:
     def __init__(self, players, round_number, contract):
