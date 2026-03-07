@@ -17,7 +17,14 @@ The DiscardPile class does NOT:
 
 from typing import List, Optional
 
-from app.cards.card import Card
+try:
+    from app.cards.card import Card
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from app.cards.card import Card
 
 
 class DiscardPile:

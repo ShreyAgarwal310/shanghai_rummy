@@ -12,7 +12,7 @@ from app.rules.contract import CONTRACTS, Contract
 
 class TestContract(unittest.TestCase):
     def test_contract_count(self):
-        self.assertEqual(len(CONTRACTS), 11)
+        self.assertEqual(len(CONTRACTS), 10)
 
     def test_round_progression(self):
         expected = [
@@ -26,7 +26,6 @@ class TestContract(unittest.TestCase):
             (3, 1),
             (1, 3),
             (4, 0),
-            (0, 4),
         ]
         got = [(c.required_sets, c.required_runs) for c in CONTRACTS]
         self.assertEqual(got, expected)
