@@ -20,20 +20,25 @@ class Hand:
     def __init__(self):
         self.cards = [] #using a arraylist
 
-    def draw_card (self, card):
-        self.card.append(card)
+    def add_card(self, card):
+        """Add a card to the hand (used when dealing or drawing)."""
+        self.cards.append(card)
 
     def discard_card(self, card):
-        self.card.remove(card)
+        self.cards.remove(card)
 
     def sort_cards(self):
-        self.card.sort(key=lambda card: (card.sort_value, card.suit_value))
+        self.cards.sort(key=lambda c: (c.sort_value, c.suit_value))
 
     def deadwood (self) -> int: # calculating remaining card pts
         return sum (card.point_value for card in self.cards)
     
     def get_card(self):
-        return list(self.cards) #using list incase there are changes in the hand internal state
+        return list(self.cards)  # copy so callers don't mutate internal state
+
+    def get_cards(self):
+        """Alias for get_card() for compatibility."""
+        return self.get_card()
     
     def is_empty(self) -> bool:
         return len(self.cards) == 0

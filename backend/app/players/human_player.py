@@ -15,7 +15,7 @@ This class does NOT:
 - Control round progression.
 """
 
-from player import Player
+from app.players.player import Player
 
 class HumanPlayer(Player):
 
@@ -26,6 +26,9 @@ class HumanPlayer(Player):
 
         if action == "draw":
             current_round.handle_draw(self)
+            card_to_discard = self.choose_discard()
+            self.hand.discard_card(card_to_discard)
+            current_round.discard_pile.add_card(card_to_discard)
 
         elif action == "play":
             current_round.handle_play(self)
@@ -33,32 +36,23 @@ class HumanPlayer(Player):
         else:
             print("Invalid choice.")
 
-        # Choose card
-
-        def choose_discard(self):
-            cards = self.hand.get_cards()
-
-            print("\nYour hand:")
-            for i, card in enumerate(cards):
-                print(f"{i}: {card}")
-
-        choice = int(input("Select card index to discard: "))
-
-        return cards[choice]
-
-        # Attempt meld
-
-    def choose_meld(self):
+    def choose_discard(self):
+        """Prompt player to choose a card to discard; returns the chosen card."""
         cards = self.hand.get_cards()
-
         print("\nYour hand:")
         for i, card in enumerate(cards):
             print(f"{i}: {card}")
+        choice = int(input("Select card index to discard: "))
+        return cards[choice]
 
+    def choose_meld(self):
+        """Prompt player to choose cards for a meld; returns list of selected cards."""
+        cards = self.hand.get_cards()
+        print("\nYour hand:")
+        for i, card in enumerate(cards):
+            print(f"{i}: {card}")
         indices = input(
-        "Enter card indices for meld (space separated): "
-        ).split()
-
+            "Enter card indices for meld (space separated): "
+        ).strip().split()
         selected_cards = [cards[int(i)] for i in indices]
-
         return selected_cards
