@@ -31,6 +31,19 @@ function StatsPage() {
 
   return (
     <main className="stats-page" aria-label="Player statistics">
+
+      {/* Fixed gold border frame */}
+      <div className="stats-frame" aria-hidden="true">
+        <span className="stats-frame__corner stats-frame__corner--tl" />
+        <span className="stats-frame__corner stats-frame__corner--tr" />
+        <span className="stats-frame__corner stats-frame__corner--bl" />
+        <span className="stats-frame__corner stats-frame__corner--br" />
+        <span className="stats-frame__mid stats-frame__mid--top">◆</span>
+        <span className="stats-frame__mid stats-frame__mid--right">◆</span>
+        <span className="stats-frame__mid stats-frame__mid--bottom">◆</span>
+        <span className="stats-frame__mid stats-frame__mid--left">◆</span>
+      </div>
+
       <button
         type="button"
         className="stats-page__back-btn"
@@ -42,13 +55,25 @@ function StatsPage() {
 
       <section className="stats-page__content">
         <header className="stats-page__title-card">
-          <h1 className="stats-page__title">Your Statistics</h1>
+          <div className="stats-page__pretitle" aria-hidden="true">
+            <span className="stats-page__ornament-line" />
+            <span className="stats-page__ornament-gem">◆</span>
+            <span className="stats-page__ornament-line" />
+          </div>
           <p className="stats-page__player-name">Player Name</p>
+          <h1 className="stats-page__title">Your Statistics</h1>
+          <div className="stats-page__title-ornament" aria-hidden="true">
+            <span className="stats-page__ornament-line" />
+            <span className="stats-page__ornament-gem">◈</span>
+            <span className="stats-page__ornament-gem stats-page__ornament-gem--main">◆</span>
+            <span className="stats-page__ornament-gem">◈</span>
+            <span className="stats-page__ornament-line" />
+          </div>
         </header>
 
         <section className="stats-page__metrics-grid" aria-label="Primary statistics">
           {metricCards.map((card) => (
-            <article key={card.label} className={`stats-card stats-card--${card.accent}`} data-a11y-label={`Accent: ${card.accent}`}>
+            <article key={card.label} className={`stats-card stats-card--${card.accent}`}>
               <header className="stats-card__header">
                 <span className="stats-card__icon" aria-hidden="true">
                   {card.icon}
@@ -81,7 +106,7 @@ function StatsPage() {
                 ☆
               </span>
               <p className="stats-panel__favorite-round">--</p>
-              <p className="stats-panel__favorite-note">Awaiting backend stats feed.</p>
+              <p className="stats-panel__favorite-note">No data yet.</p>
             </div>
           </article>
         </section>

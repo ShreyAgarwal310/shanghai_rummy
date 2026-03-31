@@ -91,11 +91,24 @@ function ProfilePage() {
 
   const handleSave = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setSaveMessage('Profile preferences saved locally. Backend can now bind real user fields here.')
+    setSaveMessage('Preferences saved.')
   }
 
   return (
     <main className="profile-page" aria-label="Profile settings">
+
+      {/* Fixed gold border frame */}
+      <div className="profile-frame" aria-hidden="true">
+        <span className="profile-frame__corner profile-frame__corner--tl" />
+        <span className="profile-frame__corner profile-frame__corner--tr" />
+        <span className="profile-frame__corner profile-frame__corner--bl" />
+        <span className="profile-frame__corner profile-frame__corner--br" />
+        <span className="profile-frame__mid profile-frame__mid--top">◆</span>
+        <span className="profile-frame__mid profile-frame__mid--right">◆</span>
+        <span className="profile-frame__mid profile-frame__mid--bottom">◆</span>
+        <span className="profile-frame__mid profile-frame__mid--left">◆</span>
+      </div>
+
       <button
         type="button"
         className="profile-page__back-btn"
@@ -107,8 +120,20 @@ function ProfilePage() {
 
       <section className="profile-page__content">
         <header className="profile-page__title-card">
+          <div className="profile-page__pretitle" aria-hidden="true">
+            <span className="profile-page__ornament-line" />
+            <span className="profile-page__ornament-gem">◆</span>
+            <span className="profile-page__ornament-line" />
+          </div>
+          <p className="profile-page__subtitle">Identity · Avatar · Accessibility</p>
           <h1 className="profile-page__title">Profile Settings</h1>
-          <p className="profile-page__subtitle">Identity, avatar, and accessibility preferences</p>
+          <div className="profile-page__title-ornament" aria-hidden="true">
+            <span className="profile-page__ornament-line" />
+            <span className="profile-page__ornament-gem">◈</span>
+            <span className="profile-page__ornament-gem profile-page__ornament-gem--main">◆</span>
+            <span className="profile-page__ornament-gem">◈</span>
+            <span className="profile-page__ornament-line" />
+          </div>
         </header>
 
         <form className="profile-page__form" onSubmit={handleSave}>
@@ -121,7 +146,7 @@ function ProfilePage() {
                   {avatarPreview ? (
                     <img src={avatarPreview} alt="" className="profile-avatar__image" />
                   ) : (
-                    <span className="profile-avatar__placeholder">👤</span>
+                    <span className="profile-avatar__placeholder">♠</span>
                   )}
                 </div>
 
@@ -186,7 +211,6 @@ function ProfilePage() {
 
             <section className="profile-card">
               <h2 className="profile-card__title">Accessibility</h2>
-              <p className="profile-card__note">These preferences are UI-only for now and ready for backend sync.</p>
 
               <label className="profile-toggle">
                 <input

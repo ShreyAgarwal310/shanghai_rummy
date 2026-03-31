@@ -318,6 +318,19 @@ function GameTablePage({ gameId }: GameTablePageProps) {
 
   return (
     <main className="game-table-page" aria-label="Shanghai Rummy game table">
+
+      {/* Fixed gold border frame */}
+      <div className="game-table-frame" aria-hidden="true">
+        <span className="game-table-frame__corner game-table-frame__corner--tl" />
+        <span className="game-table-frame__corner game-table-frame__corner--tr" />
+        <span className="game-table-frame__corner game-table-frame__corner--bl" />
+        <span className="game-table-frame__corner game-table-frame__corner--br" />
+        <span className="game-table-frame__mid game-table-frame__mid--top">◆</span>
+        <span className="game-table-frame__mid game-table-frame__mid--right">◆</span>
+        <span className="game-table-frame__mid game-table-frame__mid--bottom">◆</span>
+        <span className="game-table-frame__mid game-table-frame__mid--left">◆</span>
+      </div>
+
       <header className="game-table-header">
         <button
           type="button"
@@ -325,16 +338,19 @@ function GameTablePage({ gameId }: GameTablePageProps) {
           onClick={handleBackToLobby}
           data-a11y-description="Leave the table and return to the lobby."
         >
-          Leave Table
+          ← Leave
         </button>
 
         <div className="game-table-header__meta">
-          <p className="game-table-header__chip">Table ID: {gameId}</p>
           <p className="game-table-header__chip">
-            Round {currentDemoRound.roundNumber} of {demoRounds.length}
+            Round {currentDemoRound.roundNumber} / {demoRounds.length}
           </p>
-          <p className="game-table-header__chip game-table-header__chip--turn">{isDemoGameComplete ? 'Game complete' : 'Your turn'}</p>
-          <p className="game-table-header__chip">Demo Mode</p>
+          <p className="game-table-header__chip game-table-header__chip--contract">
+            {currentDemoRound.contractText}
+          </p>
+          <p className="game-table-header__chip game-table-header__chip--turn">
+            {isDemoGameComplete ? 'Game Complete' : 'Your Turn'}
+          </p>
         </div>
 
         <button
@@ -343,7 +359,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
           onClick={handleOpenRulebook}
           data-a11y-description="Open the rulebook page in one click."
         >
-          Open Rulebook
+          Rulebook
         </button>
       </header>
 

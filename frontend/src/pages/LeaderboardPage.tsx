@@ -32,6 +32,19 @@ function LeaderboardPage() {
 
   return (
     <main className="leaderboard-page" aria-label="Global leaderboard">
+
+      {/* Fixed gold border frame */}
+      <div className="leaderboard-frame" aria-hidden="true">
+        <span className="leaderboard-frame__corner leaderboard-frame__corner--tl" />
+        <span className="leaderboard-frame__corner leaderboard-frame__corner--tr" />
+        <span className="leaderboard-frame__corner leaderboard-frame__corner--bl" />
+        <span className="leaderboard-frame__corner leaderboard-frame__corner--br" />
+        <span className="leaderboard-frame__mid leaderboard-frame__mid--top">◆</span>
+        <span className="leaderboard-frame__mid leaderboard-frame__mid--right">◆</span>
+        <span className="leaderboard-frame__mid leaderboard-frame__mid--bottom">◆</span>
+        <span className="leaderboard-frame__mid leaderboard-frame__mid--left">◆</span>
+      </div>
+
       <button
         type="button"
         className="leaderboard-page__back-btn"
@@ -44,7 +57,7 @@ function LeaderboardPage() {
       <section className="leaderboard-page__content">
         <header className="leaderboard-page__title-card">
           <h1 className="leaderboard-page__title">Global Leaderboard</h1>
-          <p className="leaderboard-page__subtitle">Rankings update when backend match results are connected.</p>
+          <p className="leaderboard-page__subtitle">Top players across all tables.</p>
         </header>
 
         <section className="leaderboard-page__timeframe-row" aria-label="Leaderboard timeframe">
@@ -82,7 +95,6 @@ function LeaderboardPage() {
         </section>
 
         <section className="leaderboard-table-card">
-          <p className="leaderboard-table-card__note">Data placeholder mode. Backend can populate rows from leaderboard API.</p>
           <div className="leaderboard-table-wrap">
             <table className="leaderboard-table">
               <thead>

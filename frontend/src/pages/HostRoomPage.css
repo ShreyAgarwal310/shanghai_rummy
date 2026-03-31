@@ -1,191 +1,718 @@
-.host-room-page {
-  min-height: 100vh;
-  padding: 22px 24px 40px;
-  background:
-    radial-gradient(circle at 18% 8%, rgba(55, 124, 84, 0.24), transparent 42%),
-    radial-gradient(circle at 76% 28%, rgba(0, 0, 0, 0.13), transparent 50%),
-    radial-gradient(circle at 50% 105%, rgba(0, 0, 0, 0.42), transparent 55%),
-    linear-gradient(180deg, rgba(10, 91, 58, 0.9) 0%, rgba(7, 72, 46, 0.94) 100%),
-    #0d5c39;
+/* ─── HOST ROOM PAGE — Grand Shanghai Club ─── */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+/* ════════════════════════════════════════════
+   KEYFRAMES
+   ════════════════════════════════════════════ */
+
+@keyframes room-fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes suit-float {
+  0%   { transform: translateY(0)      rotate(0deg)   scale(1);    opacity: 0; }
+  8%   {                                                             opacity: 1; }
+  92%  {                                                             opacity: 0.7; }
+  100% { transform: translateY(-90vh)  rotate(22deg)  scale(0.65); opacity: 0; }
+}
+
+@keyframes seat-breathe {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(228, 192, 52, 0),    inset 0 2px 8px rgba(0,0,0,0.35); }
+  50%       { box-shadow: 0 0 0 6px rgba(228, 192, 52, 0.09), inset 0 2px 8px rgba(0,0,0,0.35); }
+}
+
+@keyframes seat-appear {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes code-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes felt-breathe {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.65; }
+}
+
+@keyframes spotlight-drift {
+  0%   { transform: translate(  0%,   0%); opacity: 0.75; }
+  20%  { transform: translate(  7%,  -5%); opacity: 1;    }
+  45%  { transform: translate(  3%,   6%); opacity: 0.85; }
+  70%  { transform: translate( -6%,  -3%); opacity: 1;    }
+  100% { transform: translate(  0%,   0%); opacity: 0.75; }
+}
+
+@keyframes card-fan {
+  0%,  10% { transform: rotate(0deg) translateY(0px); }
+  24%, 68% { transform: rotate(var(--fan-angle)) translateY(-3px); }
+  82%, 100% { transform: rotate(0deg) translateY(0px); }
+}
+
+@keyframes frame-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(228, 192, 52, 0.2),
+      0 0 22px rgba(228, 192, 52, 0.08),
+      inset 0 0 20px rgba(228, 192, 52, 0.04);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(228, 192, 52, 0.38),
+      0 0 40px rgba(228, 192, 52, 0.16),
+      inset 0 0 32px rgba(228, 192, 52, 0.07);
+  }
+}
+
+/* ════════════════════════════════════════════
+   PAGE SHELL
+   ════════════════════════════════════════════ */
+
+.host-room-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 14px 18px 36px;
+  overflow: hidden;
+  font-family: 'EB Garamond', 'Libre Baskerville', Georgia, serif;
+
+  background:
+    /* central gold title spotlight */
+    radial-gradient(ellipse 60% 42% at 50% 36%, rgba(212, 175, 55, 0.12) 0%, transparent 62%),
+    /* CNY red warmth — bottom */
+    radial-gradient(ellipse 110% 50% at 50% 115%, rgba(148, 14, 14, 0.22), transparent 55%),
+    /* red corner warmth */
+    radial-gradient(circle at  0% 85%, rgba(130, 12, 12, 0.14), transparent 40%),
+    radial-gradient(circle at 100% 85%, rgba(130, 12, 12, 0.14), transparent 40%),
+    /* green ambient halo */
+    radial-gradient(ellipse 100% 65% at 50% 42%, rgba(18, 72, 38, 0.18) 0%, transparent 70%),
+    /* corner vignettes — very subtle */
+    radial-gradient(circle at  1%  2%,  rgba(0,0,0,0.45), transparent 26%),
+    radial-gradient(circle at 99%  2%,  rgba(0,0,0,0.45), transparent 26%),
+    radial-gradient(circle at  1% 98%,  rgba(0,0,0,0.50), transparent 28%),
+    radial-gradient(circle at 99% 98%,  rgba(0,0,0,0.50), transparent 28%),
+    /* base felt — matches home page */
+    linear-gradient(168deg, #0e4a35 0%, #08301f 50%, #041b12 100%);
+}
+
+/* Art Deco diamond trellis — two scales */
 .host-room-page::before {
   content: '';
   position: fixed;
   inset: 0;
-  opacity: 0.16;
   pointer-events: none;
+  z-index: 0;
   background-image:
-    radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2px, transparent 2.1px),
-    radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.18) 2px, transparent 2.1px);
-  background-size: 50px 50px;
+    repeating-linear-gradient( 45deg, rgba(228,192,52,0.020) 0px, rgba(228,192,52,0.020) 1px, transparent 1px, transparent  6px),
+    repeating-linear-gradient(-45deg, rgba(228,192,52,0.020) 0px, rgba(228,192,52,0.020) 1px, transparent 1px, transparent  6px),
+    repeating-linear-gradient( 45deg, rgba(228,192,52,0.048) 0px, rgba(228,192,52,0.048) 1px, transparent 1px, transparent 30px),
+    repeating-linear-gradient(-45deg, rgba(228,192,52,0.048) 0px, rgba(228,192,52,0.048) 1px, transparent 1px, transparent 30px);
 }
+
+
+/* ════════════════════════════════════════════
+   AMBIENT FLOATING SUITS
+   ════════════════════════════════════════════ */
+
+.host-room-ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.host-room-ambient__suit {
+  position: absolute;
+  bottom: -6%;
+  opacity: 0;
+  user-select: none;
+  animation: suit-float linear infinite;
+}
+
+/* Each suit: different position, size, color, speed, and start offset */
+.host-room-ambient__suit--1 { left:  7%; font-size: 1.35rem; color: rgba(228,192,52, 0.22); animation-duration: 22s; animation-delay:  -8s; }
+.host-room-ambient__suit--2 { left: 17%; font-size: 2.10rem; color: rgba(160, 18,18, 0.18); animation-duration: 29s; animation-delay: -16s; }
+.host-room-ambient__suit--3 { left: 30%; font-size: 1.55rem; color: rgba(228,192,52, 0.17); animation-duration: 19s; animation-delay:  -3s; }
+.host-room-ambient__suit--4 { left: 47%; font-size: 2.70rem; color: rgba(160, 18,18, 0.12); animation-duration: 35s; animation-delay: -21s; }
+.host-room-ambient__suit--5 { left: 61%; font-size: 1.25rem; color: rgba(228,192,52, 0.20); animation-duration: 25s; animation-delay:  -7s; }
+.host-room-ambient__suit--6 { left: 73%; font-size: 1.95rem; color: rgba(160, 18,18, 0.16); animation-duration: 21s; animation-delay: -13s; }
+.host-room-ambient__suit--7 { left: 85%; font-size: 1.45rem; color: rgba(228,192,52, 0.19); animation-duration: 27s; animation-delay:  -2s; }
+.host-room-ambient__suit--8 { left: 93%; font-size: 1.65rem; color: rgba(160, 18,18, 0.14); animation-duration: 32s; animation-delay: -18s; }
+
+/* ════════════════════════════════════════════
+   FIXED GOLD BORDER FRAME
+   ════════════════════════════════════════════ */
+
+.host-room-frame {
+  position: fixed;
+  inset: 10px;
+  pointer-events: none;
+  z-index: 10;
+  border: 2px solid rgba(228, 192, 52, 0.72);
+  border-radius: 4px;
+  animation: frame-pulse 7s ease-in-out infinite;
+}
+
+.host-room-frame::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(228, 192, 52, 0.20);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.host-room-frame__corner {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+}
+
+.host-room-frame__corner::after {
+  content: '◆';
+  position: absolute;
+  font-size: 0.62rem;
+  color: rgba(228, 192, 52, 0.95);
+}
+
+.host-room-frame__corner--tl { top: -2px;    left: -2px;   border-top: 2px solid rgba(228,192,52,0.95); border-left:   2px solid rgba(228,192,52,0.95); }
+.host-room-frame__corner--tr { top: -2px;    right: -2px;  border-top: 2px solid rgba(228,192,52,0.95); border-right:  2px solid rgba(228,192,52,0.95); }
+.host-room-frame__corner--bl { bottom: -2px; left: -2px;   border-bottom: 2px solid rgba(228,192,52,0.95); border-left:  2px solid rgba(228,192,52,0.95); }
+.host-room-frame__corner--br { bottom: -2px; right: -2px;  border-bottom: 2px solid rgba(228,192,52,0.95); border-right: 2px solid rgba(228,192,52,0.95); }
+
+.host-room-frame__corner--tl::after { bottom: 3px; right: 3px; }
+.host-room-frame__corner--tr::after { bottom: 3px; left:  3px; }
+.host-room-frame__corner--bl::after { top:    3px; right: 3px; }
+.host-room-frame__corner--br::after { top:    3px; left:  3px; }
+
+.host-room-frame__mid {
+  position: absolute;
+  color: rgba(228, 192, 52, 0.88);
+  font-size: 0.82rem;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+
+.host-room-frame__mid--top    { top: 0;    left: 50%; }
+.host-room-frame__mid--bottom { bottom: 0; left: 50%; transform: translate(-50%, 50%); }
+.host-room-frame__mid--left   { top: 50%;  left: 0;   transform: translate(-50%, -50%); }
+.host-room-frame__mid--right  { top: 50%;  right: 0;  transform: translate(50%, -50%); }
+
+/* ════════════════════════════════════════════
+   BACK BUTTON
+   ════════════════════════════════════════════ */
 
 .host-room-page__back {
   position: relative;
-  z-index: 2;
-  border: 1px solid #b85e08;
-  border-radius: 8px;
-  color: #fff;
-  background: linear-gradient(180deg, #bf6a07 0%, #a95602 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 232, 178, 0.45);
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: 1rem;
-  padding: 8px 14px;
+  z-index: 11;
+  border: 1px solid rgba(228, 192, 52, 0.42);
+  border-radius: 4px;
+  color: rgba(228, 192, 52, 0.72);
+  background: rgba(3, 10, 6, 0.7);
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 7px 14px;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
+
+.host-room-page__back:hover {
+  background: rgba(228, 192, 52, 0.10);
+  color: rgba(228, 192, 52, 1);
+  border-color: rgba(228, 192, 52, 0.72);
+}
+
+/* ════════════════════════════════════════════
+   MAIN LAYOUT SHELL
+   ════════════════════════════════════════════ */
 
 .host-room-shell {
   position: relative;
   z-index: 2;
-  width: min(95vw, 1180px);
-  margin: 30px auto 0;
+  width: min(98vw, 1520px);
+  margin: 14px auto 0;
   display: grid;
-  grid-template-columns: 1.5fr minmax(290px, 0.9fr);
-  gap: 18px;
+  grid-template-columns: 1.6fr minmax(300px, 0.75fr);
+  gap: 16px;
+  animation: room-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
 }
+
+/* ════════════════════════════════════════════
+   SHARED CARD BASE
+   ════════════════════════════════════════════ */
 
 .host-room-card {
-  border: 5px solid #f28a0b;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #f0e9cf 0%, #e8dfbc 100%);
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  position: relative;
+  border-radius: 8px;
+  border: 1px solid rgba(228, 192, 52, 0.22);
+  background: rgba(5, 30, 16, 0.78);
+  backdrop-filter: blur(22px);
+  box-shadow:
+    0 10px 52px rgba(0, 0, 0, 0.68),
+    inset 0  1px 0 rgba(228, 192, 52, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+  overflow: hidden;
 }
 
-.host-room-card--main {
-  padding: 22px;
+/* Crimson-gold Art Deco top rule */
+.host-room-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent       0%,
+    rgba(228,192,52,0.12) 8%,
+    rgba(140, 16,16,0.55) 26%,
+    rgba(190, 26,26,0.92) 50%,
+    rgba(140, 16,16,0.55) 74%,
+    rgba(228,192,52,0.12) 92%,
+    transparent      100%
+  );
 }
 
-.host-room-card--side {
-  padding: 18px;
-  display: grid;
-  align-content: start;
-  gap: 10px;
+/* Subtle crown glow */
+.host-room-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 80px;
+  pointer-events: none;
+  border-radius: 8px 8px 0 0;
+  background: radial-gradient(ellipse 60% 100% at 50% 0%, rgba(228,192,52,0.045) 0%, transparent 70%);
 }
 
-.host-room-card--empty {
-  width: min(95vw, 760px);
-  margin: 34px auto 0;
-  text-align: center;
-  padding: 28px;
-}
+.host-room-card--main  { padding: 24px 26px; }
+.host-room-card--side  { padding: 20px 20px; display: grid; align-content: start; gap: 12px; }
+.host-room-card--empty { width: min(95vw, 680px); margin: 40px auto 0; text-align: center; padding: 36px 32px; }
+
+/* ════════════════════════════════════════════
+   CARD HEADER
+   ════════════════════════════════════════════ */
 
 .host-room-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(228, 192, 52, 0.10);
 }
 
 .host-room-card__title {
   margin: 0;
-  color: #7b3204;
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 2.8vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: linear-gradient(148deg, #f7e8b0 0%, #e4c84a 42%, #c8963c 72%, #f2dea0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.host-room-card__text {
+  margin: 10px 0 0;
+  color: rgba(200, 185, 150, 0.58);
+  font-size: 1rem;
 }
 
 .host-room-card__status {
   margin: 0;
-  border-radius: 999px;
-  padding: 6px 12px;
-  color: #f4ffef;
-  font-size: 0.88rem;
-  letter-spacing: 0.03em;
-  background: #109345;
+  flex-shrink: 0;
+  border-radius: 3px;
+  padding: 5px 12px;
+  background: rgba(6, 52, 26, 0.92);
+  border: 1px solid rgba(24, 120, 62, 0.42);
+  border-top-color: rgba(50, 170, 90, 0.28);
+  color: rgba(110, 218, 144, 0.92);
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
+
+/* ════════════════════════════════════════════
+   ASIDE HEADER
+   ════════════════════════════════════════════ */
 
 .host-room-card__aside-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(228, 192, 52, 0.10);
 }
 
 .host-room-card__tag {
   margin: 0;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: 0.95rem;
-  color: #f4ffef;
-  background: #109345;
+  padding: 3px 9px;
+  border-radius: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  color: rgba(245, 222, 165, 0.92);
+  background: rgba(100, 7, 7, 0.78);
+  border: 1px solid rgba(170, 25, 25, 0.48);
 }
 
+/* ════════════════════════════════════════════
+   GAME CODE ROW
+   ════════════════════════════════════════════ */
+
 .host-room-card__code-row {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  border: 2px solid #d77907;
-  border-radius: 10px;
-  padding: 12px 14px;
-  background: rgba(255, 254, 248, 0.75);
+  gap: 16px;
+  border: 1px solid rgba(228, 192, 52, 0.22);
+  border-radius: 6px;
+  padding: 14px 20px;
+  background: rgba(3, 20, 10, 0.50);
+  overflow: hidden;
+}
+
+/* Slow shimmer sweep */
+.host-room-card__code-row::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(108deg, transparent 30%, rgba(228,192,52,0.045) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: code-shimmer 7s linear infinite;
+  pointer-events: none;
 }
 
 .host-room-card__code-label {
   margin: 0;
-  color: #8a3b0b;
-  font-size: 0.92rem;
-  letter-spacing: 0.05em;
+  font-family: 'Cinzel', serif;
+  color: rgba(228, 192, 52, 0.48);
+  font-size: 0.68rem;
+  letter-spacing: 0.20em;
   text-transform: uppercase;
 }
 
 .host-room-card__code-value {
-  margin: 4px 0 0;
-  color: #6b2a04;
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: 0.09em;
+  margin: 6px 0 0;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 3.3vw, 2.7rem);
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  background: linear-gradient(140deg, #fff8e4 0%, #f0d060 35%, #c8963c 65%, #f5e0a0 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: code-shimmer 9s linear infinite;
 }
 
-.host-room-card__players {
-  margin-top: 16px;
-}
+/* ════════════════════════════════════════════
+   SUBTITLE
+   ════════════════════════════════════════════ */
 
 .host-room-card__subtitle {
   margin: 0;
-  color: #8a3b0b;
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: 1.5rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(228, 192, 52, 0.58);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
+
+/* ════════════════════════════════════════════
+   PLAYERS SECTION
+   ════════════════════════════════════════════ */
+
+.host-room-card__players {
+  margin-top: 20px;
+}
+
+/* ════════════════════════════════════════════
+   POKER TABLE
+   ════════════════════════════════════════════ */
 
 .host-room-table {
   position: relative;
-  margin-top: 12px;
-  min-height: 420px;
+  margin-top: 16px;
+  min-height: 540px;
 }
 
 .host-room-table__felt {
   position: absolute;
-  inset: 16% 12%;
-  border-radius: 48%;
-  border: 3px solid #d77907;
-  background:
-    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.15), transparent 44%),
-    radial-gradient(circle at 62% 76%, rgba(0, 0, 0, 0.2), transparent 50%),
-    linear-gradient(180deg, #116b43 0%, #0b5836 100%);
+  inset: 8% 5%;
+  border-radius: 50%;
+
+  /* Inner gold bead → dark leather rail → outer gold trim */
+  border: 2px solid rgba(228, 192, 52, 0.58);
   box-shadow:
-    inset 0 8px 30px rgba(255, 255, 255, 0.14),
-    inset 0 -14px 26px rgba(0, 0, 0, 0.22),
-    0 12px 28px rgba(0, 0, 0, 0.24);
+    /* gold inner bead */
+    0 0 0 5px  rgba(228, 192, 52, 0.42),
+    /* dark padded rail body */
+    0 0 0 22px rgba(10,   6,   3, 0.96),
+    /* rail highlight rim */
+    0 0 0 25px rgba(70,  42,  10, 0.65),
+    /* outer gold trim line */
+    0 0 0 27px rgba(228, 192, 52, 0.30),
+    /* felt depth */
+    inset  0  12px 40px rgba(255, 255, 255, 0.07),
+    inset  0 -22px 32px rgba(0,   0,   0,   0.45),
+    inset  0   0  80px rgba(0,   0,   0,   0.24),
+    /* table drop shadow */
+    0 32px 80px rgba(0, 0, 0, 0.72);
+
+  background:
+    radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.08), transparent 44%),
+    radial-gradient(circle at 66% 74%, rgba(0,   0,   0,  0.32),  transparent 50%),
+    linear-gradient(155deg, rgba(10, 74, 40, 0.98) 0%, rgba(6, 52, 28, 1) 60%, rgba(4, 38, 18, 1) 100%);
+
   display: grid;
   place-content: center;
   text-align: center;
+  gap: 1px;
+}
+
+/* Fine diamond cloth weave */
+.host-room-table__felt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient( 45deg, rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 1px, transparent 1px, transparent 13px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 1px, transparent 1px, transparent 13px);
+}
+
+/* Centre light bloom */
+.host-room-table__felt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(ellipse 52% 32% at 50% 28%, rgba(255, 255, 255, 0.052) 0%, transparent 62%);
+  animation: felt-breathe 5s ease-in-out infinite;
+}
+
+.host-room-table__felt-ornament {
+  display: block;
+  font-size: 0.68rem;
+  color: rgba(228, 192, 52, 0.48);
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.05em;
 }
 
 .host-room-table__felt-title {
-  margin: 0;
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  color: #f0f7f2;
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  margin: 4px 0;
+  position: relative;
+  z-index: 1;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: linear-gradient(162deg, rgba(255,242,190,0.9) 0%, rgba(228,192,52,0.95) 48%, rgba(192,148,26,0.85) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .host-room-table__felt-subtitle {
-  margin: 3px 0 0;
-  color: rgba(240, 247, 242, 0.85);
+  margin: 2px 0 0;
+  position: relative;
+  z-index: 1;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  color: rgba(185, 208, 196, 0.58);
+  font-size: 0.88rem;
+  letter-spacing: 0.07em;
 }
+
+/* ─── Felt center watermark diamond ─── */
+.host-room-table__felt-watermark {
+  position: absolute;
+  font-size: 7rem;
+  color: rgba(228, 192, 52, 0.055);
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  line-height: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ─── Felt interior: double-rail inner ring ─── */
+.host-room-table__felt-inner-ring {
+  position: absolute;
+  inset: 9%;
+  border-radius: 50%;
+  border: 1px solid rgba(228, 192, 52, 0.18);
+  box-shadow: 0 0 12px rgba(228, 192, 52, 0.06) inset;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Felt corner suit watermarks ─── */
+.host-room-table__felt-suit {
+  position: absolute;
+  font-size: 2rem;
+  color: rgba(228, 192, 52, 0.09);
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  line-height: 1;
+}
+
+.host-room-table__felt-suit--nw { top: 26%; left: 20%; }
+.host-room-table__felt-suit--ne { top: 26%; right: 20%; }
+.host-room-table__felt-suit--sw { bottom: 26%; left: 20%; }
+.host-room-table__felt-suit--se { bottom: 26%; right: 20%; }
+
+/* ─── Felt spotlight beam ─── */
+.host-room-table__spotlight {
+  position: absolute;
+  width: 75%;
+  height: 55%;
+  top: 8%;
+  left: 12%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, rgba(255, 248, 218, 0.068) 0%, transparent 68%);
+  animation: spotlight-drift 16s ease-in-out infinite;
+}
+
+/* ─── Felt contract display ─── */
+.host-room-table__felt-label {
+  margin: 4px 0 0;
+  position: relative;
+  z-index: 1;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(228, 192, 52, 0.42);
+}
+
+.host-room-table__felt-contract {
+  margin: 2px 0 0;
+  position: relative;
+  z-index: 1;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  color: rgba(200, 218, 208, 0.72);
+  letter-spacing: 0.05em;
+}
+
+/* ─── Animated card fan ─── */
+.host-room-table__card-fan {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 42px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.host-room-table__card {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 42px;
+  border-radius: 3px;
+  border: 1px solid rgba(228, 192, 52, 0.38);
+  background:
+    repeating-linear-gradient( 45deg, rgba(228,192,52,0.10) 0px, rgba(228,192,52,0.10) 1px, transparent 1px, transparent 5px),
+    repeating-linear-gradient(-45deg, rgba(228,192,52,0.10) 0px, rgba(228,192,52,0.10) 1px, transparent 1px, transparent 5px),
+    linear-gradient(145deg, rgba(5, 26, 14, 0.97) 0%, rgba(3, 18, 9, 0.99) 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(228,192,52,0.08);
+  transform-origin: bottom center;
+  animation: card-fan 7s ease-in-out infinite;
+}
+
+/* Fan angles + stagger per card */
+.host-room-table__card:nth-child(1) { --fan-angle: -22deg; animation-delay: 0.14s; }
+.host-room-table__card:nth-child(2) { --fan-angle: -11deg; animation-delay: 0.07s; }
+.host-room-table__card:nth-child(3) { --fan-angle:   0deg; animation-delay:    0s; }
+.host-room-table__card:nth-child(4) { --fan-angle:  11deg; animation-delay: 0.07s; }
+.host-room-table__card:nth-child(5) { --fan-angle:  22deg; animation-delay: 0.14s; }
+
+/* ─── Side panel: gold Art Deco divider rule ─── */
+.host-room-card__rule {
+  display: block;
+  height: 1px;
+  border: none;
+  margin: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(228, 192, 52, 0.20) 18%,
+    rgba(228, 192, 52, 0.20) 82%,
+    transparent 100%
+  );
+  position: relative;
+}
+
+.host-room-card__rule::before,
+.host-room-card__rule::after {
+  content: '◆';
+  position: absolute;
+  top: 50%;
+  font-size: 0.48rem;
+  color: rgba(228, 192, 52, 0.42);
+  line-height: 1;
+}
+
+.host-room-card__rule::before { left:  16%; transform: translate(-50%, -50%); }
+.host-room-card__rule::after  { right: 16%; transform: translate( 50%, -50%); }
+
+/* ─── Side panel: player-count pip track ─── */
+.host-room-card__player-pips {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.host-room-card__pip {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid rgba(228, 192, 52, 0.25);
+  background: rgba(3, 14, 8, 0.8);
+  flex-shrink: 0;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.host-room-card__pip--filled {
+  background: linear-gradient(145deg, rgba(26, 148, 70, 0.92) 0%, rgba(12, 96, 42, 0.96) 100%);
+  border-color: rgba(28, 152, 68, 0.58);
+  box-shadow: 0 0 7px rgba(20, 140, 60, 0.30);
+}
+
+/* ════════════════════════════════════════════
+   SEAT LIST
+   ════════════════════════════════════════════ */
 
 .host-room-table__seats {
   margin: 0;
@@ -200,84 +727,122 @@
   width: 132px;
   text-align: center;
   transform: translate(-50%, -50%);
+  animation: seat-appear 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+/* Staggered entrance */
+.host-room-seat--north      { animation-delay: 0.08s; }
+.host-room-seat--north-east { animation-delay: 0.14s; }
+.host-room-seat--east       { animation-delay: 0.20s; }
+.host-room-seat--south-east { animation-delay: 0.26s; }
+.host-room-seat--south      { animation-delay: 0.32s; }
+.host-room-seat--south-west { animation-delay: 0.38s; }
+.host-room-seat--west       { animation-delay: 0.44s; }
+.host-room-seat--north-west { animation-delay: 0.50s; }
+
+/* Avatar base */
 .host-room-seat__avatar {
-  width: 74px;
-  height: 74px;
+  width: 70px;
+  height: 70px;
   margin: 0 auto;
   border-radius: 50%;
-  border: 4px solid #e8b97a;
-  background: rgba(255, 255, 255, 0.6);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.host-room-seat__avatar--occupied {
-  border-color: #1f8f55;
-  background: linear-gradient(180deg, rgba(242, 249, 244, 0.95) 0%, rgba(227, 235, 230, 0.92) 100%);
-}
-
+/* Empty seat — card-back crosshatch pattern */
 .host-room-seat__avatar--empty {
-  border-style: dashed;
-  opacity: 0.85;
+  background:
+    repeating-linear-gradient( 45deg, rgba(228,192,52,0.055) 0px, rgba(228,192,52,0.055) 2px, transparent 2px, transparent 9px),
+    repeating-linear-gradient(-45deg, rgba(228,192,52,0.055) 0px, rgba(228,192,52,0.055) 2px, transparent 2px, transparent 9px),
+    linear-gradient(158deg, rgba(4, 18, 9, 0.92) 0%, rgba(3, 12, 6, 0.96) 100%);
+  border: 1.5px dashed rgba(228, 192, 52, 0.24);
+  animation: seat-breathe 3.8s ease-in-out infinite;
+}
+
+/* Occupied seat — club green */
+.host-room-seat__avatar--occupied {
+  background: linear-gradient(148deg, rgba(10, 54, 28, 0.96) 0%, rgba(6, 36, 18, 0.99) 100%);
+  border: 2px solid rgba(26, 150, 72, 0.62);
+  box-shadow:
+    0 0 16px rgba(18, 135, 62, 0.18),
+    inset 0  1px 0 rgba(160, 255, 190, 0.10),
+    0 4px 14px rgba(0, 0, 0, 0.44);
+}
+
+/* Red suit override (hearts / diamonds) */
+.host-room-seat__avatar--occupied.host-room-seat__avatar--red {
+  border-color: rgba(155, 22, 22, 0.68);
+  box-shadow:
+    0 0 16px rgba(130, 18, 18, 0.18),
+    inset 0  1px 0 rgba(255, 160, 160, 0.10),
+    0 4px 14px rgba(0, 0, 0, 0.44);
+}
+
+/* Player initial */
+.host-room-seat__initial {
+  font-family: 'Cinzel', serif;
+  font-size: 1.72rem;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(246, 224, 168, 0.96);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  position: relative;
+  z-index: 1;
+}
+
+/* Suit symbol on empty seat */
+.host-room-seat__suit-empty {
+  font-size: 1.45rem;
+  opacity: 0.28;
+  color: rgba(228, 192, 52, 0.9);
+  line-height: 1;
 }
 
 .host-room-seat__name {
-  margin: 7px 0 0;
-  color: #61280a;
-  font-weight: 700;
-  line-height: 1.2;
+  margin: 8px 0 0;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(246, 224, 168, 0.88);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .host-room-seat__meta {
-  margin: 2px 0 0;
-  color: #8a4b1f;
-  font-size: 0.9rem;
+  margin: 3px 0 0;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: rgba(200, 185, 150, 0.48);
+  letter-spacing: 0.03em;
 }
 
-.host-room-seat--north {
-  top: 4%;
-  left: 50%;
-}
+/* Seat positions */
+.host-room-seat--north      { top:  4%; left: 50%; }
+.host-room-seat--north-east { top: 20%; left: 86%; }
+.host-room-seat--east       { top: 50%; left: 92%; }
+.host-room-seat--south-east { top: 80%; left: 86%; }
+.host-room-seat--south      { top: 95%; left: 50%; }
+.host-room-seat--south-west { top: 80%; left: 14%; }
+.host-room-seat--west       { top: 50%; left:  8%; }
+.host-room-seat--north-west { top: 20%; left: 14%; }
 
-.host-room-seat--north-east {
-  top: 20%;
-  left: 86%;
-}
-
-.host-room-seat--east {
-  top: 50%;
-  left: 92%;
-}
-
-.host-room-seat--south-east {
-  top: 80%;
-  left: 86%;
-}
-
-.host-room-seat--south {
-  top: 95%;
-  left: 50%;
-}
-
-.host-room-seat--south-west {
-  top: 80%;
-  left: 14%;
-}
-
-.host-room-seat--west {
-  top: 50%;
-  left: 8%;
-}
-
-.host-room-seat--north-west {
-  top: 20%;
-  left: 14%;
-}
+/* ════════════════════════════════════════════
+   SIDE PANEL CONTENT
+   ════════════════════════════════════════════ */
 
 .host-room-card__detail {
   margin: 0;
-  color: #7a3c0f;
+  font-family: 'EB Garamond', serif;
+  color: rgba(200, 185, 150, 0.62);
+  font-size: 0.98rem;
 }
 
 .host-room-card__demo-tools {
@@ -286,57 +851,160 @@
 }
 
 .host-room-card__note {
-  margin: 2px 0 0;
-  color: #8f4718;
-  font-size: 0.98rem;
+  margin: 0;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  color: rgba(172, 158, 124, 0.48);
+  font-size: 0.94rem;
+  line-height: 1.6;
 }
 
 .host-room-card__actions {
-  margin-top: 8px;
+  margin-top: 4px;
   display: grid;
   gap: 10px;
 }
 
+/* ════════════════════════════════════════════
+   BUTTONS
+   ════════════════════════════════════════════ */
+
 .host-room-card__btn {
-  min-height: 50px;
-  border-radius: 9px;
-  border: 2px solid #8f4600;
-  font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: 1.2rem;
+  position: relative;
+  min-height: 48px;
+  border-radius: 5px;
+  border: 1px solid rgba(120, 10, 10, 0.82);
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: #fff7e5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(246, 224, 168, 0.97);
   cursor: pointer;
-  background: linear-gradient(180deg, #cc7307 0%, #b55d03 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 233, 186, 0.45);
+  background: linear-gradient(174deg, rgba(148, 15, 15, 0.96) 0%, rgba(84, 5, 5, 0.99) 100%);
+  box-shadow:
+    inset 0  1px 0 rgba(255, 200, 200, 0.14),
+    inset 0 -1px 0 rgba(0,   0,   0,   0.32),
+    0 4px 18px rgba(0, 0, 0, 0.48);
+  overflow: hidden;
+  transition: filter 0.18s, transform 0.1s;
 }
+
+/* Shimmer sweep */
+.host-room-card__btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -115%;
+  width: 100%; height: 100%;
+  background: linear-gradient(108deg, transparent 22%, rgba(255,222,160,0.15) 50%, transparent 78%);
+  transition: left 0.52s ease;
+  pointer-events: none;
+}
+
+.host-room-card__btn:hover               { filter: brightness(1.13); transform: translateY(-1px); }
+.host-room-card__btn:hover::before       { left: 115%; }
+.host-room-card__btn:active              { transform: translateY(0); filter: brightness(0.94); }
 
 .host-room-card__btn:disabled {
-  opacity: 0.5;
+  opacity: 0.30;
   cursor: not-allowed;
+  transform: none;
 }
+.host-room-card__btn:disabled::before    { display: none; }
 
+/* Secondary — deep green */
 .host-room-card__btn--secondary {
-  color: #fff;
-  border-color: #187242;
-  background: linear-gradient(180deg, #22a95b 0%, #177945 100%);
+  border-color: rgba(13, 86, 46, 0.88);
+  background: linear-gradient(174deg, rgba(16, 100, 52, 0.96) 0%, rgba(9, 60, 30, 0.99) 100%);
+  box-shadow:
+    inset 0  1px 0 rgba(160, 255, 190, 0.10),
+    inset 0 -1px 0 rgba(0,   0,   0,   0.32),
+    0 4px 18px rgba(0, 0, 0, 0.44);
 }
 
+/* Ghost */
 .host-room-card__btn--ghost {
-  color: #8d3e10;
-  border-color: rgba(141, 62, 16, 0.5);
-  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(228, 192, 52, 0.20);
+  background: transparent;
+  color: rgba(228, 192, 52, 0.52);
+  box-shadow: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
 }
 
+.host-room-card__btn--ghost:hover {
+  background: rgba(228, 192, 52, 0.07);
+  color: rgba(228, 192, 52, 0.82);
+  border-color: rgba(228, 192, 52, 0.42);
+  filter: none;
+  transform: none;
+}
+
+/* Inline copy */
 .host-room-card__btn--inline {
-  min-height: 44px;
-  min-width: 120px;
-  font-size: 1rem;
+  min-height: 38px;
+  min-width: 110px;
+  font-size: 0.8rem;
 }
 
-.host-room-card__text {
-  margin: 10px 0 0;
-  color: #8f4718;
+/* ════════════════════════════════════════════
+   PLAYER COUNT REACTIVE (option 8)
+   Table luminance ramps up as seats fill.
+   Frame border intensifies when ready to start.
+   ════════════════════════════════════════════ */
+
+.host-room-table {
+  transition: filter 1.8s ease;
 }
+
+.host-room-frame {
+  transition: border-color 1.8s ease, box-shadow 1.8s ease;
+}
+
+.host-room-page[data-player-count="2"] .host-room-table {
+  filter: brightness(1.06);
+}
+
+.host-room-page[data-player-count="3"] .host-room-table,
+.host-room-page[data-player-count="4"] .host-room-table,
+.host-room-page[data-player-count="5"] .host-room-table,
+.host-room-page[data-player-count="6"] .host-room-table {
+  filter: brightness(1.14);
+}
+
+/* Frame border brightens when game is ready to start (3+) */
+.host-room-page[data-player-count="3"] .host-room-frame,
+.host-room-page[data-player-count="4"] .host-room-frame,
+.host-room-page[data-player-count="5"] .host-room-frame,
+.host-room-page[data-player-count="6"] .host-room-frame {
+  border-color: rgba(228, 192, 52, 0.96);
+  box-shadow:
+    0 0 0 1px rgba(228, 192, 52, 0.42),
+    0 0 48px rgba(228, 192, 52, 0.22),
+    inset 0 0 36px rgba(228, 192, 52, 0.10);
+}
+
+/* ════════════════════════════════════════════
+   REDUCED MOTION
+   ════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .host-room-shell                { animation: none; }
+  .host-room-seat                 { animation: none; }
+  .host-room-seat__avatar--empty  { animation: none; }
+  .host-room-ambient__suit        { animation: none; opacity: 0.08; }
+  .host-room-table__felt::after   { animation: none; }
+  .host-room-frame                { animation: none; }
+  .host-room-card__code-value     { animation: none; }
+  .host-room-card__code-row::after  { animation: none; }
+  .host-room-table__spotlight       { animation: none; opacity: 0.5; }
+  .host-room-table__card            { animation: none; transform: rotate(var(--fan-angle)); }
+  .host-room-table,
+  .host-room-frame                  { transition: none; }
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════ */
 
 @media (max-width: 980px) {
   .host-room-shell {
@@ -346,22 +1014,22 @@
 
 @media (max-width: 760px) {
   .host-room-page {
-    padding: 14px;
+    padding: 14px 14px 40px;
   }
 
   .host-room-card--main,
   .host-room-card--side {
-    padding: 14px;
+    padding: 14px 16px;
   }
 
   .host-room-card__header,
   .host-room-card__code-row {
-    align-items: start;
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .host-room-card__btn {
-    font-size: 1.08rem;
+    font-size: 0.84rem;
   }
 
   .host-room-table {
@@ -369,7 +1037,7 @@
   }
 
   .host-room-seat {
-    width: 110px;
+    width: 108px;
   }
 
   .host-room-seat__avatar {
@@ -377,39 +1045,12 @@
     height: 62px;
   }
 
-  .host-room-seat--north {
-    top: 6%;
-  }
-
-  .host-room-seat--north-east {
-    top: 21%;
-    left: 83%;
-  }
-
-  .host-room-seat--east {
-    left: 88%;
-  }
-
-  .host-room-seat--south-east {
-    top: 79%;
-    left: 83%;
-  }
-
-  .host-room-seat--south {
-    top: 92%;
-  }
-
-  .host-room-seat--south-west {
-    top: 79%;
-    left: 17%;
-  }
-
-  .host-room-seat--west {
-    left: 12%;
-  }
-
-  .host-room-seat--north-west {
-    top: 21%;
-    left: 17%;
-  }
+  .host-room-seat--north      { top:  6%; }
+  .host-room-seat--north-east { top: 21%; left: 83%; }
+  .host-room-seat--east       {           left: 88%; }
+  .host-room-seat--south-east { top: 79%; left: 83%; }
+  .host-room-seat--south      { top: 92%; }
+  .host-room-seat--south-west { top: 79%; left: 17%; }
+  .host-room-seat--west       {           left: 12%; }
+  .host-room-seat--north-west { top: 21%; left: 17%; }
 }
