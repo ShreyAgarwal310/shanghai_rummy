@@ -66,7 +66,6 @@ function LoginPage() {
       </button>
 
       <section className="login-page__card">
-        <p className="login-page__eyebrow">Supabase Authentication</p>
         <h1 className="login-page__title">Join the Table</h1>
         <p className="login-page__subtitle">
           Sign in to save your profile and connect your scores to the leaderboard.
