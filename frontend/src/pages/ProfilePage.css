@@ -285,6 +285,14 @@
     drop-shadow(0 0 36px rgba(212, 175, 55, 0.08));
 }
 
+.profile-page__hero-copy {
+  margin: 0.85rem auto 0;
+  max-width: 40rem;
+  color: rgba(245, 233, 204, 0.82);
+  line-height: 1.6;
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+
 /* Post-title ornament */
 .profile-page__title-ornament {
   display: flex;
@@ -559,6 +567,12 @@
 .profile-card__button:focus-visible {
   outline: 2px solid rgba(228, 192, 52, 0.7);
   outline-offset: 2px;
+}
+
+.profile-card__button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
 }
 
 /* Primary — deep CNY red */

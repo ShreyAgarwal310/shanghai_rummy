@@ -1,4 +1,5 @@
 import Button from '../components/common/Button'
+import { useAuth } from '../hooks/useAuth'
 import AppLayout from '../layout/AppLayout'
 import { navigateTo } from '../utils/navigate'
 import './HomePage.css'
@@ -11,6 +12,8 @@ type HomeAction = {
 }
 
 function HomePage() {
+  const { user, profile } = useAuth()
+
   const handleJoinClick = () => {
     navigateTo('/join')
   }
@@ -28,7 +31,7 @@ function HomePage() {
   }
 
   const handleProfileClick = () => {
-    navigateTo('/profile')
+    navigateTo(user ? '/profile' : '/login')
   }
 
   const handleLeaderboardClick = () => {
@@ -73,7 +76,7 @@ function HomePage() {
               <svg viewBox="0 0 24 24" className="home-nav__icon" aria-hidden="true">
                 <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.3 0-6 2.13-6 4.75a1 1 0 0 0 2 0C8 17.29 9.79 16 12 16s4 1.29 4 2.75a1 1 0 0 0 2 0C18 16.13 15.3 14 12 14Z" />
               </svg>
-              <span>Profile</span>
+              <span>{profile?.display_name ?? user?.email?.split('@')[0] ?? 'Profile'}</span>
             </button>
             <button className="home-nav__btn" onClick={handleLeaderboardClick} aria-label="Open Leaderboard">
               <svg viewBox="0 0 24 24" className="home-nav__icon" aria-hidden="true">

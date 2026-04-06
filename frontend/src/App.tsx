@@ -5,6 +5,7 @@ import HostRoomPage from './pages/HostRoomPage'
 import JoinPage from './pages/JoinPage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import GameTablePage from './pages/GameTablePage'
+import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import RulesPage from './pages/RulesPage'
 import StatsPage from './pages/StatsPage'
@@ -39,6 +40,10 @@ function App() {
 
   if (window.location.pathname === '/stats') {
     return <StatsPage />
+  }
+
+  if (window.location.pathname === '/login') {
+    return <LoginPage />
   }
 
   if (window.location.pathname === '/profile') {

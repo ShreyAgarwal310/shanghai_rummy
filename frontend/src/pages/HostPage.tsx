@@ -109,7 +109,10 @@ function HostPage() {
             required
           />
 
-          <p className="host-dialog__note">A game code will be generated automatically when you create the table.</p>
+          <p className="host-dialog__note">
+            A game code will be generated automatically when you create the table.
+            {isDemoMode ? ' Demo mode is currently enabled.' : ''}
+          </p>
 
           {errorMessage ? <p className="host-dialog__error">{errorMessage}</p> : null}
 
