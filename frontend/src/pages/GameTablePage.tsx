@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import './GameTablePage.css'
 import {
-  createDenseMeldGroups,
   createInitialHandCards,
   createInitialMeldGroups,
   demoRounds,
@@ -17,13 +16,11 @@ import {
 import {
   buildMeldsByType,
   detectMeldKind,
-  getCardDescription,
   getMeldLaneClassName,
   validateRunMeld,
   validateSetMeld,
 } from './GameTablePage.logic'
 import type { GameTablePageProps } from './GameTablePage.types'
-import DemoRail from './GameTablePage/components/DemoRail'
 import EndGameOverlay from './GameTablePage/components/EndGameOverlay'
 import LocalPlayerZone from './GameTablePage/components/LocalPlayerZone'
 import TableCenter from './GameTablePage/components/TableCenter'
@@ -32,14 +29,12 @@ import TopPanels from './GameTablePage/components/TopPanels'
 function GameTablePage({ gameId }: GameTablePageProps) {
   const [demoRoundIndex, setDemoRoundIndex] = useState(0)
   const [isDemoGameComplete, setIsDemoGameComplete] = useState(false)
-  const [isDenseMeldPreview, setIsDenseMeldPreview] = useState(false)
   const [handCards, setHandCards] = useState<HandCard[]>(createInitialHandCards)
   const [meldGroups, setMeldGroups] = useState<MeldGroup[]>(createInitialMeldGroups)
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [topDiscardCard, setTopDiscardCard] = useState<TableCard>(discardTopCard)
   const [showBuyAction, setShowBuyAction] = useState(false)
   const [drawIndex, setDrawIndex] = useState(0)
-  const [activityFeed, setActivityFeed] = useState<string[]>(['Demo mode active. Select one card, then choose a target.'])
 
   const selectedCard = useMemo(() => {
     if (!selectedCardId) {
@@ -79,16 +74,11 @@ function GameTablePage({ gameId }: GameTablePageProps) {
   const setLaneClassName = getMeldLaneClassName(meldsByType.sets.length)
   const runLaneClassName = getMeldLaneClassName(meldsByType.runs.length)
 
-  const appendActivity = (message: string) => {
-    setActivityFeed((currentFeed) => [message, ...currentFeed.slice(0, 5)])
-  }
-
   const clearSelection = () => {
     setSelectedCardId(null)
   }
 
   const resetTablePreviewState = () => {
-    setIsDenseMeldPreview(false)
     setHandCards(createInitialHandCards())
     setMeldGroups(createInitialMeldGroups())
     setSelectedCardId(null)
@@ -113,40 +103,26 @@ function GameTablePage({ gameId }: GameTablePageProps) {
   })
 
   const handleHandCardClick = (cardId: string) => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to continue testing.')
-      return
-    }
+    if (isDemoGameComplete) return
     setSelectedCardId((currentSelectedId) => (currentSelectedId === cardId ? null : cardId))
     setShowBuyAction(false)
   }
 
   const handleDrawFromDeck = () => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to continue testing.')
-      return
-    }
+    if (isDemoGameComplete) return
     const drawnCard = mockDrawSequence[drawIndex % mockDrawSequence.length]
     setDrawIndex((currentIndex) => currentIndex + 1)
     setHandCards((currentCards) => [...currentCards, createHandCard(drawnCard)])
-    appendActivity(`Intent sent: DRAW_FROM_DECK -> ${getCardDescription(drawnCard)} added (demo preview).`)
     setShowBuyAction(false)
   }
 
   const handleDrawFromDiscard = () => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to continue testing.')
-      return
-    }
-    appendActivity(`Intent sent: REQUEST_DRAW_FROM_DISCARD -> ${getCardDescription(topDiscardCard)}.`)
+    if (isDemoGameComplete) return
     setShowBuyAction(true)
   }
 
   const handleDiscardPileClick = () => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to continue testing.')
-      return
-    }
+    if (isDemoGameComplete) return
     if (selectedCards.length === 0) {
       handleDrawFromDiscard()
       return
@@ -157,15 +133,10 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     setHandCards((currentCards) => currentCards.filter((card) => card.id !== cardToDiscard.id))
     clearSelection()
     setShowBuyAction(false)
-    appendActivity(`Intent sent: DISCARD -> ${getCardDescription(cardToDiscard)} to discard pile.`)
   }
 
   const handleBuyAction = () => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to continue testing.')
-      return
-    }
-    appendActivity(`Intent sent: BUY -> contesting ${getCardDescription(topDiscardCard)}.`)
+    if (isDemoGameComplete) return
     setShowBuyAction(false)
   }
 
@@ -175,21 +146,11 @@ function GameTablePage({ gameId }: GameTablePageProps) {
   }
 
   const handleAttemptMeld = () => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to continue testing.')
-      return
-    }
-    if (selectedCards.length === 0) {
-      appendActivity('Select a card first, then press Attempt Meld.')
-      return
-    }
+    if (isDemoGameComplete || selectedCards.length === 0) return
 
     const meldCards: TableCard[] = selectedTableCards
     const meldKind = detectMeldKind(meldCards)
-    if (!meldKind) {
-      appendActivity('Invalid meld: selected cards must form a legal set or run.')
-      return
-    }
+    if (!meldKind) return
 
     setMeldGroups((currentGroups) => {
       const yourGroupIndex = currentGroups.findIndex((group) => group.player === 'You')
@@ -204,41 +165,22 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     removeSelectedCardsFromHand(selectedCards)
     clearSelection()
     setShowBuyAction(false)
-    appendActivity(`Intent sent: ATTEMPT_MELD (${meldKind}) -> ${selectedCards.map(getCardDescription).join(', ')}.`)
   }
 
   const handleLayoffToMeld = (groupIndex: number, meldIndex: number) => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to continue testing.')
-      return
-    }
-    if (selectedCards.length === 0) {
-      appendActivity('Select a card first, then click a meld target to lay off.')
-      return
-    }
+    if (isDemoGameComplete || selectedCards.length === 0) return
 
     const targetGroup = meldGroups[groupIndex]
     const targetMeld = targetGroup?.melds[meldIndex]
-    if (!targetGroup || !targetMeld) {
-      appendActivity('Unable to target meld. Please try again.')
-      return
-    }
+    if (!targetGroup || !targetMeld) return
 
     const cardsToLayoff: TableCard[] = selectedTableCards
     const targetMeldKind = detectMeldKind(targetMeld)
-    if (!targetMeldKind) {
-      appendActivity('That target meld is not valid. Layoff was canceled.')
-      return
-    }
+    if (!targetMeldKind) return
 
     const combinedMeld = [...targetMeld, ...cardsToLayoff]
     const combinedValid = targetMeldKind === 'set' ? validateSetMeld(combinedMeld) : validateRunMeld(combinedMeld)
-    if (!combinedValid) {
-      const ruleHint =
-        targetMeldKind === 'set' ? 'Set layoff must match meld rank (or use wildcard).' : 'Run layoff must preserve suit and sequence.'
-      appendActivity(`Invalid layoff: ${ruleHint}`)
-      return
-    }
+    if (!combinedValid) return
 
     setMeldGroups((currentGroups) =>
       currentGroups.map((group, currentGroupIndex) =>
@@ -255,65 +197,16 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     removeSelectedCardsFromHand(selectedCards)
     clearSelection()
     setShowBuyAction(false)
-    appendActivity(
-      `Intent sent: LAYOFF -> ${selectedCards
-        .map(getCardDescription)
-        .join(', ')} onto ${targetGroup.player} meld ${meldIndex + 1}.`,
-    )
   }
 
   const handleClearSelection = () => {
     clearSelection()
-    appendActivity('Selection cleared.')
-  }
-
-  const handleNextDemoRound = () => {
-    if (isDemoGameComplete) {
-      appendActivity('Demo game is complete. Press Reset Demo to return to Round 1.')
-      return
-    }
-    if (isFinalDemoRound) {
-      appendActivity('Final round reached. Use End Game to preview post-game state.')
-      return
-    }
-
-    const nextRoundIndex = demoRoundIndex + 1
-    setDemoRoundIndex(nextRoundIndex)
-    resetTablePreviewState()
-    appendActivity(`Demo mode: moved to round ${demoRounds[nextRoundIndex].roundNumber} (${demoRounds[nextRoundIndex].contractText}).`)
-  }
-
-  const handleEndDemoGame = () => {
-    if (!isFinalDemoRound) {
-      return
-    }
-    setIsDemoGameComplete(true)
-    clearSelection()
-    setShowBuyAction(false)
-    appendActivity('Demo mode: game ended. Final summary unlocked.')
   }
 
   const handleResetDemo = () => {
     setDemoRoundIndex(0)
     setIsDemoGameComplete(false)
     resetTablePreviewState()
-    setActivityFeed(['Demo mode reset to Round 1. Select one card, then choose a target.'])
-  }
-
-  const handleToggleDenseMeldPreview = () => {
-    if (isDemoGameComplete) {
-      appendActivity('Close end-game preview or reset demo before toggling dense meld mode.')
-      return
-    }
-
-    setIsDenseMeldPreview((currentValue) => {
-      const nextValue = !currentValue
-      setMeldGroups(nextValue ? createDenseMeldGroups() : createInitialMeldGroups())
-      clearSelection()
-      setShowBuyAction(false)
-      appendActivity(nextValue ? 'Dense table preview enabled: 6 sets and 6 runs loaded.' : 'Dense table preview disabled.')
-      return nextValue
-    })
   }
 
   return (
@@ -368,7 +261,6 @@ function GameTablePage({ gameId }: GameTablePageProps) {
           currentDemoRound={currentDemoRound}
           pinnedScoreRows={pinnedScoreRows}
           extraScoreRows={extraScoreRows}
-          activityFeed={activityFeed}
         />
 
         <div className="game-board-row">
@@ -400,19 +292,6 @@ function GameTablePage({ gameId }: GameTablePageProps) {
           </section>
         </div>
 
-        <DemoRail
-          currentDemoRound={currentDemoRound}
-          totalRounds={demoRounds.length}
-          isFinalDemoRound={isFinalDemoRound}
-          isDemoGameComplete={isDemoGameComplete}
-          isDenseMeldPreview={isDenseMeldPreview}
-          setCount={meldsByType.sets.length}
-          runCount={meldsByType.runs.length}
-          onNextDemoRound={handleNextDemoRound}
-          onEndDemoGame={handleEndDemoGame}
-          onResetDemo={handleResetDemo}
-          onToggleDenseMeldPreview={handleToggleDenseMeldPreview}
-        />
       </section>
 
       <EndGameOverlay

@@ -37,7 +37,7 @@
 .game-demo-rail__header h3 {
   margin: 0;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -47,12 +47,12 @@
 .game-demo-rail__header p {
   margin: 0;
   color: rgba(180, 150, 60, 0.55);
-  font-size: 0.7rem;
+  font-size: 1.04rem;
 }
 
 .game-demo-rail__text {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   color: rgba(180, 150, 60, 0.45);
   font-style: italic;
   line-height: 1.4;
@@ -63,7 +63,7 @@
   border: 1px solid rgba(228, 192, 52, 0.28);
   border-radius: 7px;
   color: rgba(210, 185, 120, 0.88);
-  font-size: 0.78rem;
+  font-size: 1.16rem;
   font-weight: 600;
   font-family: 'Playfair Display', 'Merriweather', serif;
   cursor: pointer;
@@ -101,7 +101,7 @@
   border-left: 2px solid rgba(228, 192, 52, 0.45);
   border-radius: 0 4px 4px 0;
   padding: 5px 7px;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   color: rgba(210, 185, 120, 0.8);
   background: rgba(228, 192, 52, 0.05);
   line-height: 1.4;
@@ -117,13 +117,13 @@
 .game-demo-result h4 {
   margin: 0;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.84rem;
+  font-size: 1.26rem;
   color: rgba(228, 205, 145, 0.9);
 }
 
 .game-demo-result p {
   margin: 4px 0 0;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   color: rgba(180, 150, 60, 0.65);
   line-height: 1.4;
 }
@@ -187,7 +187,7 @@
 .game-end-card__label {
   margin: 0;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.78rem;
+  font-size: 1.16rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(228, 192, 52, 0.6);
@@ -196,7 +196,7 @@
 .game-end-card__winner {
   margin: 6px 0 0;
   font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-size: clamp(3.6rem, 9.0vw, 6.0rem);
   font-weight: 700;
   line-height: 1.02;
 
@@ -215,7 +215,7 @@
 .game-end-card__subtitle {
   margin: 8px 0 0;
   color: rgba(200, 175, 100, 0.75);
-  font-size: 0.95rem;
+  font-size: 1.42rem;
 }
 
 .game-end-card__stats {
@@ -233,7 +233,7 @@
 
 .game-end-stat h3 {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: rgba(228, 192, 52, 0.55);
@@ -243,7 +243,7 @@
 .game-end-stat p {
   margin: 6px 0 0;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 1.2rem;
+  font-size: 1.80rem;
   font-weight: 700;
   color: rgba(228, 205, 145, 0.95);
 }
@@ -251,7 +251,7 @@
 .game-end-stat span {
   display: block;
   margin-top: 2px;
-  font-size: 0.76rem;
+  font-size: 1.14rem;
   color: rgba(180, 150, 60, 0.6);
 }
 
@@ -265,7 +265,7 @@
 .game-end-card__leaderboard-title {
   margin: 0 0 8px;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.88rem;
+  font-size: 1.32rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -279,7 +279,7 @@
 
 .game-end-card__leaderboard th {
   text-align: left;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: rgba(180, 150, 60, 0.55);
@@ -290,7 +290,7 @@
 .game-end-card__leaderboard td {
   padding: 6px 0;
   border-top: 1px solid rgba(228, 192, 52, 0.08);
-  font-size: 0.9rem;
+  font-size: 1.34rem;
   color: rgba(200, 175, 100, 0.85);
 }
 
@@ -312,7 +312,7 @@
   min-width: 160px;
   border-radius: 8px;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 1rem;
+  font-size: 1.49rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;

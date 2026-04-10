@@ -3,7 +3,7 @@
 .game-panel-card {
   border: 1px solid rgba(228, 192, 52, 0.2);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 14px 16px;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%),
     rgba(4, 18, 10, 0.75);
@@ -26,15 +26,14 @@
 
 .game-panel-card__title-row {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .game-panel-card__title {
   margin: 0;
   font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
-  font-size: 0.78rem;
+  font-size: 1.27rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -43,23 +42,23 @@
 
 .game-panel-card__subtitle {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: 1.16rem;
   color: rgba(180, 150, 60, 0.5);
   font-style: italic;
 }
 
 .game-panel-card__contract {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.96rem;
+  font-size: 1.67rem;
   font-weight: 700;
   color: rgba(228, 205, 145, 0.95);
   line-height: 1.3;
 }
 
 .game-panel-card__text {
-  margin: 5px 0 0;
-  font-size: 0.78rem;
+  margin: 6px 0 0;
+  font-size: 1.26rem;
   color: rgba(180, 155, 80, 0.7);
 }
 
@@ -78,8 +77,8 @@
   border-radius: 6px;
   border: 1px solid rgba(228, 192, 52, 0.18);
   background: rgba(2, 12, 7, 0.5);
-  padding: 5px 8px;
-  font-size: 0.78rem;
+  padding: 7px 10px;
+  font-size: 1.28rem;
   color: rgba(210, 185, 120, 0.85);
 }
 
@@ -93,12 +92,12 @@
 .game-score-pinned-row {
   border: 1px solid rgba(228, 192, 52, 0.15);
   border-radius: 6px;
-  padding: 5px 7px;
+  padding: 8px 10px;
   background: rgba(2, 12, 7, 0.45);
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .game-score-pinned-row.is-leader {
@@ -110,7 +109,7 @@
   border: 1px solid rgba(228, 192, 52, 0.3);
   border-radius: 999px;
   padding: 1px 6px;
-  font-size: 0.62rem;
+  font-size: 0.92rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: rgba(228, 192, 52, 0.8);
@@ -124,7 +123,7 @@
 }
 
 .game-score-pinned-row__player {
-  font-size: 0.76rem;
+  font-size: 1.26rem;
   color: rgba(210, 185, 120, 0.9);
   white-space: nowrap;
   overflow: hidden;
@@ -132,50 +131,12 @@
 }
 
 .game-score-pinned-row__score {
-  font-size: 0.82rem;
+  font-size: 1.37rem;
   font-weight: 700;
   color: rgba(228, 205, 145, 0.95);
   font-family: 'Playfair Display', 'Merriweather', serif;
 }
 
-.game-score-extra {
-  margin-top: 6px;
-  border-top: 1px solid rgba(228, 192, 52, 0.1);
-  padding-top: 5px;
-  display: grid;
-  gap: 3px;
-  flex: 1;
-  min-height: 0;
-}
-
-.game-score-extra__title {
-  margin: 0;
-  font-size: 0.66rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(180, 150, 60, 0.5);
-}
-
-.game-score-extra__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 3px;
-  overflow-y: auto;
-}
-
-.game-score-extra__list li {
-  border: 1px solid rgba(228, 192, 52, 0.1);
-  border-radius: 5px;
-  background: rgba(2, 10, 6, 0.35);
-  padding: 3px 6px;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 0.72rem;
-  color: rgba(200, 175, 100, 0.8);
-}
 
 /* ── Activity feed ── */
 .game-activity-feed {

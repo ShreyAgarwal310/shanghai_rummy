@@ -4,30 +4,32 @@
    OPPONENT SEATS — compact badges above felt
    ══════════════════════════════════════════════ */
 .opponent-seats {
-  position: relative;
   list-style: none;
   margin: 0;
-  padding: 0;
-  min-height: 72px;
+  padding: 0 4px;
   flex: 0 0 auto;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: stretch;
+  gap: 6px;
 }
 
 .opponent-seat {
-  position: absolute;
-  width: 128px;
+  flex: 1;
+  min-width: 0;
+  max-width: 148px;
   border: 1px solid rgba(228, 192, 52, 0.22);
   border-radius: 8px;
   padding: 5px 8px;
   background: rgba(4, 18, 10, 0.75);
   backdrop-filter: blur(4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  transform: translate(-50%, 0);
 }
 
 .opponent-seat__name {
   margin: 0;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 1.19rem;
   color: rgba(228, 205, 145, 0.92);
   font-family: 'Playfair Display', 'Merriweather', serif;
   white-space: nowrap;
@@ -55,15 +57,10 @@
 
 .opponent-seat__meta {
   margin: 3px 0 0;
-  font-size: 0.68rem;
+  font-size: 1.02rem;
   color: rgba(180, 150, 60, 0.6);
 }
 
-.opponent-seat--north     { top: 0;   left: 50%; }
-.opponent-seat--north-east { top: 4px; left: 76%; }
-.opponent-seat--east      { top: 40px; left: 92%; }
-.opponent-seat--west      { top: 40px; left: 8%; }
-.opponent-seat--north-west { top: 4px; left: 24%; }
 
 /* ══════════════════════════════════════════════
    TABLE FELT — casino oval
@@ -177,7 +174,7 @@
 
 .table-pile__label {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: rgba(180, 150, 60, 0.7);
@@ -208,7 +205,7 @@
 
 .table-pile__meta {
   margin: 5px 0 0;
-  font-size: 0.7rem;
+  font-size: 1.04rem;
   color: rgba(180, 150, 60, 0.55);
 }
 
@@ -216,11 +213,11 @@
    MELD LANES
    ══════════════════════════════════════════════ */
 .table-meld-lane {
-  --meld-card-width: 52px;
-  --meld-card-height: 74px;
-  --meld-rank-size: 0.66rem;
-  --meld-suit-size: 0.6rem;
-  --meld-center-size: 1.22rem;
+  --meld-card-width: 68px;
+  --meld-card-height: 97px;
+  --meld-rank-size: 0.76rem;
+  --meld-suit-size: 0.68rem;
+  --meld-center-size: 1.5rem;
 
   border: 1px solid rgba(228, 192, 52, 0.16);
   border-radius: 10px;
@@ -232,27 +229,27 @@
 }
 
 .table-meld-lane--spacious {
-  --meld-card-width: 62px;
-  --meld-card-height: 88px;
-  --meld-rank-size: 0.76rem;
-  --meld-suit-size: 0.7rem;
-  --meld-center-size: 1.44rem;
+  --meld-card-width: 82px;
+  --meld-card-height: 117px;
+  --meld-rank-size: 0.88rem;
+  --meld-suit-size: 0.8rem;
+  --meld-center-size: 1.72rem;
 }
 
 .table-meld-lane--dense {
-  --meld-card-width: 44px;
-  --meld-card-height: 64px;
-  --meld-rank-size: 0.6rem;
-  --meld-suit-size: 0.54rem;
-  --meld-center-size: 1.08rem;
+  --meld-card-width: 58px;
+  --meld-card-height: 83px;
+  --meld-rank-size: 0.68rem;
+  --meld-suit-size: 0.62rem;
+  --meld-center-size: 1.28rem;
 }
 
 .table-meld-lane--ultra {
-  --meld-card-width: 38px;
-  --meld-card-height: 56px;
-  --meld-rank-size: 0.55rem;
-  --meld-suit-size: 0.5rem;
-  --meld-center-size: 0.94rem;
+  --meld-card-width: 50px;
+  --meld-card-height: 71px;
+  --meld-rank-size: 0.62rem;
+  --meld-suit-size: 0.56rem;
+  --meld-center-size: 1.1rem;
 }
 
 .table-meld-lane__header {
@@ -266,7 +263,7 @@
 .table-meld-lane__header h3 {
   margin: 0;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.72rem;
+  font-size: 1.08rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -278,7 +275,7 @@
   border: 1px solid rgba(228, 192, 52, 0.28);
   background: rgba(2, 12, 7, 0.5);
   padding: 1px 7px;
-  font-size: 0.7rem;
+  font-size: 1.04rem;
   font-weight: 700;
   color: rgba(210, 185, 120, 0.8);
 }
@@ -304,7 +301,7 @@
   border: 1px dashed rgba(228, 192, 52, 0.15);
   border-radius: 6px;
   padding: 0;
-  font-size: 0.74rem;
+  font-size: 1.10rem;
   color: rgba(180, 150, 60, 0.45);
   text-align: center;
   display: flex;
@@ -337,7 +334,7 @@
 
 .meld-entry__owner {
   margin: 0;
-  font-size: 0.66rem;
+  font-size: 1.00rem;
   color: rgba(210, 185, 120, 0.8);
   font-weight: 700;
   line-height: 1.1;
@@ -348,31 +345,30 @@
 
 .meld-entry__meta {
   margin: 0;
-  font-size: 0.6rem;
+  font-size: 0.90rem;
   color: rgba(180, 150, 60, 0.5);
   line-height: 1.1;
   white-space: nowrap;
 }
 
-.table-meld-lane--ultra .meld-entry__owner { font-size: 0.6rem; }
-.table-meld-lane--ultra .meld-entry__meta  { font-size: 0.55rem; }
+.table-meld-lane--ultra .meld-entry__owner { font-size: 0.90rem; }
+.table-meld-lane--ultra .meld-entry__meta  { font-size: 0.82rem; }
 
 /* Lay-off target button */
 .player-melds__meld {
   appearance: none;
   border: 1px dashed rgba(228, 192, 52, 0.18);
   border-radius: 5px;
-  padding: 3px;
+  padding: 6px;
   background: rgba(4, 22, 13, 0.4);
   cursor: pointer;
   flex: 1;
   min-height: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  align-content: center;
-  gap: 2px;
+  gap: 5px;
   overflow: hidden;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
@@ -404,13 +400,29 @@
 .table-meld-lane--ultra .playing-card--meld .playing-card__corner--top    { top: 1px; left: 1px; }
 .table-meld-lane--ultra .playing-card--meld .playing-card__corner--bottom { right: 1px; bottom: 1px; }
 
+/* Fluid cards inside meld buttons — centered, scale with container */
+.player-melds__meld .playing-card--meld {
+  height: 83%;
+  max-height: 176px;
+  width: auto;
+  aspect-ratio: 5 / 7;
+  flex-shrink: 1;
+  min-width: 0;
+  align-self: center;
+}
+.player-melds__meld .playing-card--meld .playing-card__rank        { font-size: 1.01rem; }
+.player-melds__meld .playing-card--meld .playing-card__suit        { font-size: 0.90rem; }
+.player-melds__meld .playing-card--meld .playing-card__center-suit { font-size: 2.04rem; }
+.player-melds__meld .playing-card--meld .playing-card__corner--top    { top: 3px; left: 3px; }
+.player-melds__meld .playing-card--meld .playing-card__corner--bottom { right: 3px; bottom: 3px; }
+
 /* ══════════════════════════════════════════════
    LOCAL PLAYER ZONE — your hand + actions
    ══════════════════════════════════════════════ */
 .local-player-zone {
   border: 1px solid rgba(228, 192, 52, 0.2);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 16px 18px;
   background: rgba(2, 12, 7, 0.65);
   backdrop-filter: blur(4px);
 }
@@ -426,7 +438,7 @@
 .local-player-zone__header h2 {
   margin: 0;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.78rem;
+  font-size: 1.16rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -435,17 +447,17 @@
 
 .local-player-zone__header p {
   margin: 0;
-  font-size: 0.74rem;
+  font-size: 1.10rem;
   color: rgba(180, 150, 60, 0.55);
 }
 
 .local-player-zone__hand {
-  margin-top: 8px;
+  margin-top: 10px;
   display: flex;
   align-items: flex-end;
-  gap: 7px;
+  gap: 8px;
   overflow-x: auto;
-  padding: 20px 4px 6px;
+  padding: 26px 4px 8px;
   scrollbar-width: thin;
   scrollbar-color: rgba(228, 192, 52, 0.2) transparent;
 }
@@ -478,7 +490,7 @@
   border-radius: 8px;
   border: 1px solid rgba(228, 192, 52, 0.28);
   color: rgba(210, 185, 120, 0.9);
-  font-size: 0.82rem;
+  font-size: 1.22rem;
   font-weight: 600;
   font-family: 'Playfair Display', 'Merriweather', serif;
   letter-spacing: 0.03em;

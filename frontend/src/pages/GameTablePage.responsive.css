@@ -2,11 +2,20 @@
 
 @media (max-width: 1100px) {
   .game-table-layout {
-    grid-template-columns: 168px 1fr;
+    grid-template-columns: 210px 1fr;
+  }
+
+  .game-table-header__meta {
+    transform: translateX(calc(-50% + 110px));
   }
 }
 
 @media (max-width: 880px) {
+  /* Header meta re-centers when sidebar stacks above board */
+  .game-table-header__meta {
+    transform: translateX(-50%);
+  }
+
   /* Stack sidebar on top of table */
   .game-table-page {
     height: auto;
@@ -16,7 +25,7 @@
 
   .game-table-layout {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
   }
 
   .game-side-panel {
@@ -36,27 +45,13 @@
     grid-row: 2;
   }
 
-  .game-demo-rail--dock {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
   .game-table-stage {
     grid-template-rows: auto 1fr auto;
   }
 
-  .opponent-seats {
-    min-height: 200px;
-  }
-
   .opponent-seat {
-    width: 128px;
+    max-width: none;
   }
-
-  .opponent-seat--north-east { top: 60px; left: 76%; }
-  .opponent-seat--east       { top: 120px; left: 88%; }
-  .opponent-seat--west       { top: 120px; left: 12%; }
-  .opponent-seat--north-west { top: 60px; left: 24%; }
 
   .table-felt__piles {
     grid-template-columns: repeat(2, minmax(110px, 1fr));

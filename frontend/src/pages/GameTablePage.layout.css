@@ -60,7 +60,7 @@
   pointer-events: none;
 }
 .game-table-frame__corner { position: absolute; width: 52px; height: 52px; }
-.game-table-frame__corner::after { content: '◆'; position: absolute; font-size: 0.72rem; color: rgba(228, 192, 52, 0.9); }
+.game-table-frame__corner::after { content: '◆'; position: absolute; font-size: 1.08rem; color: rgba(228, 192, 52, 0.9); }
 .game-table-frame__corner--tl { top: -3px; left: -3px;   border-top: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
 .game-table-frame__corner--tr { top: -3px; right: -3px;  border-top: 3px solid rgba(228,192,52,0.95); border-right: 3px solid rgba(228,192,52,0.95); }
 .game-table-frame__corner--bl { bottom: -3px; left: -3px;  border-bottom: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
@@ -69,7 +69,7 @@
 .game-table-frame__corner--tr::after { bottom: 4px; left: 4px; }
 .game-table-frame__corner--bl::after { top: 4px; right: 4px; }
 .game-table-frame__corner--br::after { top: 4px; left: 4px; }
-.game-table-frame__mid { position: absolute; color: rgba(228, 192, 52, 0.88); font-size: 0.9rem; line-height: 1; }
+.game-table-frame__mid { position: absolute; color: rgba(228, 192, 52, 0.88); font-size: 1.34rem; line-height: 1; }
 .game-table-frame__mid--top    { top: 0;    left: 50%;  transform: translate(-50%, -50%); }
 .game-table-frame__mid--bottom { bottom: 0; left: 50%;  transform: translate(-50%, 50%);  }
 .game-table-frame__mid--left   { top: 50%;  left: 0;    transform: translate(-50%, -50%); }
@@ -92,10 +92,18 @@
 }
 
 .game-table-header__meta {
+  position: absolute;
+  left: 50%;
+  transform: translateX(calc(-50% + 125px));
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
   justify-content: center;
+  pointer-events: none;
+}
+
+.game-table-header__meta > * {
+  pointer-events: auto;
 }
 
 .game-table-header__chip {
@@ -103,7 +111,7 @@
   border: 1px solid rgba(228, 192, 52, 0.25);
   border-radius: 999px;
   padding: 6px 14px;
-  font-size: 0.88rem;
+  font-size: 1.32rem;
   font-family: 'Playfair Display', 'Merriweather', serif;
   color: rgba(210, 180, 100, 0.78);
   background: rgba(4, 14, 9, 0.5);
@@ -129,7 +137,7 @@
   border: 1px solid rgba(228, 192, 52, 0.45);
   padding: 8px 18px;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 0.93rem;
+  font-size: 1.39rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -167,8 +175,8 @@
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 188px 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 1fr;
   gap: 10px;
 }
 
@@ -183,26 +191,29 @@
   overflow: hidden;
 }
 
-/* Each panel stretches equally in the sidebar */
+/* Panel size ratios */
 .game-side-panel .game-panel-card {
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
-/* ── Main table: right column, spans both rows ── */
+.game-side-panel .game-panel-card--contract {
+  flex: 0 0 auto;
+}
+
+.game-side-panel .game-panel-card--scoreboard {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Main table: right column ── */
 .game-board-row {
   grid-column: 2;
-  grid-row: 1 / 3;
+  grid-row: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-}
-
-/* ── Demo rail: bottom of left sidebar ── */
-.game-demo-rail--dock {
-  grid-column: 1;
-  grid-row: 2;
 }
 
 /* ── Game stage: felt + player zone ── */
