@@ -17,7 +17,14 @@ This class does NOT:
 
 from typing import List
 
-from app.melds.meld import Meld
+try:
+    from app.melds.meld import Meld
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from app.melds.meld import Meld
 
 
 class RunMeld(Meld):

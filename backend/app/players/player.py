@@ -20,7 +20,14 @@ The Player class does NOT:
 
 from abc import ABC, abstractmethod
 
-from app.hands import Hand
+try:
+    from app.hands import Hand
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from app.hands import Hand
 
 
 class Player(ABC):

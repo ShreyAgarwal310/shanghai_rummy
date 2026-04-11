@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
+import { navigateTo } from '../utils/navigate'
 import {
   defaultAccessibilityPreferences,
   getAccessibilityPreferences,
@@ -9,6 +12,7 @@ import type { AccessibilityPreferences } from '../services/accessibilityService'
 import './ProfilePage.css'
 
 function ProfilePage() {
+  const { user, profile, loading, isConfigured, errorMessage, refreshProfile, signOut } = useAuth()
   const [displayName, setDisplayName] = useState('')
   const [preferredName, setPreferredName] = useState('')
   const [bio, setBio] = useState('')
@@ -16,6 +20,8 @@ function ProfilePage() {
   const [accessibility, setAccessibility] = useState<AccessibilityPreferences>(() => getAccessibilityPreferences())
   const [inviteNotifications, setInviteNotifications] = useState(true)
   const [saveMessage, setSaveMessage] = useState('')
+  const [saveError, setSaveError] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const objectUrlRef = useRef<string | null>(null)
@@ -30,6 +36,18 @@ function ProfilePage() {
   )
 
   useEffect(() => {
+    if (!profile) {
+      return
+    }
+
+    setDisplayName(profile.display_name ?? '')
+    setPreferredName(profile.preferred_name ?? '')
+    setBio(profile.bio ?? '')
+    setInviteNotifications(profile.invite_notifications)
+    setAccessibility(profile.accessibility_preferences ?? getAccessibilityPreferences())
+  }, [profile])
+
+  useEffect(() => {
     updateAccessibilityPreferences(accessibility)
   }, [accessibility])
 
@@ -40,8 +58,23 @@ function ProfilePage() {
     }
   }
 
+  const resetForm = () => {
+    clearObjectUrl()
+    setAvatarPreview(null)
+    setDisplayName(profile?.display_name ?? '')
+    setPreferredName(profile?.preferred_name ?? '')
+    setBio(profile?.bio ?? '')
+    setInviteNotifications(profile?.invite_notifications ?? true)
+    setAccessibility(profile?.accessibility_preferences ?? defaultAccessibilityPreferences)
+    setSaveError('')
+    setSaveMessage('')
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
   const handleBackClick = () => {
-    window.location.assign('/')
+    navigateTo('/')
   }
 
   const handlePickImageClick = () => {
@@ -58,7 +91,8 @@ function ProfilePage() {
     const imageUrl = URL.createObjectURL(selectedFile)
     objectUrlRef.current = imageUrl
     setAvatarPreview(imageUrl)
-    setSaveMessage('')
+    setSaveMessage('Local avatar preview updated. Persisting image uploads requires a Supabase Storage bucket.')
+    setSaveError('')
   }
 
   const handleRemoveAvatar = () => {
@@ -70,32 +104,103 @@ function ProfilePage() {
     setSaveMessage('')
   }
 
-  const handleReset = () => {
-    clearObjectUrl()
-    setDisplayName('')
-    setPreferredName('')
-    setBio('')
-    setAvatarPreview(null)
-    setAccessibility(defaultAccessibilityPreferences)
-    setInviteNotifications(true)
-    setSaveMessage('')
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-  }
-
   const updateAccessibilitySetting = (key: keyof AccessibilityPreferences, value: boolean) => {
     setAccessibility((currentPreferences) => ({ ...currentPreferences, [key]: value }))
     setSaveMessage('')
+    setSaveError('')
   }
 
-  const handleSave = (event: FormEvent<HTMLFormElement>) => {
+  const handleSave = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setSaveMessage('Profile preferences saved locally. Backend can now bind real user fields here.')
+    if (!user || !supabase) {
+      return
+    }
+
+    setIsSaving(true)
+    setSaveMessage('')
+    setSaveError('')
+
+    try {
+      const { error } = await supabase.from('profiles').upsert({
+        id: user.id,
+        email: user.email ?? profile?.email ?? null,
+        display_name: displayName.trim() || null,
+        preferred_name: preferredName.trim() || null,
+        bio: bio.trim() || null,
+        invite_notifications: inviteNotifications,
+        accessibility_preferences: accessibility,
+      })
+
+      if (error) {
+        throw error
+      }
+
+      await refreshProfile()
+      setSaveMessage('Profile saved to Supabase.')
+    } catch (nextError) {
+      setSaveError(nextError instanceof Error ? nextError.message : 'Unable to save your profile.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigateTo('/')
+  }
+
+  if (loading) {
+    return (
+      <main className="profile-page" aria-label="Profile settings">
+        <section className="profile-page__content">
+          <header className="profile-page__title-card">
+            <h1 className="profile-page__title">Loading profile...</h1>
+          </header>
+        </section>
+      </main>
+    )
+  }
+
+  if (!isConfigured || !user) {
+    return (
+      <main className="profile-page" aria-label="Profile settings">
+        <button type="button" className="profile-page__back-btn" onClick={handleBackClick}>
+          ← Back to Lobby
+        </button>
+        <section className="profile-page__content">
+          <header className="profile-page__title-card">
+            <p className="profile-page__subtitle">Authentication required</p>
+            <h1 className="profile-page__title">Profile Settings</h1>
+            <p className="profile-page__hero-copy">
+              {isConfigured
+                ? 'Sign in first so your profile and future leaderboard scores map to a real player record.'
+                : 'Add your Supabase URL and anon key before authentication can work.'}
+            </p>
+            {errorMessage ? <p className="profile-page__save-message">{errorMessage}</p> : null}
+            <div className="profile-page__actions">
+              <button type="button" className="profile-card__button profile-card__button--primary" onClick={() => navigateTo('/login')}>
+                Open Login
+              </button>
+            </div>
+          </header>
+        </section>
+      </main>
+    )
   }
 
   return (
     <main className="profile-page" aria-label="Profile settings">
+      <div className="profile-frame" aria-hidden="true">
+        <span className="profile-frame__corner profile-frame__corner--tl" />
+        <span className="profile-frame__corner profile-frame__corner--tr" />
+        <span className="profile-frame__corner profile-frame__corner--bl" />
+        <span className="profile-frame__corner profile-frame__corner--br" />
+        <span className="profile-frame__mid profile-frame__mid--top">◆</span>
+        <span className="profile-frame__mid profile-frame__mid--right">◆</span>
+        <span className="profile-frame__mid profile-frame__mid--bottom">◆</span>
+        <span className="profile-frame__mid profile-frame__mid--left">◆</span>
+      </div>
+
       <button
         type="button"
         className="profile-page__back-btn"
@@ -107,8 +212,23 @@ function ProfilePage() {
 
       <section className="profile-page__content">
         <header className="profile-page__title-card">
+          <div className="profile-page__pretitle" aria-hidden="true">
+            <span className="profile-page__ornament-line" />
+            <span className="profile-page__ornament-gem">◆</span>
+            <span className="profile-page__ornament-line" />
+          </div>
+          <p className="profile-page__subtitle">Identity · Avatar · Accessibility</p>
           <h1 className="profile-page__title">Profile Settings</h1>
-          <p className="profile-page__subtitle">Identity, avatar, and accessibility preferences</p>
+          <p className="profile-page__hero-copy">
+            Signed in as <strong>{profile?.display_name ?? user.email}</strong>
+          </p>
+          <div className="profile-page__title-ornament" aria-hidden="true">
+            <span className="profile-page__ornament-line" />
+            <span className="profile-page__ornament-gem">◈</span>
+            <span className="profile-page__ornament-gem profile-page__ornament-gem--main">◆</span>
+            <span className="profile-page__ornament-gem">◈</span>
+            <span className="profile-page__ornament-line" />
+          </div>
         </header>
 
         <form className="profile-page__form" onSubmit={handleSave}>
@@ -121,7 +241,7 @@ function ProfilePage() {
                   {avatarPreview ? (
                     <img src={avatarPreview} alt="" className="profile-avatar__image" />
                   ) : (
-                    <span className="profile-avatar__placeholder">👤</span>
+                    <span className="profile-avatar__placeholder">♠</span>
                   )}
                 </div>
 
@@ -186,7 +306,6 @@ function ProfilePage() {
 
             <section className="profile-card">
               <h2 className="profile-card__title">Accessibility</h2>
-              <p className="profile-card__note">These preferences are UI-only for now and ready for backend sync.</p>
 
               <label className="profile-toggle">
                 <input
@@ -258,20 +377,30 @@ function ProfilePage() {
               type="submit"
               className="profile-card__button profile-card__button--primary"
               data-a11y-description="Save all profile and accessibility preferences."
+              disabled={isSaving}
             >
-              Save Profile
+              {isSaving ? 'Saving...' : 'Save Profile'}
             </button>
             <button
               type="button"
               className="profile-card__button profile-card__button--secondary"
-              onClick={handleReset}
-              data-a11y-description="Reset profile and accessibility fields to defaults."
+              onClick={resetForm}
+              data-a11y-description="Reset profile and accessibility fields to saved values."
             >
               Reset Fields
+            </button>
+            <button
+              type="button"
+              className="profile-card__button profile-card__button--secondary"
+              onClick={handleSignOut}
+            >
+              Sign Out
             </button>
           </footer>
 
           {saveMessage ? <p className="profile-page__save-message">{saveMessage}</p> : null}
+          {saveError ? <p className="profile-page__save-message">{saveError}</p> : null}
+          {errorMessage && !saveError ? <p className="profile-page__save-message">{errorMessage}</p> : null}
         </form>
       </section>
     </main>

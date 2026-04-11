@@ -17,9 +17,18 @@ The RulesEngine does NOT:
 
 from typing import Iterable
 
-from app.melds.run_meld import RunMeld
-from app.melds.set_meld import SetMeld
-from app.rules.contract import Contract
+try:
+    from app.melds.run_meld import RunMeld
+    from app.melds.set_meld import SetMeld
+    from app.rules.contract import Contract
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from app.melds.run_meld import RunMeld
+    from app.melds.set_meld import SetMeld
+    from app.rules.contract import Contract
 
 
 class RulesEngine:

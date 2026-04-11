@@ -7,6 +7,7 @@ type CreateGameInput = {
 }
 
 const DEMO_HOSTED_GAME_KEY = 'shanghai_rummy_demo_hosted_game'
+const DEMO_JOIN_CODE = 'GAMECODE'
 
 export function isDemoModeEnabled() {
   return import.meta.env.VITE_DEMO_MODE !== 'false'
@@ -47,18 +48,33 @@ export async function createGame(input: CreateGameInput): Promise<HostedGame> {
 
 export function getHostedGameById(gameId: string): HostedGame | null {
   const rawValue = sessionStorage.getItem(DEMO_HOSTED_GAME_KEY)
-  if (!rawValue) {
-    return null
-  }
+  const normalizedQuery = gameId.trim().toUpperCase()
 
-  try {
-    const game = JSON.parse(rawValue) as HostedGame
-    if (game.id !== gameId) {
+  if (rawValue) {
+    try {
+      const game = JSON.parse(rawValue) as HostedGame
+      const matchesGameId = game.id === gameId
+      const matchesGameCode = game.code.trim().toUpperCase() === normalizedQuery
+
+      if (matchesGameId || matchesGameCode) {
+        return game
+      }
+    } catch {
       return null
     }
-    return game
-  } catch {
-    return null
   }
-}
 
+  // Stable demo lobby route for recorded walkthroughs.
+  if (isDemoModeEnabled() && normalizedQuery === DEMO_JOIN_CODE) {
+    return {
+      id: 'demo-release-lobby',
+      code: DEMO_JOIN_CODE,
+      name: 'Release One Demo Lobby',
+      maxPlayers: 4,
+      players: [{ name: 'DemoHost', isHost: true }],
+      status: 'waiting',
+    }
+  }
+
+  return null
+}

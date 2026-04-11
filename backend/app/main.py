@@ -12,8 +12,17 @@ Responsibility:
 This file should contain NO game logic.
 It should only launch the application.
 """
-from app.game import Game
-from app.players.human_player import HumanPlayer
+try:
+    from app.game import Game
+    from app.players.human_player import HumanPlayer
+except ModuleNotFoundError:
+    # Allow direct execution like: python app/main.py
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from app.game import Game
+    from app.players.human_player import HumanPlayer
 
 if __name__ == "__main__":
     players = [

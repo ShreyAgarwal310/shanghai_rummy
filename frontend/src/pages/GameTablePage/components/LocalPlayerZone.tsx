@@ -92,9 +92,6 @@ function LocalPlayerZone({
             Clear Selection
           </button>
         </div>
-        <p className="game-action-bar__note">
-          UI-intent mode only: actions dispatch placeholders for backend handling, with no local rules validation.
-        </p>
       </section>
     </section>
   )

@@ -242,10 +242,9 @@ const rulesBookPages: RulesBookPage[] = [
           <li>Every changed meld must remain valid after your move.</li>
         </ol>
         <div className="rules-book__spotlight">
-          <h3>Backend Ownership</h3>
+          <h3>Validation</h3>
           <p>
-            This app follows backend validation for layoff legality, Joker replacement flow, and any rearrangement
-            permissions.
+            The server validates layoff legality, Joker replacement flow, and any rearrangement permissions.
           </p>
         </div>
         <p className="rules-book__callout rules-book__callout--warning">
@@ -326,6 +325,7 @@ const rulesBookPages: RulesBookPage[] = [
 
 function RulesPage() {
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [flipClass, setFlipClass] = useState('')
   const searchParams = new URLSearchParams(window.location.search)
   const requestedReturnPath = searchParams.get('returnTo')
   const backDestination = requestedReturnPath && requestedReturnPath.startsWith('/game/') ? requestedReturnPath : '/'
@@ -339,22 +339,40 @@ function RulesPage() {
     window.location.assign(backDestination)
   }
 
+  const flipTo = (nextIndex: number, direction: 'next' | 'prev') => {
+    setFlipClass(`is-flipping-${direction}`)
+    window.setTimeout(() => {
+      setCurrentPageIndex(nextIndex)
+      setFlipClass(`is-arriving-${direction}`)
+      window.setTimeout(() => setFlipClass(''), 320)
+    }, 280)
+  }
+
   const goToPreviousPage = () => {
-    if (isFirstPage) {
-      return
-    }
-    setCurrentPageIndex((index) => index - 1)
+    if (isFirstPage) return
+    flipTo(currentPageIndex - 1, 'prev')
   }
 
   const goToNextPage = () => {
-    if (isLastPage) {
-      return
-    }
-    setCurrentPageIndex((index) => index + 1)
+    if (isLastPage) return
+    flipTo(currentPageIndex + 1, 'next')
   }
 
   return (
     <main className="rules-page" aria-label="Rules and Tips">
+
+      {/* Fixed gold border frame */}
+      <div className="rules-frame" aria-hidden="true">
+        <span className="rules-frame__corner rules-frame__corner--tl" />
+        <span className="rules-frame__corner rules-frame__corner--tr" />
+        <span className="rules-frame__corner rules-frame__corner--bl" />
+        <span className="rules-frame__corner rules-frame__corner--br" />
+        <span className="rules-frame__mid rules-frame__mid--top">◆</span>
+        <span className="rules-frame__mid rules-frame__mid--right">◆</span>
+        <span className="rules-frame__mid rules-frame__mid--bottom">◆</span>
+        <span className="rules-frame__mid rules-frame__mid--left">◆</span>
+      </div>
+
       <button
         type="button"
         className="rules-page__back-btn"
@@ -364,53 +382,58 @@ function RulesPage() {
         ← {backButtonLabel}
       </button>
 
-      <section className="rules-book" aria-label="Shanghai Rummy Rules Book">
-        <aside className="rules-book__sheet rules-book__sheet--left">
-          <p className="rules-book__crest">Shanghai Rummy Handbook</p>
-          <h1 className="rules-book__headline">The Rules</h1>
-          <h2 className="rules-book__legend-title">Contents</h2>
-          <ol className="rules-book__legend-list">
-            {rulesBookPages.map((page, index) => (
-              <li key={page.title}>
-                <button
-                  type="button"
-                  className={`rules-book__legend-item ${index === currentPageIndex ? 'is-active' : ''}`}
-                  onClick={() => setCurrentPageIndex(index)}
-                  data-a11y-description={`Open rules page ${index + 1}: ${page.title}.`}
-                >
-                  <span>Page {index + 1}</span>
-                  <span>{page.title}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        </aside>
-
-        <article className="rules-book__sheet rules-book__sheet--right">
-          <h2 className="rules-book__page-title">{currentPage.title}</h2>
-          <p className="rules-book__subtitle">{currentPage.subtitle}</p>
-          <div className="rules-book__page-content">{currentPage.content}</div>
-          <aside className="rules-book__tip" aria-label="Strategy tip">
-            <h3>Table Tip</h3>
-            <p>{currentPage.tip}</p>
+      <div className="rules-book-outer">
+        <div className="rules-book-cover">
+        <section className="rules-book" aria-label="Shanghai Rummy Rules Book">
+          <aside className="rules-book__sheet rules-book__sheet--left">
+            <p className="rules-book__crest">Shanghai Rummy Handbook</p>
+            <h1 className="rules-book__headline">The Rules</h1>
+            <h2 className="rules-book__legend-title">Contents</h2>
+            <ol className="rules-book__legend-list">
+              {rulesBookPages.map((page, index) => (
+                <li key={page.title}>
+                  <button
+                    type="button"
+                    className={`rules-book__legend-item ${index === currentPageIndex ? 'is-active' : ''}`}
+                    onClick={() => {
+                      const dir = index > currentPageIndex ? 'next' : 'prev'
+                      flipTo(index, dir)
+                    }}
+                    data-a11y-description={`Open rules page ${index + 1}: ${page.title}.`}
+                  >
+                    <span>Page {index + 1}</span>
+                    <span>{page.title}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
           </aside>
 
-          <footer className="rules-book__footer">
-            <button
-              type="button"
-              className="rules-book__nav-btn"
-              onClick={goToPreviousPage}
-              disabled={isFirstPage}
-              data-a11y-description="Open previous rules page."
-            >
-              ←
-            </button>
-            <p className="rules-book__page-marker">
-              Page {currentPageIndex + 1} of {rulesBookPages.length}
-            </p>
-            <button
-              type="button"
-              className="rules-book__nav-btn"
+          <article className={`rules-book__sheet rules-book__sheet--right ${flipClass}`}>
+            <h2 className="rules-book__page-title">{currentPage.title}</h2>
+            <p className="rules-book__subtitle">{currentPage.subtitle}</p>
+            <div className="rules-book__page-content">{currentPage.content}</div>
+            <aside className="rules-book__tip" aria-label="Strategy tip">
+              <h3>Table Tip</h3>
+              <p>{currentPage.tip}</p>
+            </aside>
+
+            <footer className="rules-book__footer">
+              <button
+                type="button"
+                className="rules-book__nav-btn"
+                onClick={goToPreviousPage}
+                disabled={isFirstPage}
+                data-a11y-description="Open previous rules page."
+              >
+                ←
+              </button>
+              <p className="rules-book__page-marker">
+                Page {currentPageIndex + 1} of {rulesBookPages.length}
+              </p>
+              <button
+                type="button"
+                className="rules-book__nav-btn"
               onClick={goToNextPage}
               disabled={isLastPage}
               data-a11y-description="Open next rules page."
@@ -418,8 +441,10 @@ function RulesPage() {
               →
             </button>
           </footer>
-        </article>
-      </section>
+          </article>
+        </section>
+        </div>
+      </div>
     </main>
   )
 }

@@ -18,8 +18,15 @@ The Deck class does NOT:
 import random
 from typing import List
 
-from app.cards.card import Card
+try:
+    from app.cards.card import Card
+except ModuleNotFoundError:
+    # Allow direct execution like: python app/cards/deck.py
+    import sys
+    from pathlib import Path
 
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from app.cards.card import Card
 
 class Deck:
     def __init__(self, num_decks: int = 2, jokers_per_deck: int = 2):

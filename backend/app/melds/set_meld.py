@@ -15,7 +15,14 @@ This class does NOT:
 - Control turns.
 """
 
-from app.melds.meld import Meld
+try:
+    from app.melds.meld import Meld
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from app.melds.meld import Meld
 
 
 class SetMeld(Meld):

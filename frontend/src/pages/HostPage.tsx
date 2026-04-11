@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { createGame, isDemoModeEnabled } from '../services/gameService'
+import { navigateTo } from '../utils/navigate'
 import './HostPage.css'
+
+const AMBIENT_SUITS = ['♠', '♥', '♦', '♣', '♠', '♥', '♦', '♣'] as const
 
 function HostPage() {
   const [gameName, setGameName] = useState('')
@@ -11,7 +14,7 @@ function HostPage() {
   const isDemoMode = isDemoModeEnabled()
 
   const handleBackToLobby = () => {
-    window.location.assign('/')
+    navigateTo('/')
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -21,7 +24,7 @@ function HostPage() {
 
     try {
       const game = await createGame({ gameName, maxPlayers, hostName: 'You' })
-      window.location.assign(`/host/game/${game.id}`)
+      navigateTo(`/host/game/${game.id}`)
     } catch (error) {
       const message =
         error instanceof Error
@@ -35,6 +38,26 @@ function HostPage() {
 
   return (
     <main className="host-page" aria-label="Host game setup">
+
+      {/* Floating ambient suit symbols */}
+      <div className="host-ambient" aria-hidden="true">
+        {AMBIENT_SUITS.map((suit, i) => (
+          <span key={i} className={`host-ambient__suit host-ambient__suit--${i + 1}`}>{suit}</span>
+        ))}
+      </div>
+
+      {/* Fixed gold border frame */}
+      <div className="host-page-frame" aria-hidden="true">
+        <span className="host-page-frame__corner host-page-frame__corner--tl" />
+        <span className="host-page-frame__corner host-page-frame__corner--tr" />
+        <span className="host-page-frame__corner host-page-frame__corner--bl" />
+        <span className="host-page-frame__corner host-page-frame__corner--br" />
+        <span className="host-page-frame__mid host-page-frame__mid--top">◆</span>
+        <span className="host-page-frame__mid host-page-frame__mid--right">◆</span>
+        <span className="host-page-frame__mid host-page-frame__mid--bottom">◆</span>
+        <span className="host-page-frame__mid host-page-frame__mid--left">◆</span>
+      </div>
+
       <button
         type="button"
         className="host-page__back"
@@ -43,8 +66,6 @@ function HostPage() {
       >
         ← Back to Lobby
       </button>
-
-      <section className="host-page__overlay" aria-hidden="true" />
 
       <section className="host-page__dialog-wrap">
         <form className="host-dialog" onSubmit={handleSubmit}>
@@ -88,9 +109,9 @@ function HostPage() {
             required
           />
 
-          <p className="host-dialog__note">A game code will be generated automatically when you create the table.</p>
           <p className="host-dialog__note">
-            {isDemoMode ? 'Demo mode is enabled. This flow uses mock data only.' : 'Demo mode is disabled.'}
+            A game code will be generated automatically when you create the table.
+            {isDemoMode ? ' Demo mode is currently enabled.' : ''}
           </p>
 
           {errorMessage ? <p className="host-dialog__error">{errorMessage}</p> : null}

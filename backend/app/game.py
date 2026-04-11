@@ -19,8 +19,16 @@ The Game class does NOT:
 - Contain user input logic.
 """
 
-from app.round import Round
-from app.rules.contract import CONTRACTS # 7 rounds from contract.py
+try:
+    from app.round import Round
+    from app.rules.contract import CONTRACTS
+except ModuleNotFoundError:
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from app.round import Round
+    from app.rules.contract import CONTRACTS
 
 class Game:
     def __init__(self, players):

@@ -1,47 +1,73 @@
+# Supabase Schema
+
+Use Supabase Auth for login storage and the public tables below for profile and leaderboard data.
+
+```mermaid
 erDiagram
-    USER ||--o{ PLAYER_STAT : "has"
-    USER ||--o{ GAME_PARTICIPANT : "participates"
-    GAME_SESSION ||--o{ GAME_PARTICIPANT : "contains"
-    GAME_SESSION ||--o{ GAME_STATE : "tracks"
+    AUTH_USER ||--|| PROFILE : "owns"
+    PROFILE ||--|| PLAYER_STATS : "has all-time stats"
+    PROFILE ||--o{ LEADERBOARD_PERIOD_STATS : "has leaderboard snapshots"
 
-    USER {
-        uuid user_id PK
-        string username
+    AUTH_USER {
+        uuid id PK
         string email
-        string password_hash
-        timestamp created_at
+        jsonb raw_user_meta_data
+        timestamptz created_at
     }
 
-    PLAYER_STAT {
-        uuid stat_id PK
-        uuid user_id FK
-        int total_wins
+    PROFILE {
+        uuid id PK
+        string email
+        string display_name
+        string preferred_name
+        string bio
+        string avatar_url
+        boolean invite_notifications
+        jsonb accessibility_preferences
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    PLAYER_STATS {
+        uuid user_id PK
         int games_played
+        int wins
+        int losses
         int total_points
+        numeric average_score
+        int best_score
+        int worst_score
+        int current_streak
+        int longest_streak
+        int total_melds
+        int perfect_rounds
+        string favorite_round
+        timestamptz updated_at
     }
 
-    GAME_SESSION {
-        uuid game_id PK
-        uuid host_id FK
-        enum status
-        int current_round
-        uuid current_turn_id FK
-    }
-
-    GAME_PARTICIPANT {
-        uuid participant_id PK
-        uuid game_id FK
+    LEADERBOARD_PERIOD_STATS {
         uuid user_id FK
-        int seat_number
-        int current_score
-        int buys_remaining
-        boolean has_laid_down
+        string timeframe
+        date period_start
+        int games_played
+        int wins
+        int losses
+        int total_points
+        numeric average_score
+        int current_streak
+        int longest_streak
+        timestamptz updated_at
     }
+```
 
-    GAME_STATE {
-        uuid state_id PK
-        uuid game_id FK
-        jsonb hand_data
-        jsonb discard_pile
-        jsonb board_state
-    }
+## Notes
+
+- `auth.users` remains the source of truth for login credentials.
+- `public.profiles` stores editable profile data used by the frontend.
+- `public.player_stats` stores all-time numbers for stats pages and the all-time leaderboard.
+- `public.leaderboard_period_stats` stores precomputed weekly and monthly leaderboard rows.
+- Current views expected by the frontend are:
+  - `public.leaderboard_all_time`
+  - `public.leaderboard_current_weekly`
+  - `public.leaderboard_current_monthly`
+- Run [docs/supabase_schema.sql](/Users/shreyagarwal/Code/GitHub/shanghai_rummy/docs/supabase_schema.sql) in the Supabase SQL editor to create the schema.
