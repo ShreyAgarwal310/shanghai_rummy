@@ -74,27 +74,12 @@
 .host-room-page {
   position: relative;
   min-height: 100vh;
-  padding: 14px 18px 36px;
-  overflow: hidden;
-  font-family: 'EB Garamond', 'Libre Baskerville', Georgia, serif;
-
-  background:
-    /* central gold title spotlight */
-    radial-gradient(ellipse 60% 42% at 50% 36%, rgba(212, 175, 55, 0.12) 0%, transparent 62%),
-    /* CNY red warmth — bottom */
-    radial-gradient(ellipse 110% 50% at 50% 115%, rgba(148, 14, 14, 0.22), transparent 55%),
-    /* red corner warmth */
-    radial-gradient(circle at  0% 85%, rgba(130, 12, 12, 0.14), transparent 40%),
-    radial-gradient(circle at 100% 85%, rgba(130, 12, 12, 0.14), transparent 40%),
-    /* green ambient halo */
-    radial-gradient(ellipse 100% 65% at 50% 42%, rgba(18, 72, 38, 0.18) 0%, transparent 70%),
-    /* corner vignettes — very subtle */
-    radial-gradient(circle at  1%  2%,  rgba(0,0,0,0.45), transparent 26%),
-    radial-gradient(circle at 99%  2%,  rgba(0,0,0,0.45), transparent 26%),
-    radial-gradient(circle at  1% 98%,  rgba(0,0,0,0.50), transparent 28%),
-    radial-gradient(circle at 99% 98%,  rgba(0,0,0,0.50), transparent 28%),
-    /* base felt — matches home page */
-    linear-gradient(168deg, #0e4a35 0%, #08301f 50%, #041b12 100%);
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* THE FIX: Use your asset globally */
+  background: url('../assets/green-background.png') center/cover no-repeat fixed !important;
 }
 
 /* Art Deco diamond trellis — two scales */

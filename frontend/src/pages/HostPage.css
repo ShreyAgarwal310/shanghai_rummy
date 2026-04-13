@@ -1,316 +1,152 @@
-/* ─── HOST PAGE — Grand Shanghai Club · Create a Table ─── */
+/* ─── HOST PAGE — Grand Shanghai Club Aesthetic ─── */
 
-/* ══════════════════════════════════════════════
-   PAGE SHELL
-   ══════════════════════════════════════════════ */
 .host-page {
   position: relative;
   min-height: 100vh;
-  padding: 18px 28px;
-  display: grid;
-  align-content: start;
-
-  background:
-    radial-gradient(ellipse 60% 42% at 50% 36%, rgba(212, 175, 55, 0.12) 0%, transparent 62%),
-    radial-gradient(ellipse at 20%  0%,  rgba(160, 18, 18, 0.13) 0%, transparent 46%),
-    radial-gradient(ellipse at 82%  6%,  rgba(160, 18, 18, 0.10) 0%, transparent 38%),
-    radial-gradient(ellipse 100% 65% at 50% 42%, rgba(18, 72, 38, 0.18) 0%, transparent 70%),
-    radial-gradient(circle at  1%  2%,  rgba(0,0,0,0.45), transparent 26%),
-    radial-gradient(circle at 99%  2%,  rgba(0,0,0,0.45), transparent 26%),
-    radial-gradient(circle at  1% 98%,  rgba(0,0,0,0.50), transparent 28%),
-    radial-gradient(circle at 99% 98%,  rgba(0,0,0,0.50), transparent 28%),
-    linear-gradient(168deg, #0e4a35 0%, #08301f 50%, #041b12 100%);
-}
-
-@keyframes host-dialog-enter {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Ambient floating suit symbols ── */
-.host-ambient {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
-}
-
-.host-ambient__suit {
-  position: absolute;
-  bottom: -6%;
-  opacity: 0;
-  user-select: none;
-  animation: suit-float linear infinite;
-}
-
-.host-ambient__suit--1 { left:  7%; font-size: 1.35rem; color: rgba(228,192,52, 0.22); animation-duration: 22s; animation-delay:  -8s; }
-.host-ambient__suit--2 { left: 17%; font-size: 2.10rem; color: rgba(160, 18,18, 0.18); animation-duration: 29s; animation-delay: -16s; }
-.host-ambient__suit--3 { left: 30%; font-size: 1.55rem; color: rgba(228,192,52, 0.17); animation-duration: 19s; animation-delay:  -3s; }
-.host-ambient__suit--4 { left: 47%; font-size: 2.70rem; color: rgba(160, 18,18, 0.12); animation-duration: 35s; animation-delay: -21s; }
-.host-ambient__suit--5 { left: 61%; font-size: 1.25rem; color: rgba(228,192,52, 0.20); animation-duration: 25s; animation-delay:  -7s; }
-.host-ambient__suit--6 { left: 73%; font-size: 1.95rem; color: rgba(160, 18,18, 0.16); animation-duration: 21s; animation-delay: -13s; }
-.host-ambient__suit--7 { left: 85%; font-size: 1.45rem; color: rgba(228,192,52, 0.19); animation-duration: 27s; animation-delay:  -2s; }
-.host-ambient__suit--8 { left: 93%; font-size: 1.65rem; color: rgba(160, 18,18, 0.14); animation-duration: 32s; animation-delay: -18s; }
-
-/* Diamond trellis felt */
-.host-page::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    repeating-linear-gradient(45deg,  rgba(228,192,52,0.028) 0px, rgba(228,192,52,0.028) 1px, transparent 1px, transparent 7px),
-    repeating-linear-gradient(-45deg, rgba(228,192,52,0.028) 0px, rgba(228,192,52,0.028) 1px, transparent 1px, transparent 7px),
-    repeating-linear-gradient(45deg,  rgba(228,192,52,0.055) 0px, rgba(228,192,52,0.055) 1px, transparent 1px, transparent 28px),
-    repeating-linear-gradient(-45deg, rgba(228,192,52,0.055) 0px, rgba(228,192,52,0.055) 1px, transparent 1px, transparent 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Fixed Background matching Home and Login */
+  background-image: url('../assets/green-background.png') !important;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  padding: 40px 20px;
 }
 
 /* ══════════════════════════════════════════════
-   FIXED GOLD BORDER FRAME
+   CENTERED BACK BUTTON
    ══════════════════════════════════════════════ */
-.host-page-frame {
-  position: fixed;
-  inset: 10px;
-  pointer-events: none;
-  z-index: 100;
-  border: 3px solid rgba(228, 192, 52, 0.88);
-  border-radius: 4px;
-  box-shadow:
-    0 0 0 1px rgba(228, 192, 52, 0.22),
-    0 0 18px rgba(228, 192, 52, 0.14),
-    inset 0 0 18px rgba(228, 192, 52, 0.06);
-}
-.host-page-frame::before {
-  content: '';
-  position: absolute;
-  inset: 5px;
-  border: 1px solid rgba(228, 192, 52, 0.28);
-  border-radius: 2px;
-  pointer-events: none;
-}
-.host-page-frame__corner { position: absolute; width: 52px; height: 52px; }
-.host-page-frame__corner::after { content: '◆'; position: absolute; font-size: 0.72rem; color: rgba(228, 192, 52, 0.9); }
-.host-page-frame__corner--tl { top: -3px; left: -3px;   border-top: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
-.host-page-frame__corner--tr { top: -3px; right: -3px;  border-top: 3px solid rgba(228,192,52,0.95); border-right: 3px solid rgba(228,192,52,0.95); }
-.host-page-frame__corner--bl { bottom: -3px; left: -3px;  border-bottom: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
-.host-page-frame__corner--br { bottom: -3px; right: -3px; border-bottom: 3px solid rgba(228,192,52,0.95); border-right: 3px solid rgba(228,192,52,0.95); }
-.host-page-frame__corner--tl::after { bottom: 4px; right: 4px; }
-.host-page-frame__corner--tr::after { bottom: 4px; left: 4px; }
-.host-page-frame__corner--bl::after { top: 4px; right: 4px; }
-.host-page-frame__corner--br::after { top: 4px; left: 4px; }
-.host-page-frame__mid { position: absolute; color: rgba(228, 192, 52, 0.88); font-size: 0.9rem; line-height: 1; }
-.host-page-frame__mid--top    { top: 0;    left: 50%;  transform: translate(-50%, -50%); }
-.host-page-frame__mid--bottom { bottom: 0; left: 50%;  transform: translate(-50%, 50%);  }
-.host-page-frame__mid--left   { top: 50%;  left: 0;    transform: translate(-50%, -50%); }
-.host-page-frame__mid--right  { top: 50%;  right: 0;   transform: translate(50%, -50%);  }
-
-/* ── Back button ── */
 .host-page__back {
-  position: relative;
-  z-index: 11;
-  justify-self: start;
-  border: 1px solid rgba(228, 192, 52, 0.6);
-  border-radius: 6px;
-  color: rgba(228, 192, 52, 0.9);
-  background: rgba(4, 14, 9, 0.7);
-  font-family: 'Cinzel', 'Playfair Display', serif;
-  font-size: 0.95rem;
-  padding: 8px 16px;
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  
+  /* Matches your pill-style "Leaderboard" buttons */
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
   cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: background 0.18s, color 0.18s;
+  transition: all 0.3s ease;
+  color: var(--gold-bright);
+  background: rgba(5, 20, 10, 0.9);
+  border: 2px solid var(--gold-metallic);
+  letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
+
 .host-page__back:hover {
-  background: rgba(228, 192, 52, 0.1);
-  color: rgba(228, 192, 52, 1);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-bright);
+  transform: translateX(-50%) translateY(-2px);
 }
 
 /* ══════════════════════════════════════════════
-   DIALOG WRAPPER — centers form vertically
-   ══════════════════════════════════════════════ */
-.host-page__dialog-wrap {
-  position: relative;
-  z-index: 3;
-  min-height: calc(100vh - 100px);
-  display: grid;
-  place-items: center;
-}
-
-/* ══════════════════════════════════════════════
-   FORM CARD
+   FORM CARD - Matching the "Join Table" look
    ══════════════════════════════════════════════ */
 .host-dialog {
   position: relative;
+  z-index: 10;
   width: min(94vw, 520px);
-  animation: host-dialog-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-  border-radius: 12px;
-  border: 1px solid rgba(228, 192, 52, 0.32);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%),
-    rgba(4, 18, 10, 0.82);
-  backdrop-filter: blur(8px);
-  box-shadow:
-    0 0 0 1px rgba(228, 192, 52, 0.08),
-    0 24px 64px rgba(0, 0, 0, 0.65),
-    0 8px 24px rgba(0, 0, 0, 0.4);
-  padding: 0 32px 32px;
-  overflow: hidden;
+  padding: 3.5rem 2.5rem;
+  /* Deep translucent green-black matching your preference */
+  background: rgba(5, 20, 10, 0.9); 
+  border: 2px solid var(--gold-metallic);
+  border-radius: 20px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+  text-align: center;
 }
 
-/* CNY red top stripe */
-.host-dialog::before {
-  content: '';
-  display: block;
-  height: 3px;
-  margin: 0 -32px 28px;
-  background: linear-gradient(90deg, transparent 2%, rgba(185, 14, 14, 0.85) 15%, rgba(185, 14, 14, 0.85) 85%, transparent 98%);
-}
-
-/* ── Close button ── */
-.host-dialog__close {
-  position: absolute;
-  top: 14px;
-  right: 18px;
-  border: none;
-  background: transparent;
-  color: rgba(228, 192, 52, 0.5);
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: color 0.15s;
-}
-.host-dialog__close:hover {
-  color: rgba(228, 192, 52, 0.9);
+/* Remove the old red stripe and gradients */
+.host-page::before, .host-dialog::before, .host-page-frame {
+  display: none !important;
 }
 
 /* ── Title ── */
 .host-dialog__title {
-  margin: 0 0 28px;
-  text-align: center;
-  font-family: 'Cinzel', 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  margin-bottom: 2rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.8rem);
   font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.05;
-
-  background: linear-gradient(180deg,
-    #f5e27a 0%,
-    #e4c034 28%,
-    #f0d060 52%,
-    #c8a020 72%,
-    #e4c034 100%
-  );
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  /* Gold gradient matching the main home title */
+  background: linear-gradient(to bottom, var(--gold-shimmer) 0%, var(--gold-bright) 25%, var(--gold-metallic) 50%, var(--gold-deep) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Gold rule under title */
-.host-dialog__title::after {
-  content: '';
-  display: block;
-  width: 64px;
-  height: 1px;
-  margin: 10px auto 0;
-  background: linear-gradient(90deg, transparent, rgba(228,192,52,0.5), transparent);
 }
 
 /* ── Labels ── */
 .host-dialog__label {
   display: block;
   margin-bottom: 8px;
-  color: rgba(228, 192, 52, 0.7);
-  font-family: 'Cinzel', 'Playfair Display', serif;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  color: var(--gold-metallic);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
 /* ── Inputs ── */
 .host-dialog__input {
   width: 100%;
-  min-height: 52px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  padding: 1.1rem;
+  color: #fff;
+  font-family: var(--font-body);
   margin-bottom: 22px;
-  border-radius: 8px;
-  border: 1px solid rgba(228, 192, 52, 0.3);
-  background: rgba(2, 10, 6, 0.6);
-  padding: 10px 14px;
-  color: rgba(228, 205, 145, 0.95);
-  font-size: 1.08rem;
-  font-family: 'Playfair Display', 'Merriweather', serif;
-  transition: border-color 0.18s, box-shadow 0.18s;
-  box-sizing: border-box;
+  transition: border-color 0.2s;
 }
-.host-dialog__input::placeholder {
-  color: rgba(180, 155, 80, 0.3);
-}
-.host-dialog__input:focus-visible {
+
+.host-dialog__input:focus {
   outline: none;
-  border-color: rgba(228, 192, 52, 0.65);
-  box-shadow: 0 0 0 3px rgba(228, 192, 52, 0.1);
+  border-color: var(--gold-bright);
+  background: rgba(0, 0, 0, 0.7);
 }
 
-/* ── Note ── */
-.host-dialog__note {
-  margin: -10px 0 20px;
-  color: rgba(180, 150, 60, 0.5);
-  font-size: 0.87rem;
-  font-style: italic;
-}
-
-/* ── Error ── */
-.host-dialog__error {
-  margin: -8px 0 14px;
-  padding: 9px 12px;
-  border-radius: 6px;
-  border-left: 3px solid rgba(185, 14, 14, 0.8);
-  background: rgba(185, 14, 14, 0.1);
-  color: rgba(255, 160, 140, 0.9);
-  font-size: 0.93rem;
-  font-weight: 600;
-}
-
-/* ── Submit button ── */
+/* ── Submit button — Matching the "SIGN IN" aesthetic ── */
 .host-dialog__submit {
-  position: relative;
   width: 100%;
-  min-height: 56px;
-  border-radius: 8px;
-  border: 1px solid rgba(185, 14, 14, 0.6);
-  font-family: 'Cinzel', 'Playfair Display', serif;
+  padding: 1.2rem;
+  border-radius: 12px;
+  font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  color: rgba(245, 222, 165, 0.97);
+  text-transform: uppercase;
+  letter-spacing: 2px;
   cursor: pointer;
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(150, 18, 18, 0.9) 0%, rgba(90, 8, 8, 0.95) 100%);
-  box-shadow: inset 0 1px 0 rgba(255,200,200,0.14), 0 4px 16px rgba(0,0,0,0.35);
-  transition: filter 0.15s;
-}
-.host-dialog__submit::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(120deg, transparent 30%, rgba(255,220,160,0.12) 50%, transparent 70%);
-  transition: left 0.4s ease;
-}
-.host-dialog__submit:hover:not(:disabled)::before { left: 100%; }
-.host-dialog__submit:hover:not(:disabled) { filter: brightness(1.12); }
-.host-dialog__submit:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  transition: all 0.3s ease;
+  
+  /* Solid Gold Outline with Dark Center */
+  color: var(--gold-bright);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--gold-metallic);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 0 15px rgba(0,0,0,0.4);
 }
 
-/* ══════════════════════════════════════════════
-   RESPONSIVE
-   ══════════════════════════════════════════════ */
-@media (max-width: 720px) {
-  .host-page { padding: 14px 14px; }
-  .host-dialog { padding: 0 18px 24px; }
-  .host-dialog::before { margin: 0 -18px 22px; }
+.host-dialog__submit:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold-bright);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+}
+
+/* Filigree Corners */
+.corner {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-image: url('../assets/gold-corner.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.8;
 }
