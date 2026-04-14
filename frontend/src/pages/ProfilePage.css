@@ -8,25 +8,12 @@
   min-height: 100vh;
   padding: 28px 28px 56px;
 
-  background:
-    /* central golden spotlight */
-    radial-gradient(ellipse 60% 35% at 50% 22%, rgba(212, 175, 55, 0.13) 0%, transparent 60%),
-    /* CNY red warmth — bottom */
-    radial-gradient(ellipse 110% 45% at 50% 115%, rgba(148, 14, 14, 0.26), transparent 55%),
-    /* CNY red — lower corners */
-    radial-gradient(circle at 0%   85%, rgba(130, 12, 12, 0.16), transparent 40%),
-    radial-gradient(circle at 100% 85%, rgba(130, 12, 12, 0.16), transparent 40%),
-    /* green ambient halo */
-    radial-gradient(ellipse 100% 60% at 50% 30%, rgba(18, 72, 38, 0.18) 0%, transparent 68%),
-    /* top-left emerald lift */
-    radial-gradient(circle at 8% 4%, rgba(55, 130, 78, 0.17), transparent 36%),
-    /* four-corner vignettes */
-    radial-gradient(circle at 1%   2%,  rgba(0, 0, 0, 0.68), transparent 28%),
-    radial-gradient(circle at 99%  2%,  rgba(0, 0, 0, 0.68), transparent 28%),
-    radial-gradient(circle at 1%   98%, rgba(0, 0, 0, 0.78), transparent 32%),
-    radial-gradient(circle at 99%  98%, rgba(0, 0, 0, 0.78), transparent 32%),
-    /* base deep-green felt */
-    linear-gradient(168deg, #0e4a35 0%, #08301f 50%, #041b12 100%);
+  /* ── BACKGROUND: green-background.png (matches homepage) ── */
+  background-image: url('../assets/green-background.png') !important;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 /* Two-scale felt texture */
@@ -176,7 +163,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(5, 18, 11, 0.58);
+  background: rgba(5, 20, 10, 0.58);
   border: 1px solid rgba(228, 192, 52, 0.3);
   border-radius: 8px;
   padding: 9px 18px;
@@ -195,7 +182,7 @@
 .profile-page__back-btn:hover {
   color: rgba(234, 200, 70, 0.95);
   border-color: rgba(228, 192, 52, 0.62);
-  background: rgba(10, 30, 18, 0.75);
+  background: rgba(212, 175, 55, 0.1);
 }
 
 .profile-page__back-btn:focus-visible {
@@ -225,7 +212,6 @@
   box-shadow: none;
 }
 
-/* Pre-title ornament with CNY red lines */
 .profile-page__pretitle {
   display: flex;
   align-items: center;
@@ -293,7 +279,6 @@
   font-family: 'Inter', 'Roboto', sans-serif;
 }
 
-/* Post-title ornament */
 .profile-page__title-ornament {
   display: flex;
   align-items: center;
@@ -332,7 +317,7 @@
   position: relative;
   border-radius: 12px;
   border: 1px solid rgba(228, 192, 52, 0.28);
-  background: linear-gradient(155deg, rgba(14, 44, 28, 0.92) 0%, rgba(6, 21, 13, 0.96) 100%);
+  background: linear-gradient(155deg, rgba(5, 20, 10, 0.92) 0%, rgba(4, 14, 9, 0.96) 100%);
   padding: 20px 22px 22px;
   box-shadow:
     0 8px 40px rgba(0, 0, 0, 0.58),
@@ -343,7 +328,6 @@
   overflow: hidden;
 }
 
-/* CNY red banner at top of each card */
 .profile-card::before {
   content: '';
   position: absolute;
@@ -358,7 +342,6 @@
   width: 100%;
 }
 
-/* ── Card title ─────────────────────────────────────────── */
 .profile-card__title {
   margin: 0 0 14px;
   font-family: 'Playfair Display', 'Merriweather', 'Libre Baskerville', serif;
@@ -391,7 +374,7 @@
   height: 120px;
   border-radius: 50%;
   border: 3px solid rgba(228, 192, 52, 0.55);
-  background: rgba(5, 18, 11, 0.85);
+  background: rgba(5, 20, 10, 0.85);
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -445,7 +428,7 @@
   width: 100%;
   border: 1px solid rgba(228, 192, 52, 0.22);
   border-radius: 8px;
-  background: rgba(4, 14, 9, 0.75);
+  background: rgba(5, 20, 10, 0.75);
   padding: 10px 13px;
   color: rgba(240, 225, 175, 0.9);
   font-size: 0.95rem;
@@ -475,7 +458,7 @@
   border: 1px solid rgba(228, 192, 52, 0.16);
   border-radius: 10px;
   padding: 11px 14px;
-  background: rgba(5, 18, 11, 0.5);
+  background: rgba(5, 20, 10, 0.5);
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 8px 12px;
@@ -486,10 +469,9 @@
 
 .profile-toggle:hover {
   border-color: rgba(228, 192, 52, 0.3);
-  background: rgba(8, 26, 16, 0.6);
+  background: rgba(5, 20, 10, 0.65);
 }
 
-/* Custom checkbox */
 .profile-toggle input[type='checkbox'] {
   appearance: none;
   -webkit-appearance: none;
@@ -497,7 +479,7 @@
   height: 18px;
   border: 1.5px solid rgba(228, 192, 52, 0.38);
   border-radius: 4px;
-  background: rgba(4, 14, 9, 0.8);
+  background: rgba(5, 20, 10, 0.8);
   cursor: pointer;
   flex-shrink: 0;
   position: relative;
@@ -556,23 +538,13 @@
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, filter 0.18s ease;
 }
 
-.profile-card__button:hover {
-  transform: translateY(-2px);
-}
-
-.profile-card__button:active {
-  transform: scale(0.98);
-}
+.profile-card__button:hover   { transform: translateY(-2px); }
+.profile-card__button:active  { transform: scale(0.98); }
+.profile-card__button:disabled { opacity: 0.7; cursor: wait; transform: none; }
 
 .profile-card__button:focus-visible {
   outline: 2px solid rgba(228, 192, 52, 0.7);
   outline-offset: 2px;
-}
-
-.profile-card__button:disabled {
-  opacity: 0.7;
-  cursor: wait;
-  transform: none;
 }
 
 /* Primary — deep CNY red */
@@ -596,7 +568,7 @@
 /* Secondary — dark glass with gold */
 .profile-card__button--secondary {
   color: rgba(212, 175, 55, 0.8);
-  background: rgba(5, 18, 11, 0.65);
+  background: rgba(5, 20, 10, 0.65);
   border-color: rgba(228, 192, 52, 0.28);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
@@ -604,7 +576,7 @@
 .profile-card__button--secondary:hover {
   color: rgba(234, 200, 70, 0.95);
   border-color: rgba(228, 192, 52, 0.62);
-  background: rgba(10, 30, 18, 0.78);
+  background: rgba(212, 175, 55, 0.1);
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
 }
 
@@ -634,42 +606,15 @@
    ENTRANCE ANIMATIONS
    ══════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: no-preference) {
-  .profile-page__back-btn {
-    animation: profile-fade-up 0.55s ease both;
-    animation-delay: 0s;
-  }
-  .profile-page__pretitle {
-    animation: profile-fade-up 0.6s ease both;
-    animation-delay: 0.06s;
-  }
-  .profile-page__subtitle {
-    animation: profile-fade-up 0.6s ease both;
-    animation-delay: 0.12s;
-  }
-  .profile-page__title {
-    animation: profile-fade-up 0.75s ease both;
-    animation-delay: 0.2s;
-  }
-  .profile-page__title-ornament {
-    animation: profile-fade-up 0.6s ease both;
-    animation-delay: 0.3s;
-  }
-  .profile-page__grid .profile-card:nth-child(1) {
-    animation: profile-fade-up 0.6s ease both;
-    animation-delay: 0.38s;
-  }
-  .profile-page__grid .profile-card:nth-child(2) {
-    animation: profile-fade-up 0.6s ease both;
-    animation-delay: 0.46s;
-  }
-  .profile-card--full {
-    animation: profile-fade-up 0.6s ease both;
-    animation-delay: 0.54s;
-  }
-  .profile-page__actions {
-    animation: profile-fade-up 0.55s ease both;
-    animation-delay: 0.6s;
-  }
+  .profile-page__back-btn       { animation: profile-fade-up 0.55s ease both; animation-delay: 0s; }
+  .profile-page__pretitle       { animation: profile-fade-up 0.6s  ease both; animation-delay: 0.06s; }
+  .profile-page__subtitle       { animation: profile-fade-up 0.6s  ease both; animation-delay: 0.12s; }
+  .profile-page__title          { animation: profile-fade-up 0.75s ease both; animation-delay: 0.2s; }
+  .profile-page__title-ornament { animation: profile-fade-up 0.6s  ease both; animation-delay: 0.3s; }
+  .profile-page__grid .profile-card:nth-child(1) { animation: profile-fade-up 0.6s ease both; animation-delay: 0.38s; }
+  .profile-page__grid .profile-card:nth-child(2) { animation: profile-fade-up 0.6s ease both; animation-delay: 0.46s; }
+  .profile-card--full    { animation: profile-fade-up 0.6s  ease both; animation-delay: 0.54s; }
+  .profile-page__actions { animation: profile-fade-up 0.55s ease both; animation-delay: 0.6s; }
 }
 
 @keyframes profile-fade-up {
@@ -677,7 +622,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Respect app-level reduced motion ───────────────────── */
 .a11y-reduced-motion .profile-page__back-btn,
 .a11y-reduced-motion .profile-page__pretitle,
 .a11y-reduced-motion .profile-page__subtitle,
@@ -692,41 +636,18 @@
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 940px) {
-  .profile-page__grid {
-    grid-template-columns: 1fr;
-  }
+  .profile-page__grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 760px) {
-  .profile-page {
-    padding: 20px 18px 44px;
-  }
-
-  .profile-avatar {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-  }
-
-  .profile-avatar__actions {
-    width: 100%;
-  }
-
-  .profile-page__actions {
-    flex-direction: column;
-  }
-
-  .profile-frame {
-    inset: 6px;
-  }
+  .profile-page { padding: 20px 18px 44px; }
+  .profile-avatar { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .profile-avatar__actions { width: 100%; }
+  .profile-page__actions { flex-direction: column; }
+  .profile-frame { inset: 6px; }
 }
 
 @media (max-width: 480px) {
-  .profile-page {
-    padding: 16px 14px 40px;
-  }
-
-  .profile-frame {
-    display: none;
-  }
+  .profile-page { padding: 16px 14px 40px; }
+  .profile-frame { display: none; }
 }

@@ -1,158 +1,164 @@
+/* ── Grand Shanghai Login — Gold & Green Aesthetic ── */
+
 .login-page {
   min-height: 100vh;
-  padding: 2rem 1.5rem 3rem;
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(circle at top, rgba(224, 178, 95, 0.24), transparent 36%),
-    linear-gradient(180deg, #173129 0%, #10231d 55%, #09140f 100%);
-  color: #f7ecd5;
-}
-
-.login-page__frame {
-  position: fixed;
-  inset: 1.2rem;
-  border: 1px solid rgba(241, 204, 127, 0.45);
-  border-radius: 28px;
-  box-shadow: 0 0 0 1px rgba(112, 75, 24, 0.4) inset;
-  pointer-events: none;
-}
-
-.login-page__back-btn {
-  position: fixed;
-  top: 2rem;
-  left: 2rem;
-  border: 1px solid rgba(241, 204, 127, 0.4);
-  border-radius: 999px;
-  background: rgba(9, 20, 15, 0.6);
-  color: inherit;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-}
-
-.login-page__card {
-  width: min(100%, 540px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  /* Fixed Background Fix */
+  background-image: url('../assets/green-background.png') !important;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   padding: 2rem;
-  border-radius: 28px;
-  background: rgba(15, 27, 22, 0.88);
-  border: 1px solid rgba(241, 204, 127, 0.28);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }
 
-.login-page__eyebrow {
-  margin: 0 0 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.72rem;
-  color: #cfb071;
+/* Central Card - Darkened for readability against the pattern */
+.login-page__card {
+  position: relative;
+  z-index: 10;
+  width: min(100%, 520px);
+  padding: 3.5rem 2.5rem;
+  background: rgba(5, 20, 10, 0.9); /* Deep poker-green transparency */
+  border: 2px solid var(--gold-metallic);
+  border-radius: 20px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+  text-align: center;
 }
 
+/* Typography matching the Gold Theme */
 .login-page__title {
-  margin: 0;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-family: var(--font-display);
+  color: var(--gold-bright);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .login-page__subtitle {
-  margin: 0.8rem 0 1.4rem;
-  color: rgba(247, 236, 213, 0.76);
-  line-height: 1.6;
+  font-family: var(--font-body);
+  color: var(--gold-metallic);
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+  opacity: 0.9;
 }
 
-.login-page__mode-switch {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
+/* ══════════════════════════════════════════════════════════
+   BUTTONS - Gold Outlines & Green Centers
+   ══════════════════════════════════════════════════════════ */
 
 .login-page__mode-btn,
-.login-page__submit-btn {
-  border: 0;
-  border-radius: 16px;
-  padding: 0.95rem 1rem;
-  font: inherit;
+.login-page__submit-btn,
+.login-page__back-btn {
+  font-family: var(--font-display);
+  text-transform: uppercase;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--gold-bright);
+  background: rgba(0, 0, 0, 0.3); /* Dark glass effect inside */
+  border: 2px solid var(--gold-metallic);
+  letter-spacing: 2px;
+}
+
+/* Back Button (Top Left) */
+.login-page__back-btn {
+  position: fixed;
+  top: 30px;
+  
+  /* Centering Logic */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Ensure it stays above other elements */
+  z-index: 20;
+  
+  /* Keep your existing aesthetic styles */
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--gold-bright);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--gold-metallic);
+  letter-spacing: 2px;
+}
+
+/* Toggle Buttons (Sign In / Create Account) */
+.login-page__mode-switch {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
 .login-page__mode-btn {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(247, 236, 213, 0.86);
+  padding: 12px 24px;
+  border-radius: 50px; /* Pill shape like Member Login button */
+  font-size: 0.85rem;
+  opacity: 0.4;
+  border-color: rgba(212, 175, 55, 0.3);
 }
 
-.login-page__mode-btn.is-active,
+.login-page__mode-btn.is-active {
+  opacity: 1;
+  border-color: var(--gold-bright);
+  background: rgba(212, 175, 55, 0.15);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* Main Login Action Button */
 .login-page__submit-btn {
-  background: linear-gradient(135deg, #f1cc7f 0%, #d7953e 100%);
-  color: #1f160b;
+  width: 100%;
+  padding: 1.2rem;
+  border-radius: 12px; /* Matches the tile radius on home page */
+  font-size: 1.3rem;
   font-weight: 700;
+  margin-top: 1.5rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-.login-page__form {
-  display: grid;
-  gap: 1rem;
+.login-page__submit-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-shimmer);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.6);
 }
 
-.login-page__field {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.login-page__field span {
-  font-size: 0.94rem;
-}
-
+/* Form Inputs */
 .login-page__field input {
   width: 100%;
-  border: 1px solid rgba(241, 204, 127, 0.2);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  color: inherit;
-  padding: 0.9rem 1rem;
-  font: inherit;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  padding: 1.1rem;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
 }
 
-.login-page__submit-btn:disabled {
-  cursor: wait;
-  opacity: 0.7;
+.login-page__field input:focus {
+  outline: none;
+  border-color: var(--gold-bright);
+  background: rgba(0, 0, 0, 0.7);
 }
 
-.login-page__message {
-  margin: 1rem 0 0;
-  color: #cdecc8;
-}
+/* Hide the old frame and use the corners for continuity */
+.login-page__frame { display: none; }
 
-.login-page__message--error {
-  color: #f6b3ac;
-}
-
-.login-page__note {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(241, 204, 127, 0.15);
-}
-
-.login-page__note h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1rem;
-}
-
-.login-page__note p {
-  margin: 0;
-  color: rgba(247, 236, 213, 0.76);
-  line-height: 1.6;
-}
-
-@media (max-width: 640px) {
-  .login-page__back-btn {
-    position: static;
-    justify-self: start;
-    margin-bottom: 1rem;
-  }
-
-  .login-page {
-    align-content: start;
-  }
-
-  .login-page__card {
-    padding: 1.5rem;
-  }
+/* Corner Filigrees */
+.corner {
+  position: absolute;
+  width: clamp(150px, 20vw, 280px);
+  height: clamp(150px, 20vw, 280px);
+  background-image: url('../assets/gold-corner.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 5;
+  pointer-events: none;
 }

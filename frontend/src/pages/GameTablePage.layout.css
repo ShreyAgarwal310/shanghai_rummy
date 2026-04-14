@@ -9,20 +9,17 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 18px 22px 14px;
 
-  background:
-    radial-gradient(ellipse at 20%  0%,  rgba(160, 18, 18, 0.13) 0%, transparent 46%),
-    radial-gradient(ellipse at 82%  5%,  rgba(160, 18, 18, 0.10) 0%, transparent 38%),
-    radial-gradient(ellipse at 50%  98%, rgba(0, 0, 0, 0.55)     0%, transparent 52%),
-    radial-gradient(ellipse at 14% 50%,  rgba(6, 40, 22, 0.6)    0%, transparent 54%),
-    radial-gradient(ellipse at 88% 50%,  rgba(6, 40, 22, 0.6)    0%, transparent 54%),
-    linear-gradient(160deg, rgba(6, 32, 18, 0.96) 0%, rgba(4, 26, 14, 0.98) 100%),
-    #040e09;
+  background-image: url('../assets/green-background2.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+
   color: rgba(228, 205, 145, 0.9);
 }
 
-/* Diamond trellis felt texture */
+/* Diamond trellis felt overlay */
 .game-table-page::before {
   content: '';
   position: fixed;
@@ -30,10 +27,10 @@
   pointer-events: none;
   z-index: 0;
   background-image:
-    repeating-linear-gradient(45deg,  rgba(228,192,52,0.028) 0px, rgba(228,192,52,0.028) 1px, transparent 1px, transparent 7px),
-    repeating-linear-gradient(-45deg, rgba(228,192,52,0.028) 0px, rgba(228,192,52,0.028) 1px, transparent 1px, transparent 7px),
-    repeating-linear-gradient(45deg,  rgba(228,192,52,0.055) 0px, rgba(228,192,52,0.055) 1px, transparent 1px, transparent 28px),
-    repeating-linear-gradient(-45deg, rgba(228,192,52,0.055) 0px, rgba(228,192,52,0.055) 1px, transparent 1px, transparent 28px);
+    repeating-linear-gradient(45deg,  rgba(228,192,52,0.025) 0px, rgba(228,192,52,0.025) 1px, transparent 1px, transparent 7px),
+    repeating-linear-gradient(-45deg, rgba(228,192,52,0.025) 0px, rgba(228,192,52,0.025) 1px, transparent 1px, transparent 7px),
+    repeating-linear-gradient(45deg,  rgba(228,192,52,0.048) 0px, rgba(228,192,52,0.048) 1px, transparent 1px, transparent 28px),
+    repeating-linear-gradient(-45deg, rgba(228,192,52,0.048) 0px, rgba(228,192,52,0.048) 1px, transparent 1px, transparent 28px);
 }
 
 /* ══════════════════════════════════════════════
@@ -60,7 +57,7 @@
   pointer-events: none;
 }
 .game-table-frame__corner { position: absolute; width: 52px; height: 52px; }
-.game-table-frame__corner::after { content: '◆'; position: absolute; font-size: 1.08rem; color: rgba(228, 192, 52, 0.9); }
+.game-table-frame__corner::after { content: '◆'; position: absolute; font-size: 0.72rem; color: rgba(228, 192, 52, 0.9); }
 .game-table-frame__corner--tl { top: -3px; left: -3px;   border-top: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
 .game-table-frame__corner--tr { top: -3px; right: -3px;  border-top: 3px solid rgba(228,192,52,0.95); border-right: 3px solid rgba(228,192,52,0.95); }
 .game-table-frame__corner--bl { bottom: -3px; left: -3px;  border-bottom: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
@@ -69,53 +66,153 @@
 .game-table-frame__corner--tr::after { bottom: 4px; left: 4px; }
 .game-table-frame__corner--bl::after { top: 4px; right: 4px; }
 .game-table-frame__corner--br::after { top: 4px; left: 4px; }
-.game-table-frame__mid { position: absolute; color: rgba(228, 192, 52, 0.88); font-size: 1.34rem; line-height: 1; }
+.game-table-frame__mid { position: absolute; color: rgba(228, 192, 52, 0.88); font-size: 0.9rem; line-height: 1; }
 .game-table-frame__mid--top    { top: 0;    left: 50%;  transform: translate(-50%, -50%); }
 .game-table-frame__mid--bottom { bottom: 0; left: 50%;  transform: translate(-50%, 50%);  }
 .game-table-frame__mid--left   { top: 50%;  left: 0;    transform: translate(-50%, -50%); }
 .game-table-frame__mid--right  { top: 50%;  right: 0;   transform: translate(50%, -50%);  }
 
 /* ══════════════════════════════════════════════
-   HEADER — slim status bar
+   SCORE BAR — full-width, tight fit for 6 players
+   ══════════════════════════════════════════════ */
+.game-score-bar {
+  position: relative;
+  z-index: 20;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: stretch;
+  height: 36px;
+  /* left padding accounts for the sidebar toggle tab (28px wide) */
+  padding: 0 14px 0 42px;
+  background: rgba(3, 12, 7, 0.92);
+  border-bottom: 1px solid rgba(228, 192, 52, 0.22);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+
+/* Gold shimmer line at top */
+.game-score-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 2%, rgba(228,192,52,0.7) 20%, rgba(228,192,52,0.7) 80%, transparent 98%);
+  pointer-events: none;
+}
+
+/* Each player cell — equal width, flex-based so they all fit */
+.game-score-bar__player {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+  padding: 0 6px;
+  border-right: 1px solid rgba(228, 192, 52, 0.1);
+}
+
+.game-score-bar__player:last-child {
+  border-right: none;
+}
+
+.game-score-bar__player--you {
+  background: rgba(228, 192, 52, 0.07);
+  border-right-color: rgba(228, 192, 52, 0.2);
+}
+
+.game-score-bar__player--leader {
+  background: rgba(228, 192, 52, 0.04);
+}
+
+.game-score-bar__rank {
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgba(228, 192, 52, 0.5);
+  flex-shrink: 0;
+}
+
+.game-score-bar__player--leader .game-score-bar__rank {
+  color: rgba(228, 192, 52, 0.9);
+}
+
+.game-score-bar__name {
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.76rem;
+  color: rgba(210, 185, 120, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.game-score-bar__player--you .game-score-bar__name {
+  color: rgba(228, 205, 145, 0.97);
+  font-weight: 700;
+}
+
+.game-score-bar__score {
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(228, 205, 145, 0.88);
+  flex-shrink: 0;
+}
+
+.game-score-bar__label {
+  font-size: 0.6rem;
+  color: rgba(180, 150, 60, 0.45);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════
+   HEADER — compact control bar
    ══════════════════════════════════════════════ */
 .game-table-header {
   position: relative;
-  z-index: 10;
+  z-index: 15;
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 8px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid rgba(228, 192, 52, 0.14);
+  gap: 10px;
+  /* same left padding as score bar so items line up with the board */
+  padding: 6px 14px 6px 42px;
+  border-bottom: 1px solid rgba(228, 192, 52, 0.1);
+  background: rgba(4, 14, 9, 0.6);
+  backdrop-filter: blur(6px);
 }
 
-.game-table-header__meta {
-  position: absolute;
-  left: 50%;
-  transform: translateX(calc(-50% + 125px));
+.game-table-header__left,
+.game-table-header__right {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-table-header__center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
   justify-content: center;
-  pointer-events: none;
 }
 
-.game-table-header__meta > * {
-  pointer-events: auto;
-}
-
+/* ── Round / Contract info chip ── */
 .game-table-header__chip {
   margin: 0;
   border: 1px solid rgba(228, 192, 52, 0.25);
   border-radius: 999px;
-  padding: 6px 14px;
-  font-size: 1.32rem;
+  padding: 5px 13px;
+  font-size: 0.84rem;
   font-family: 'Playfair Display', 'Merriweather', serif;
   color: rgba(210, 180, 100, 0.78);
   background: rgba(4, 14, 9, 0.5);
   letter-spacing: 0.03em;
+  white-space: nowrap;
 }
 
 .game-table-header__chip--contract {
@@ -130,26 +227,28 @@
   background: rgba(150, 18, 18, 0.28);
 }
 
+/* ── Header buttons ── */
 .game-table-header__btn {
   flex: 0 0 auto;
-  min-height: 40px;
+  min-height: 36px;
   border-radius: 8px;
   border: 1px solid rgba(228, 192, 52, 0.45);
-  padding: 8px 18px;
+  padding: 6px 16px;
   font-family: 'Playfair Display', 'Merriweather', serif;
-  font-size: 1.39rem;
+  font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   cursor: pointer;
   transition: background 0.15s, color 0.15s, filter 0.15s;
+  white-space: nowrap;
 }
 
 .game-table-header__btn--back {
   color: rgba(228, 192, 52, 0.85);
-  background: rgba(4, 14, 9, 0.65);
+  background: rgba(5, 20, 10, 0.65);
 }
 .game-table-header__btn--back:hover {
-  background: rgba(228, 192, 52, 0.1);
+  background: rgba(212, 175, 55, 0.1);
   color: rgba(228, 192, 52, 1);
 }
 
@@ -167,7 +266,323 @@
 }
 
 /* ══════════════════════════════════════════════
-   MAIN LAYOUT — 2 columns: sidebar + table
+   DROPDOWN MENUS
+   ══════════════════════════════════════════════ */
+.game-dropdown {
+  position: relative;
+}
+
+.game-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(228, 192, 52, 0.35);
+  padding: 6px 14px;
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(228, 205, 145, 0.9);
+  background: rgba(5, 20, 10, 0.7);
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.game-dropdown__trigger:hover {
+  border-color: rgba(228, 192, 52, 0.6);
+  background: rgba(228, 192, 52, 0.08);
+}
+
+.game-dropdown__trigger:focus-visible {
+  outline: 2px solid rgba(228, 192, 52, 0.7);
+  outline-offset: 2px;
+}
+
+.game-dropdown__caret {
+  font-size: 0.6rem;
+  color: rgba(228, 192, 52, 0.6);
+  transition: transform 0.18s;
+  margin-left: 2px;
+}
+
+.game-dropdown.is-open .game-dropdown__caret {
+  transform: rotate(180deg);
+}
+
+.game-dropdown__menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 200px;
+  border-radius: 10px;
+  border: 1px solid rgba(228, 192, 52, 0.32);
+  background: rgba(4, 16, 9, 0.97);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(228, 192, 52, 0.1);
+  backdrop-filter: blur(16px);
+  padding: 6px;
+  z-index: 200;
+  animation: dropdown-appear 0.16s ease both;
+}
+
+.game-dropdown.is-open .game-dropdown__menu {
+  display: block;
+}
+
+@keyframes dropdown-appear {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Red top stripe on dropdown */
+.game-dropdown__menu::before {
+  content: '';
+  display: block;
+  height: 2px;
+  margin: -6px -6px 6px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(90deg, transparent 5%, rgba(185, 14, 14, 0.7) 30%, rgba(185, 14, 14, 0.7) 70%, transparent 95%);
+}
+
+.game-dropdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.88rem;
+  color: rgba(210, 185, 120, 0.85);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.game-dropdown__item:hover {
+  background: rgba(228, 192, 52, 0.06);
+  border-color: rgba(228, 192, 52, 0.2);
+  color: rgba(228, 205, 145, 0.97);
+}
+
+.game-dropdown__item.is-active {
+  background: rgba(228, 192, 52, 0.1);
+  border-color: rgba(228, 192, 52, 0.35);
+  color: rgba(228, 205, 145, 0.97);
+}
+
+.game-dropdown__item--danger {
+  color: rgba(245, 200, 165, 0.8);
+}
+.game-dropdown__item--danger:hover {
+  background: rgba(150, 18, 18, 0.2);
+  border-color: rgba(185, 14, 14, 0.4);
+  color: rgba(245, 222, 165, 0.97);
+}
+
+.game-dropdown__item--primary {
+  color: rgba(245, 222, 165, 0.95);
+  background: linear-gradient(180deg, rgba(150, 18, 18, 0.75) 0%, rgba(90, 8, 8, 0.82) 100%);
+  border-color: rgba(185, 14, 14, 0.45);
+}
+.game-dropdown__item--primary:hover { filter: brightness(1.12); }
+
+.game-dropdown__item-label { flex: 1; }
+
+.game-dropdown__item-badge {
+  font-size: 0.72rem;
+  color: rgba(180, 150, 60, 0.55);
+  white-space: nowrap;
+}
+
+.game-dropdown__separator {
+  height: 1px;
+  background: rgba(228, 192, 52, 0.1);
+  margin: 4px 0;
+}
+
+.game-dropdown__section-label {
+  padding: 5px 12px 3px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(180, 150, 60, 0.45);
+  font-family: 'Playfair Display', 'Merriweather', serif;
+}
+
+/* ══════════════════════════════════════════════
+   SIDEBAR DRAWER — collapsible left panel
+   ══════════════════════════════════════════════ */
+
+/* Tab that sticks out on the left edge at all times */
+.game-sidebar-tab {
+  position: fixed;
+  left: 10px; /* sits just inside the gold frame */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  width: 22px;
+  /* height grows with content label */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 0;
+  background: rgba(4, 16, 9, 0.92);
+  border: 1px solid rgba(228, 192, 52, 0.5);
+  border-left: none;   /* flush against the gold frame */
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.game-sidebar-tab:hover {
+  background: rgba(10, 28, 16, 0.96);
+  border-color: rgba(228, 192, 52, 0.8);
+}
+
+.game-sidebar-tab:focus-visible {
+  outline: 2px solid rgba(228, 192, 52, 0.7);
+  outline-offset: 2px;
+}
+
+/* Rotated label text */
+.game-sidebar-tab__label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(228, 192, 52, 0.75);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.game-sidebar-tab__caret {
+  font-size: 0.5rem;
+  color: rgba(228, 192, 52, 0.6);
+  transition: transform 0.22s;
+  line-height: 1;
+}
+
+/* When open, caret flips */
+.game-sidebar-tab.is-open .game-sidebar-tab__caret {
+  transform: rotate(180deg);
+}
+
+/* The drawer itself */
+.game-side-drawer {
+  position: fixed;
+  left: 10px; /* inside the gold frame edge */
+  top: 10px;
+  bottom: 10px;
+  width: 200px;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 8px 10px 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background: rgba(3, 12, 7, 0.96);
+  border-right: 1px solid rgba(228, 192, 52, 0.35);
+  border-radius: 0 0 0 0; /* flush with frame */
+  backdrop-filter: blur(12px);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.55);
+
+  /* Slide animation */
+  transform: translateX(-110%);
+  transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(228, 192, 52, 0.2) transparent;
+}
+
+.game-side-drawer::-webkit-scrollbar { width: 3px; }
+.game-side-drawer::-webkit-scrollbar-thumb { background: rgba(228, 192, 52, 0.2); border-radius: 3px; }
+
+/* Gold top stripe on drawer */
+.game-side-drawer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 3%, rgba(228,192,52,0.6) 20%, rgba(228,192,52,0.6) 80%, transparent 97%);
+  pointer-events: none;
+}
+
+.game-side-drawer.is-open {
+  transform: translateX(0);
+}
+
+/* Dim overlay behind drawer when open */
+.game-side-drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.game-side-drawer-overlay.is-open {
+  display: block;
+}
+
+/* Drawer close button inside header area */
+.game-side-drawer__close {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.game-side-drawer__close-btn {
+  border: 1px solid rgba(228, 192, 52, 0.3);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.72rem;
+  color: rgba(228, 192, 52, 0.7);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.game-side-drawer__close-btn:hover {
+  background: rgba(228, 192, 52, 0.08);
+  color: rgba(228, 192, 52, 1);
+}
+
+.game-side-drawer__title {
+  margin: 0;
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(228, 192, 52, 0.6);
+}
+
+/* ══════════════════════════════════════════════
+   MAIN LAYOUT — board takes full width
    ══════════════════════════════════════════════ */
 .game-table-layout {
   position: relative;
@@ -175,55 +590,38 @@
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 240px 1fr;
-  grid-template-rows: 1fr;
+  /* No left sidebar column — board fills full width */
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
   gap: 10px;
+  /* Left padding so content doesn't sit behind the tab */
+  padding: 8px 10px 8px 32px;
 }
 
-/* ── Left sidebar: info panels ── */
-.game-side-panel {
-  grid-column: 1;
-  grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-  overflow: hidden;
-}
-
-/* Panel size ratios */
-.game-side-panel .game-panel-card {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.game-side-panel .game-panel-card--contract {
-  flex: 0 0 auto;
-}
-
-.game-side-panel .game-panel-card--scoreboard {
-  flex: 1;
-  min-height: 0;
-}
-
-/* ── Main table: right column ── */
+/* Board spans the full single column */
 .game-board-row {
-  grid-column: 2;
-  grid-row: 1;
+  grid-column: 1;
+  grid-row: 1 / 3;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* ── Game stage: felt + player zone ── */
+/* Demo rail goes at the bottom — hidden visually since it's in the drawer now */
+.game-demo-rail--dock {
+  display: none;
+}
+
+/* Stage: felt + player zone */
 .game-table-stage {
   flex: 1;
   min-height: 0;
-
-  /* TableCenter returns a fragment so opponent-seats, table-felt, and
-     local-player-zone are all direct grid children */
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 8px;
+  grid-template-rows: 1fr auto;
+  gap: 10px;
+}
+
+/* Legacy panel card inside drawer */
+.game-side-drawer .game-panel-card {
+  flex-shrink: 0;
 }

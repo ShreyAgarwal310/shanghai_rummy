@@ -46,19 +46,19 @@
 
 /* Sizes */
 .playing-card--pile {
-  width: 72px;
-  height: 104px;
+  width: 68px;
+  height: 98px;
 }
 
 .playing-card--meld {
-  width: 68px;
-  height: 97px;
+  width: 48px;
+  height: 68px;
   border-radius: 5px;
 }
 
 .playing-card--hand {
-  width: 116px;
-  min-height: 168px;
+  width: 92px;
+  min-height: 134px;
 }
 
 /* Suit colors */
@@ -87,18 +87,18 @@
   line-height: 1;
 }
 
-.playing-card__corner--top    { top: 4px;    left: 4px; }
-.playing-card__corner--bottom { right: 4px;  bottom: 4px; transform: rotate(180deg); }
+.playing-card__corner--top    { top: 4px;   left: 4px; }
+.playing-card__corner--bottom { right: 4px; bottom: 4px; transform: rotate(180deg); }
 
 .playing-card__rank {
-  font-size: 1.3rem;
+  font-size: 0.9rem;
   font-weight: 800;
   line-height: 1;
 }
 
 .playing-card__suit {
   margin-top: 1px;
-  font-size: 1.18rem;
+  font-size: 0.82rem;
   line-height: 1;
 }
 
@@ -110,21 +110,21 @@
 }
 
 .playing-card__center-suit {
-  font-size: 2.7rem;
+  font-size: 1.85rem;
   line-height: 1;
 }
 
 .playing-card__joker-word {
-  font-size: 1.14rem;
+  font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   color: #7a4600;
 }
 
 /* Meld size overrides */
-.playing-card--meld .playing-card__rank        { font-size: 1.00rem; }
-.playing-card--meld .playing-card__suit        { font-size: 0.90rem; }
-.playing-card--meld .playing-card__center-suit { font-size: 1.82rem; }
+.playing-card--meld .playing-card__rank        { font-size: 0.62rem; }
+.playing-card--meld .playing-card__suit        { font-size: 0.56rem; }
+.playing-card--meld .playing-card__center-suit { font-size: 1.14rem; }
 .playing-card--meld .playing-card__corner--top    { top: 2px; left: 2px; }
 .playing-card--meld .playing-card__corner--bottom { right: 2px; bottom: 2px; }
-.playing-card--meld .playing-card__joker-word  { font-size: 0.76rem; }
+.playing-card--meld .playing-card__joker-word  { font-size: 0.48rem; }
