@@ -406,3 +406,7 @@
   .leaderboard-podium__card--second,
   .leaderboard-podium__card--third { min-height: auto; }
 }
+
+.leaderboard-page p {
+  color: #ffffff;
+}

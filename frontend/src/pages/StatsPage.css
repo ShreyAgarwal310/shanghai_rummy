@@ -752,3 +752,7 @@ background-repeat: no-repeat;
     display: none;
   }
 }
+
+.stats-page p {
+  color: #ffffff;
+}

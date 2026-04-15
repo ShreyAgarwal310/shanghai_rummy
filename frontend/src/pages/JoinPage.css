@@ -512,3 +512,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.join-page p {
+  color: #ffffff;
+}
