@@ -1,5 +1,5 @@
 """
-Entry point for the Shanghai Rummy WebSocket server.
+entry point
 
 Run with:
   uvicorn server:socket_app --host 0.0.0.0 --port 8000 --reload
@@ -29,7 +29,6 @@ socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
 #register all socket.io handelers
 register_all(sio)
 
-# ── REST ──────────────────────────────────────────────────────────────────────
 
 
 @app.get("/health")

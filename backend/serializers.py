@@ -1,7 +1,8 @@
 """
-Converts Python game objects (Card, Hand, Meld) to/from JSON-serialisable dicts,
-and builds the per-player game-state view sent over WebSocket.
+converts python game to and from json-serialisable dicts
+and builds the per-player game state view to websocket
 """
+
 
 from app.cards.card import Card
 from app.hands import Hand
@@ -20,7 +21,6 @@ def hand_to_list(hand: Hand) -> list[dict]:
 
 
 def melds_table_to_dict(melds_on_table: dict) -> dict:
-    """Serialise the full table melds for broadcast."""
     result = {}
     for player_name, meld_list in melds_on_table.items():
         result[player_name] = [
@@ -31,10 +31,6 @@ def melds_table_to_dict(melds_on_table: dict) -> dict:
 
 
 def build_player_view(session: dict, viewer_name: str) -> dict:
-    """
-    Build a game-state snapshot personalised for viewer_name.
-    Only that player's own hand is included; everyone else just gets a card count.
-    """
     players_info = []
     for p in session["players"]:
         info = {

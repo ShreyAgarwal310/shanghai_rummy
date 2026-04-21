@@ -23,10 +23,9 @@ import { io, Socket } from 'socket.io-client'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000'
 
-// Single shared socket — not connected until socket.connect() is called.
+// defining constant
 export const socket: Socket = io(BACKEND_URL, { autoConnect: false })
 
-// ── Shared types ──────────────────────────────────────────────────────────────
 
 export type Card = {
   rank: string
@@ -64,7 +63,7 @@ export type GameState = {
   total_scores: Record<string, number>
 }
 
-// ── Emit helpers (client → server) ───────────────────────────────────────────
+// client -> server
 
 export function emitCreateGame(playerName: string) {
   socket.emit('create_game', { player_name: playerName })
@@ -128,8 +127,7 @@ export function emitStealJoker(
   })
 }
 
-// ── On helpers (server → client) ─────────────────────────────────────────────
-// Each returns an unsubscribe function to use in useEffect cleanup.
+// server to client
 
 function on<T>(event: string, handler: (data: T) => void) {
   socket.on(event, handler)
@@ -153,7 +151,7 @@ export const onGameStarted = (cb: (data: { round_number: number; contract: Contr
 export const onGameState = (cb: (state: GameState) => void) =>
   on('game_state', cb)
 
-// Turn events
+// turn events
 export const onTurnStarted = (cb: (data: { current_player: string; phase: 'draw' }) => void) =>
   on('turn_started', cb)
 
@@ -184,7 +182,7 @@ export const onCardDiscarded = (cb: (data: {
   deck_size: number
 }) => void) => on('card_discarded', cb)
 
-// Round / game lifecycle
+// round
 export const onRoundOver = (cb: (data: {
   round_number: number
   round_scores: Record<string, number>
@@ -199,6 +197,6 @@ export const onGameOver = (cb: (data: {
   final_scores: Record<string, number>
 }) => void) => on('game_over', cb)
 
-// Errors
+// errors
 export const onError = (cb: (data: { message: string }) => void) =>
   on('error', cb)

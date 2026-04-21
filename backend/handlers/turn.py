@@ -16,9 +16,9 @@ def register(sio):
     @sio.event
     async def draw_card(sid, data):
         """
-        Client emits:  { game_code: str, source: "deck" | "discard" }
-        Server emits:  card_drawn { player_name, source, card?, deck_size, discard_top }  → room
-                       hand_updated { hand }  → drawing player only
+        the client sends the game code as a string, the source is the deck and discard
+        the server sends back the card drawn (player.name, source, card, deck size, card?, and discard top) and
+        the hand updated for the user that is drawing the card only
         """
         game_code = (data.get("game_code") or "").strip().upper()
         source = data.get("source")
@@ -67,13 +67,9 @@ def register(sio):
     @sio.event
     async def lay_down(sid, data):
         """
-        Client emits:
-          { game_code, melds: [{ type: "set"|"run", cards: [{rank, suit}] }] }
-
-        Must satisfy the round contract exactly. Can only be done once per round.
-
-        Server emits:  meld_laid { player_name, melds }  → room
-                       hand_updated { hand }  → player only
+        clients sends the game code and melds
+        server sends back the main_laid and the hand_updated
+        
         """
         game_code = (data.get("game_code") or "").strip().upper()
         melds_data = data.get("melds") or []
@@ -148,13 +144,8 @@ def register(sio):
     @sio.event
     async def add_to_meld(sid, data):
         """
-        Client emits:
-          { game_code, target_player, meld_index, cards: [{rank, suit}] }
-
-        Only allowed after you've laid down your own contract this round.
-
-        Server emits:  meld_updated { target_player, meld_index, meld }  → room
-                       hand_updated { hand }  → player only
+        client sends the game code, target player, meld index, and meld
+        server sends the meld_updated and hand_updated
         """
         game_code = (data.get("game_code") or "").strip().upper()
         target_name = data.get("target_player")
@@ -218,15 +209,13 @@ def register(sio):
     @sio.event
     async def steal_joker(sid, data):
         """
-        Client emits:
-          { game_code, target_player, meld_index, replacement_card: {rank, suit}, wildcard_index }
+        the client sends the game_code, target player, meld index, replacement card, and wildcard index
+        replace a wildcard in a table meld with a natural card from your hand
+        the stolen wild card shld move to the current hand
+        only allowed in play phase after laying down your own meld
 
-        Replace a wildcard in a table meld with a natural card from your hand.
-        The stolen wildcard moves into your hand.
-        Only allowed in play phase after laying down your own contract.
-
-        Server emits:  meld_updated { target_player, meld_index, meld }  → room
-                       hand_updated { hand }  → player only
+        the server emits the meld updates and 
+        the hand updated (player only)
         """
         game_code = (data.get("game_code") or "").strip().upper()
         target_name = data.get("target_player")
@@ -298,15 +287,13 @@ def register(sio):
     @sio.event
     async def discard_card(sid, data):
         """
-        Client emits:  { game_code: str, card: {rank, suit} }
+          the client sends the gae)code as a string and card with the parameter of rank and suit
+          it will end a player's turn if they go out (laid down + empty hand)
 
-        Ends the player's turn. If they go out (laid down + empty hand), triggers round-over.
+          the server emits the card_discarded (player_name, card, discard_top, and deck size) and this is all attributed to the room
+          the hand updated is only for the player
 
-        Server emits:  card_discarded { player_name, card, discard_top, deck_size }  → room
-                       hand_updated { hand }  → player only
-        Then either:
-          round_over → game_over  OR  round_started + game_state
-          turn_started { current_player, phase }  → room
+          the round will be over and the game is marked as over or the round started + game_state with turn started (player and phase)
         """
         game_code = (data.get("game_code") or "").strip().upper()
         card_data = data.get("card")
