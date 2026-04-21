@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { socket, emitJoinGame, onPlayerJoined, onError } from '../services/socketService'
 import { navigateTo } from '../utils/navigate'
 import './JoinPage.css'
 
@@ -7,22 +8,46 @@ const AMBIENT_SUITS = ['♠', '♥', '♦', '♣', '♠', '♥', '♦', '♣'] a
 
 function JoinPage() {
   const [gameCode, setGameCode] = useState('')
+  const [playerName, setPlayerName] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  // Keep refs so the stable effect callback always reads the latest values
+  const gameCodeRef = useRef(gameCode)
+  const playerNameRef = useRef(playerName)
+  useEffect(() => { gameCodeRef.current = gameCode }, [gameCode])
+  useEffect(() => { playerNameRef.current = playerName }, [playerName])
 
   const handleBackClick = () => {
     navigateTo('/')
   }
 
+  useEffect(() => {
+    socket.connect()
+
+    const offJoined = onPlayerJoined(() => {
+      const code = gameCodeRef.current.trim().toUpperCase()
+      sessionStorage.setItem('sr_game_code', code)
+      sessionStorage.setItem('sr_player_name', playerNameRef.current.trim())
+      sessionStorage.setItem('sr_is_host', 'false')
+      navigateTo(`/host/game/${code}`)
+    })
+
+    const offError = onError(({ message }) => {
+      setErrorMessage(message)
+      setIsSubmitting(false)
+    })
+
+    return () => { offJoined(); offError() }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleCodeSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const normalizedCode = gameCode.trim()
-    if (!normalizedCode) {
-      return
-    }
-    navigateTo(`/host/game/${normalizedCode}`)
-  }
-
-  const handleDemoJoinClick = () => {
-    navigateTo('/host/game/GAMECODE')
+    const code = gameCode.trim().toUpperCase()
+    if (!code || !playerName.trim()) return
+    setErrorMessage('')
+    setIsSubmitting(true)
+    emitJoinGame(code, playerName.trim())
   }
 
   return (
@@ -64,7 +89,7 @@ function JoinPage() {
             <span className="join-page__ornament-line" />
           </div>
           <p className="join-page__subtitle">Find Your Table</p>
-          <h1 id="available-games-title" className="join-page__title">Available Games</h1>
+          <h1 id="available-games-title" className="join-page__title">Join a Game</h1>
           <div className="join-page__title-ornament" aria-hidden="true">
             <span className="join-page__ornament-line" />
             <span className="join-page__ornament-gem">◈</span>
@@ -75,8 +100,22 @@ function JoinPage() {
         </header>
 
         <form className="join-page__code-card" onSubmit={handleCodeSubmit}>
+          <label className="join-page__code-label" htmlFor="join-player-name">
+            Your Name
+          </label>
+          <input
+            id="join-player-name"
+            className="join-page__code-input"
+            type="text"
+            autoComplete="off"
+            maxLength={20}
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+            placeholder="Enter your name"
+            style={{ marginBottom: '0.75rem', display: 'block', width: '100%' }}
+          />
           <label className="join-page__code-label" htmlFor="game-code-input">
-            Enter Game Code
+            Game Code
           </label>
           <div className="join-page__code-row">
             <input
@@ -86,51 +125,24 @@ function JoinPage() {
               autoComplete="off"
               maxLength={10}
               value={gameCode}
-              onChange={(event) => setGameCode(event.target.value.toUpperCase())}
-              placeholder="ABCD1234"
+              onChange={(e) => setGameCode(e.target.value.toUpperCase())}
+              placeholder="ABCD12"
             />
             <button
               type="submit"
               className="join-page__join-btn"
-              disabled={!gameCode.trim()}
-              data-a11y-description="Submit this game code to request joining a private table."
+              disabled={!gameCode.trim() || !playerName.trim() || isSubmitting}
+              data-a11y-description="Submit this game code to join a table."
             >
-              ▷ Join
+              {isSubmitting ? '...' : '▷ Join'}
             </button>
           </div>
-        </form>
-
-        <section className="join-page__games-grid" aria-label="Hosted games list">
-          <article className="join-page__game-card">
-            <header className="join-page__game-card-header">
-              <h2 className="join-page__game-title">Demo Table</h2>
-              <span className="join-page__game-status" data-a11y-label="Status: Open">
-                Open
-              </span>
-            </header>
-
-            <p className="join-page__game-meta">Players: 1 / 4</p>
-            <p className="join-page__game-host">
-              Host: <strong>DemoHost</strong>
+          {errorMessage ? (
+            <p style={{ color: 'var(--color-error, red)', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+              {errorMessage}
             </p>
-            <p className="join-page__game-text">Use this to test the join flow until live lobbies are connected.</p>
-
-            <button
-              type="button"
-              className="join-page__join-btn join-page__join-btn--card"
-              onClick={handleDemoJoinClick}
-              data-a11y-description="Join the demo table to test the lobby flow."
-            >
-              ▷ Join
-            </button>
-          </article>
-
-          <article className="join-page__empty-card" aria-live="polite">
-            <p className="join-page__empty-title">No live hosted games yet.</p>
-            <p className="join-page__empty-text">You can still join the demo table now or use a private game code above.</p>
-          </article>
-        </section>
-
+          ) : null}
+        </form>
       </section>
     </main>
   )

@@ -1,39 +1,58 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { createGame, isDemoModeEnabled } from '../services/gameService'
+import { socket, emitCreateGame, onGameCreated, onError } from '../services/socketService'
 import { navigateTo } from '../utils/navigate'
 import './HostPage.css'
 
 const AMBIENT_SUITS = ['♠', '♥', '♦', '♣', '♠', '♥', '♦', '♣'] as const
 
 function HostPage() {
+  const [playerName, setPlayerName] = useState('')
   const [gameName, setGameName] = useState('')
-  const [maxPlayers, setMaxPlayers] = useState(4)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const isDemoMode = isDemoModeEnabled()
+
+  // Keep a ref so the stable effect callback always reads the latest gameName
+  const gameNameRef = useRef(gameName)
+  useEffect(() => { gameNameRef.current = gameName }, [gameName])
 
   const handleBackToLobby = () => {
     navigateTo('/')
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setErrorMessage('')
-    setIsSubmitting(true)
+  useEffect(() => {
+    socket.connect()
 
-    try {
-      const game = await createGame({ gameName, maxPlayers, hostName: 'You' })
-      navigateTo(`/host/game/${game.id}`)
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Unable to create a game right now. Try again or enable demo mode.'
-      setErrorMessage(message)
-    } finally {
+    const onConnectError = () => {
+      setErrorMessage("cannot connect to server. is the backend running?")
       setIsSubmitting(false)
     }
+    socket.on('connect_error', onConnectError)
+
+    const offCreated = onGameCreated(({ game_code, player_name }) => {
+      sessionStorage.setItem('sr_game_code', game_code)
+      sessionStorage.setItem('sr_player_name', player_name)
+      sessionStorage.setItem('sr_game_name', gameNameRef.current.trim())
+      sessionStorage.setItem('sr_is_host', 'true')
+      navigateTo(`/host/game/${game_code}`)
+    })
+
+    const offError = onError(({ message }) => {
+      setErrorMessage(message)
+      setIsSubmitting(false)
+    })
+
+    return () => { 
+    socket.off('connect_error', onConnectError)  
+    offCreated(); offError() }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!playerName.trim()) return
+    setErrorMessage('')
+    setIsSubmitting(true)
+    emitCreateGame(playerName.trim())
   }
 
   return (
@@ -71,6 +90,20 @@ function HostPage() {
         <form className="host-dialog" onSubmit={handleSubmit}>
           <h1 className="host-dialog__title">Create New Game</h1>
 
+          <label className="host-dialog__label" htmlFor="host-player-name">
+            Your Name
+          </label>
+          <input
+            id="host-player-name"
+            className="host-dialog__input"
+            type="text"
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+            placeholder="Enter your name"
+            maxLength={20}
+            required
+          />
+
           <label className="host-dialog__label" htmlFor="host-game-name">
             Game Name
           </label>
@@ -79,29 +112,14 @@ function HostPage() {
             className="host-dialog__input"
             type="text"
             value={gameName}
-            onChange={(event) => setGameName(event.target.value)}
+            onChange={(e) => setGameName(e.target.value)}
             placeholder="Enter game name"
             maxLength={28}
             required
           />
 
-          <label className="host-dialog__label" htmlFor="host-max-players">
-            Maximum Players (3-6)
-          </label>
-          <input
-            id="host-max-players"
-            className="host-dialog__input"
-            type="number"
-            min={3}
-            max={6}
-            value={maxPlayers}
-            onChange={(event) => setMaxPlayers(Number(event.target.value) || 3)}
-            required
-          />
-
           <p className="host-dialog__note">
             A game code will be generated automatically when you create the table.
-            {isDemoMode ? ' Demo mode is currently enabled.' : ''}
           </p>
 
           {errorMessage ? <p className="host-dialog__error">{errorMessage}</p> : null}
@@ -109,10 +127,10 @@ function HostPage() {
           <button
             type="submit"
             className="host-dialog__submit"
-            disabled={!gameName.trim() || isSubmitting}
+            disabled={!playerName.trim() || !gameName.trim() || isSubmitting}
             data-a11y-description="Create a new game lobby with the selected setup."
           >
-            Create Game
+            {isSubmitting ? 'Creating...' : 'Create Game'}
           </button>
         </form>
       </section>
