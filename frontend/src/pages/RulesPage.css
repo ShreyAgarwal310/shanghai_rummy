@@ -650,7 +650,3 @@
   .rules-book__legend-item { grid-template-columns: 1fr; gap: 1px; }
   .rules-book__split-list { columns: 1; }
 }
-
-.rules-page p {
-  color: #ffffff;
-}

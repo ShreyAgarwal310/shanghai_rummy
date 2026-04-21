@@ -69,16 +69,6 @@ function HostPage() {
 
       <section className="host-page__dialog-wrap">
         <form className="host-dialog" onSubmit={handleSubmit}>
-          <button
-            type="button"
-            className="host-dialog__close"
-            aria-label="Close"
-            onClick={handleBackToLobby}
-            data-a11y-description="Close create game dialog and return to lobby."
-          >
-            ×
-          </button>
-
           <h1 className="host-dialog__title">Create New Game</h1>
 
           <label className="host-dialog__label" htmlFor="host-game-name">
