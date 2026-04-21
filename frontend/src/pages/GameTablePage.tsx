@@ -457,28 +457,33 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     appendActivity(`Meld (${kind}): ${selectedCards.map(getCardDescription).join(', ')}.`)
   }
 
-  const handleSubmitLayDown = () => {
-    if (pendingMelds.length === 0) return
-    emitLayDown(gameCode, pendingMelds)
-  const handleToggleStealJoker = () => {
-    if (isDemoGameComplete) { appendActivity('Demo complete. Press Reset Demo to continue.'); return }
-    setStealJokerMode((cur) => {
-      if (!cur) appendActivity('Steal Joker mode on. Select a card from your hand, then click a meld containing a wildcard.')
-      else appendActivity('Steal Joker mode cancelled.')
-      return !cur
-    })
-    clearSelection()
+ const handleSubmitLayDown = () => {
+  if (pendingMelds.length === 0) return
+  emitLayDown(gameCode, pendingMelds)
+}
+
+const handleToggleStealJoker = () => {
+  if (isDemoGameComplete) {
+    appendActivity('Demo complete. Press Reset Demo to continue.')
+    return
   }
+  setStealJokerMode((cur) => {
+    if (!cur) appendActivity('Steal Joker mode on...')
+    else appendActivity('Steal Joker mode cancelled.')
+    return !cur
+  })
+  clearSelection()
+}
 
   const handleStealFromMeld = (groupIndex: number, meldIndex: number) => {
     if (isDemoGameComplete) { appendActivity('Demo complete.'); return }
-    if (!selectedCard) { appendActivity('Select a replacement card from your hand first.'); return }
+    if (!selectedCards) { appendActivity('Select a replacement card from your hand first.'); return }
     const targetGroup = meldGroups[groupIndex]
     const targetMeld = targetGroup?.melds[meldIndex]
     if (!targetGroup || !targetMeld) { appendActivity('Unable to target meld.'); return }
-    const wildcardIdx = canReplaceWildcardInMeld(selectedCard, targetMeld)
+    const wildcardIdx = canReplaceWildcardInMeld(selectedCards[0], targetMeld)
     if (wildcardIdx === -1) {
-      appendActivity(`${getCardDescription(selectedCard)} cannot replace any wildcard in that meld.`)
+      appendActivity(`${getCardDescription(selectedCards[0])} cannot replace any wildcard in that meld.`)
       return
     }
     const stolenCard = targetMeld[wildcardIdx]
@@ -490,7 +495,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
       ),
     )
     setHandCards((cards) => {
-      const filtered = cards.filter((c) => c.id !== selectedCard.id)
+      const filtered = cards.filter((c) => c.id !== selectedCards[0].id)
       return [...filtered, createHandCard(stolenCard)]
     })
     clearSelection()
