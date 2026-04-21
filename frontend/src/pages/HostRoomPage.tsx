@@ -1,7 +1,14 @@
-import { useMemo, useState } from 'react'
-import { getHostedGameById, isDemoModeEnabled } from '../services/gameService'
+import { useEffect, useState } from 'react'
+import {
+  socket,
+  emitStartGame,
+  emitRejoinLobby,
+  onPlayerJoined,
+  onPlayerDisconnected,
+  onGameStarted,
+  onError,
+} from '../services/socketService'
 import { navigateTo } from '../utils/navigate'
-import type { HostedGamePlayer } from '../types/game'
 import './HostRoomPage.css'
 
 type HostRoomPageProps = {
@@ -11,6 +18,8 @@ type HostRoomPageProps = {
 type SeatPosition = 'north' | 'north-east' | 'east' | 'south-east' | 'south' | 'south-west' | 'west' | 'north-west'
 
 const seatLayouts: Record<number, SeatPosition[]> = {
+  1: ['south'],
+  2: ['north', 'south'],
   3: ['north', 'south-east', 'south-west'],
   4: ['north', 'east', 'south', 'west'],
   5: ['north', 'north-east', 'south-east', 'south-west', 'north-west'],
@@ -19,30 +28,45 @@ const seatLayouts: Record<number, SeatPosition[]> = {
 
 const SUITS = ['♠', '♥', '♦', '♣'] as const
 const AMBIENT_SUITS = ['♠', '♥', '♦', '♣', '♠', '♥', '♦', '♣'] as const
+const MAX_PLAYERS = 6
 
 function HostRoomPage({ gameId }: HostRoomPageProps) {
-  const game = useMemo(() => getHostedGameById(gameId), [gameId])
-  const [players, setPlayers] = useState<HostedGamePlayer[]>(() => game?.players ?? [])
+  const gameCode = gameId.trim().toUpperCase()
+  const myName = sessionStorage.getItem('sr_player_name') ?? ''
+  const gameName = sessionStorage.getItem('sr_game_name') ?? gameCode
+  const isHost = sessionStorage.getItem('sr_is_host') === 'true'
+
+  const [players, setPlayers] = useState<string[]>(myName ? [myName] : [])
   const [copied, setCopied] = useState(false)
-  const isDemoMode = isDemoModeEnabled()
-  const normalizedRouteGameId = gameId.trim().toUpperCase()
-  const isJoinFlowLobby = game ? game.code.trim().toUpperCase() === normalizedRouteGameId : false
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const handleBackClick = () => {
-    navigateTo(isJoinFlowLobby ? '/join' : '/host')
-  }
+  useEffect(() => {
+    socket.connect()
+    // Re-enter the server room after page reload (window.location.assign resets the socket)
+    if (myName) emitRejoinLobby(gameCode, myName)
 
-  const handleBackToLandingClick = () => {
-    navigateTo('/')
-  }
+    const offJoined = onPlayerJoined(({ players: updatedList }) => {
+      setPlayers(updatedList)
+    })
+
+    const offDisconnected = onPlayerDisconnected(({ player_name }) => {
+      setPlayers((prev) => prev.filter((p) => p !== player_name))
+    })
+
+    const offStarted = onGameStarted(() => {
+      navigateTo(`/game/${gameCode}`)
+    })
+
+    const offError = onError(({ message }) => {
+      setErrorMessage(message)
+    })
+
+    return () => { offJoined(); offDisconnected(); offStarted(); offError() }
+  }, [gameCode])
 
   const handleCopyCode = async () => {
-    if (!game) {
-      return
-    }
-
     try {
-      await navigator.clipboard.writeText(game.code)
+      await navigator.clipboard.writeText(gameCode)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1800)
     } catch {
@@ -51,102 +75,33 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
   }
 
   const handleLeaveLobby = () => {
+    socket.disconnect()
     navigateTo('/')
   }
 
   const handleStartGame = () => {
-    if (!game || isJoinedDemoLobby || !canStart) {
-      return
-    }
-    navigateTo(`/game/${game.id}`)
+    if (canStart) emitStartGame(gameCode)
   }
 
-  const handleAddDemoPlayer = () => {
-    if (!game || isJoinedDemoLobby || players.length >= game.maxPlayers) {
-      return
-    }
-
-    const demoNames = [
-      'LuckyDragon',
-      'AceKing',
-      'DiamondQueen',
-      'RoyalFlush',
-      'CardShark88',
-      'PokerFace',
-      'FastDealer',
-      'GoldenHand',
-    ]
-    const usedNames = new Set(players.map((player) => player.name))
-    const nextName = demoNames.find((name) => !usedNames.has(name)) || `Guest${players.length + 1}`
-    setPlayers((currentPlayers) => [...currentPlayers, { name: nextName }])
-  }
-
-  const handleRemoveDemoPlayer = () => {
-    if (isJoinedDemoLobby || players.length <= 1) {
-      return
-    }
-
-    let removableIndex = -1
-    for (let index = players.length - 1; index >= 0; index -= 1) {
-      if (!players[index].isHost) {
-        removableIndex = index
-        break
-      }
-    }
-
-    if (removableIndex < 0) {
-      return
-    }
-
-    setPlayers((currentPlayers) => currentPlayers.filter((_, index) => index !== removableIndex))
-  }
-
-  if (!game) {
-    return (
-      <main className="host-room-page" aria-label="Host waiting room">
-        <div className="host-room-ambient" aria-hidden="true">
-          {AMBIENT_SUITS.map((suit, i) => (
-            <span key={i} className={`host-room-ambient__suit host-room-ambient__suit--${i + 1}`}>{suit}</span>
-          ))}
-        </div>
-        <div className="host-room-frame" aria-hidden="true">
-          <span className="host-room-frame__corner host-room-frame__corner--tl" />
-          <span className="host-room-frame__corner host-room-frame__corner--tr" />
-          <span className="host-room-frame__corner host-room-frame__corner--bl" />
-          <span className="host-room-frame__corner host-room-frame__corner--br" />
-          <span className="host-room-frame__mid host-room-frame__mid--top">◆</span>
-          <span className="host-room-frame__mid host-room-frame__mid--right">◆</span>
-          <span className="host-room-frame__mid host-room-frame__mid--bottom">◆</span>
-          <span className="host-room-frame__mid host-room-frame__mid--left">◆</span>
-        </div>
-        <button
-          type="button"
-          className="host-room-page__back"
-          onClick={handleBackToLandingClick}
-          data-a11y-description="Return to the main landing page."
-        >
-          ← Back to Lobby
-        </button>
-        <section className="host-room-card host-room-card--empty">
-          <h1 className="host-room-card__title">Room Not Found</h1>
-          <p className="host-room-card__text">Create a new demo game to preview this flow.</p>
-        </section>
-      </main>
-    )
-  }
-
-  const openSeats = Math.max(game.maxPlayers - players.length, 0)
-  const isJoinedDemoLobby = game.id === 'demo-release-lobby'
-  const canStart = players.length >= 3
-  const showHostControls = !isJoinedDemoLobby
-  const seatPositions = seatLayouts[game.maxPlayers] ?? seatLayouts[6]
-  const tableSeats = seatPositions.map((position, index) => ({
+  const canStart = players.length >= 2
+  const seatLayout = seatLayouts[Math.max(players.length, 2)] ?? seatLayouts[6]
+  const tableSeats = seatLayout.map((position, i) => ({
     position,
-    player: players[index],
+    player: players[i] ? { name: players[i], isHost: i === 0 } : undefined,
   }))
 
   return (
     <main className="host-room-page" aria-label="Host waiting room" data-player-count={players.length}>
+
+      {errorMessage ? (
+        <p style={{
+          position: 'fixed', top: '1rem', left: '50%', transform: 'translateX(-50%)',
+          background: '#c0392b', color: '#fff', padding: '0.5rem 1.25rem',
+          borderRadius: '4px', zIndex: 100, fontSize: '0.875rem',
+        }}>
+          {errorMessage}
+        </p>
+      ) : null}
 
       {/* Floating ambient suit symbols */}
       <div className="host-room-ambient" aria-hidden="true">
@@ -170,8 +125,8 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
       <button
         type="button"
         className="host-room-page__back"
-        onClick={handleBackClick}
-        data-a11y-description="Return to host setup for this table."
+        onClick={() => navigateTo(isHost ? '/host' : '/join')}
+        data-a11y-description="Return to previous page."
       >
         ← Back
       </button>
@@ -179,16 +134,16 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
       <section className="host-room-shell">
         <section className="host-room-card host-room-card--main">
           <header className="host-room-card__header">
-            <h1 className="host-room-card__title">{game.name}</h1>
+            <h1 className="host-room-card__title">{gameName}</h1>
             <p className="host-room-card__status" data-a11y-label="Table Status">
-              {openSeats === 0 ? 'Table Full' : 'Waiting for Players'}
+              {players.length >= MAX_PLAYERS ? 'Table Full' : 'Waiting for Players'}
             </p>
           </header>
 
           <div className="host-room-card__code-row">
             <div>
               <p className="host-room-card__code-label">Game Code</p>
-              <p className="host-room-card__code-value">{game.code}</p>
+              <p className="host-room-card__code-value">{gameCode}</p>
             </div>
             <button
               type="button"
@@ -202,7 +157,7 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
 
           <section className="host-room-card__players" aria-label="Current players">
             <h2 className="host-room-card__subtitle">
-              Seats ({players.length}/{game.maxPlayers})
+              Seats ({players.length}/{MAX_PLAYERS})
             </h2>
             <div className="host-room-table">
               <div className="host-room-table__felt" aria-hidden="true">
@@ -214,7 +169,7 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
                 <span className="host-room-table__felt-suit host-room-table__felt-suit--sw">♦</span>
                 <span className="host-room-table__felt-suit host-room-table__felt-suit--se">♣</span>
                 <span className="host-room-table__felt-ornament">◆</span>
-                <p className="host-room-table__felt-title">{game.name}</p>
+                <p className="host-room-table__felt-title">{gameName}</p>
                 <p className="host-room-table__felt-label">Round 1 Contract</p>
                 <p className="host-room-table__felt-contract">Two sets of 3</p>
                 <span className="host-room-table__felt-ornament">◆</span>
@@ -256,16 +211,11 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
 
         <aside className="host-room-card host-room-card--side">
           <header className="host-room-card__aside-header">
-            <h2 className="host-room-card__subtitle">{showHostControls ? 'Lobby Controls' : 'Lobby Status'}</h2>
-            {isDemoMode ? (
-              <p className="host-room-card__tag" data-a11y-label="Environment">
-                Demo Mode
-              </p>
-            ) : null}
+            <h2 className="host-room-card__subtitle">{isHost ? 'Lobby Controls' : 'Lobby Status'}</h2>
           </header>
 
           <div className="host-room-card__player-pips" aria-label="Seat status">
-            {Array.from({ length: game.maxPlayers }, (_, i) => (
+            {Array.from({ length: MAX_PLAYERS }, (_, i) => (
               <span
                 key={i}
                 className={`host-room-card__pip${i < players.length ? ' host-room-card__pip--filled' : ''}`}
@@ -274,50 +224,27 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
             ))}
           </div>
           <p className="host-room-card__detail">
-            {players.length}/{game.maxPlayers} seated
-            {Math.max(3 - players.length, 0) > 0
-              ? ` · need ${Math.max(3 - players.length, 0)} more`
+            {players.length}/{MAX_PLAYERS} seated
+            {Math.max(2 - players.length, 0) > 0
+              ? ` · need ${Math.max(2 - players.length, 0)} more`
               : ' · ready to start'}
           </p>
           <hr className="host-room-card__rule" aria-hidden="true" />
 
-          {isDemoMode && showHostControls ? (
-            <div className="host-room-card__demo-tools">
-              <button
-                type="button"
-                className="host-room-card__btn host-room-card__btn--secondary"
-                onClick={handleAddDemoPlayer}
-                disabled={openSeats === 0}
-                data-a11y-description="Add a simulated player seat for demo testing."
-              >
-                Add Demo Player
-              </button>
-              <button
-                type="button"
-                className="host-room-card__btn host-room-card__btn--ghost"
-                onClick={handleRemoveDemoPlayer}
-                disabled={players.length <= 1}
-                data-a11y-description="Remove the most recent non-host demo player."
-              >
-                Remove Player
-              </button>
-            </div>
-          ) : null}
-
           <p className="host-room-card__note">
-            {showHostControls
-              ? 'Share the game code with friends. The start button unlocks once three players are seated.'
-              : 'Waiting for host to start game.'}
+            {isHost
+              ? 'Share the game code with friends. Start unlocks at 2+ players.'
+              : 'Waiting for the host to start the game.'}
           </p>
 
           <div className="host-room-card__actions">
-            {showHostControls ? (
+            {isHost ? (
               <button
                 type="button"
                 className="host-room-card__btn"
                 disabled={!canStart}
                 onClick={handleStartGame}
-                data-a11y-description="Start game becomes available at three or more players."
+                data-a11y-description="Start game — available at 2 or more players."
               >
                 Start Game
               </button>
