@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { socket, emitCreateGame, onGameCreated, onError } from '../services/socketService'
 import { navigateTo } from '../utils/navigate'
@@ -12,6 +12,10 @@ function HostPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  // Keep a ref so the stable effect callback always reads the latest gameName
+  const gameNameRef = useRef(gameName)
+  useEffect(() => { gameNameRef.current = gameName }, [gameName])
+
   const handleBackToLobby = () => {
     navigateTo('/')
   }
@@ -19,10 +23,16 @@ function HostPage() {
   useEffect(() => {
     socket.connect()
 
+    const onConnectError = () => {
+      setErrorMessage("cannot connect to server. is the backend running?")
+      setIsSubmitting(false)
+    }
+    socket.on('connect_error', onConnectError)
+
     const offCreated = onGameCreated(({ game_code, player_name }) => {
       sessionStorage.setItem('sr_game_code', game_code)
       sessionStorage.setItem('sr_player_name', player_name)
-      sessionStorage.setItem('sr_game_name', gameName.trim())
+      sessionStorage.setItem('sr_game_name', gameNameRef.current.trim())
       sessionStorage.setItem('sr_is_host', 'true')
       navigateTo(`/host/game/${game_code}`)
     })
@@ -32,8 +42,10 @@ function HostPage() {
       setIsSubmitting(false)
     })
 
-    return () => { offCreated(); offError() }
-  }, [gameName])
+    return () => { 
+    socket.off('connect_error', onConnectError)  
+    offCreated(); offError() }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

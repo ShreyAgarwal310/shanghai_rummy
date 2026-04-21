@@ -42,8 +42,6 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
 
   useEffect(() => {
     socket.connect()
-    // Re-enter the server room after page reload (window.location.assign resets the socket)
-    if (myName) emitRejoinLobby(gameCode, myName)
 
     const offJoined = onPlayerJoined(({ players: updatedList }) => {
       setPlayers(updatedList)
@@ -60,6 +58,9 @@ function HostRoomPage({ gameId }: HostRoomPageProps) {
     const offError = onError(({ message }) => {
       setErrorMessage(message)
     })
+
+    // Emit after listeners are registered so the player_joined response is always caught
+    if (myName) emitRejoinLobby(gameCode, myName)
 
     return () => { offJoined(); offDisconnected(); offStarted(); offError() }
   }, [gameCode])

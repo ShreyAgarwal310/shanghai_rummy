@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { socket, emitJoinGame, onPlayerJoined, onError } from '../services/socketService'
 import { navigateTo } from '../utils/navigate'
@@ -12,6 +12,12 @@ function JoinPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  // Keep refs so the stable effect callback always reads the latest values
+  const gameCodeRef = useRef(gameCode)
+  const playerNameRef = useRef(playerName)
+  useEffect(() => { gameCodeRef.current = gameCode }, [gameCode])
+  useEffect(() => { playerNameRef.current = playerName }, [playerName])
+
   const handleBackClick = () => {
     navigateTo('/')
   }
@@ -20,9 +26,9 @@ function JoinPage() {
     socket.connect()
 
     const offJoined = onPlayerJoined(() => {
-      const code = gameCode.trim().toUpperCase()
+      const code = gameCodeRef.current.trim().toUpperCase()
       sessionStorage.setItem('sr_game_code', code)
-      sessionStorage.setItem('sr_player_name', playerName.trim())
+      sessionStorage.setItem('sr_player_name', playerNameRef.current.trim())
       sessionStorage.setItem('sr_is_host', 'false')
       navigateTo(`/host/game/${code}`)
     })
@@ -33,7 +39,7 @@ function JoinPage() {
     })
 
     return () => { offJoined(); offError() }
-  }, [gameCode, playerName])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCodeSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
