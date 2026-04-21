@@ -216,6 +216,86 @@ def register(sio):
         await sio.emit("hand_updated", {"hand": hand_to_list(current["hand"])}, to=sid)
 
     @sio.event
+    async def steal_joker(sid, data):
+        """
+        Client emits:
+          { game_code, target_player, meld_index, replacement_card: {rank, suit}, wildcard_index }
+
+        Replace a wildcard in a table meld with a natural card from your hand.
+        The stolen wildcard moves into your hand.
+        Only allowed in play phase after laying down your own contract.
+
+        Server emits:  meld_updated { target_player, meld_index, meld }  → room
+                       hand_updated { hand }  → player only
+        """
+        game_code = (data.get("game_code") or "").strip().upper()
+        target_name = data.get("target_player")
+        meld_index = data.get("meld_index")
+        replacement_data = data.get("replacement_card")
+        wildcard_index = data.get("wildcard_index")
+
+        if game_code not in games:
+            return await sio.emit("error", {"message": "Game not found"}, to=sid)
+        session = games[game_code]
+
+        current = get_current_player(session)
+        if current["sid"] != sid:
+            return await sio.emit("error", {"message": "It is not your turn"}, to=sid)
+        if session["phase"] != "play":
+            return await sio.emit("error", {"message": "Not in play phase"}, to=sid)
+        if not current["has_laid_down"]:
+            return await sio.emit("error", {"message": "Lay down your contract before stealing a joker"}, to=sid)
+
+        target_melds = session["melds_on_table"].get(target_name)
+        if target_melds is None:
+            return await sio.emit("error", {"message": f"No melds found for player {target_name!r}"}, to=sid)
+        if not isinstance(meld_index, int) or not (0 <= meld_index < len(target_melds)):
+            return await sio.emit("error", {"message": "Invalid meld_index"}, to=sid)
+
+        try:
+            replacement_card = dict_to_card(replacement_data)
+        except (KeyError, ValueError, TypeError) as exc:
+            return await sio.emit("error", {"message": f"Invalid replacement card: {exc}"}, to=sid)
+
+        if replacement_card.is_wildcard:
+            return await sio.emit("error", {"message": "Cannot use a wildcard to steal a wildcard"}, to=sid)
+
+        if replacement_card not in current["hand"].get_cards():
+            return await sio.emit("error", {"message": "Replacement card is not in your hand"}, to=sid)
+
+        existing = target_melds[meld_index]
+        meld_cards = existing["cards"]
+
+        if not isinstance(wildcard_index, int) or not (0 <= wildcard_index < len(meld_cards)):
+            return await sio.emit("error", {"message": "Invalid wildcard_index"}, to=sid)
+
+        stolen_card = meld_cards[wildcard_index]
+        if not stolen_card.is_wildcard:
+            return await sio.emit("error", {"message": "Target card is not a wildcard"}, to=sid)
+
+        new_cards = list(meld_cards)
+        new_cards[wildcard_index] = replacement_card
+        meld_type = existing["type"]
+        test_meld = SetMeld(new_cards) if meld_type == "set" else RunMeld(new_cards)
+        if not test_meld.is_valid():
+            return await sio.emit("error", {"message": "Replacement does not produce a valid meld"}, to=sid)
+
+        current["hand"].discard_card(replacement_card)
+        current["hand"].add_card(stolen_card)
+        existing["cards"] = new_cards
+
+        await sio.emit(
+            "meld_updated",
+            {
+                "target_player": target_name,
+                "meld_index": meld_index,
+                "meld": {"type": meld_type, "cards": [card_to_dict(c) for c in new_cards]},
+            },
+            room=game_code,
+        )
+        await sio.emit("hand_updated", {"hand": hand_to_list(current["hand"])}, to=sid)
+
+    @sio.event
     async def discard_card(sid, data):
         """
         Client emits:  { game_code: str, card: {rank, suit} }

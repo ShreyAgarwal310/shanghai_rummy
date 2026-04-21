@@ -37,6 +37,7 @@ import {
   emitLayDown,
   emitAddToMeld,
   emitDiscardCard,
+  emitStealJoker,
   emitRejoinGame,
   onGameState,
   onHandUpdated,
@@ -477,31 +478,43 @@ const handleToggleStealJoker = () => {
 
   const handleStealFromMeld = (groupIndex: number, meldIndex: number) => {
     if (isDemoGameComplete) { appendActivity('Demo complete.'); return }
-    if (!selectedCards) { appendActivity('Select a replacement card from your hand first.'); return }
+    if (selectedCards.length === 0) { appendActivity('Select a replacement card from your hand first.'); return }
     const targetGroup = meldGroups[groupIndex]
     const targetMeld = targetGroup?.melds[meldIndex]
     if (!targetGroup || !targetMeld) { appendActivity('Unable to target meld.'); return }
-    const wildcardIdx = canReplaceWildcardInMeld(selectedCards[0], targetMeld)
+    const replacement = selectedCards[0]
+    const wildcardIdx = canReplaceWildcardInMeld(replacement, targetMeld)
     if (wildcardIdx === -1) {
-      appendActivity(`${getCardDescription(selectedCards[0])} cannot replace any wildcard in that meld.`)
+      appendActivity(`${getCardDescription(replacement)} cannot replace any wildcard in that meld.`)
       return
     }
+
+    if (isLiveMode) {
+      if (!isMyTurn || livePhase !== 'play') { appendActivity('Not your turn.'); return }
+      if (!hasLaidDown) { appendActivity('Lay down your contract first.'); return }
+      emitStealJoker(gameCode, targetGroup.player, meldIndex, { rank: replacement.rank, suit: replacement.suit }, wildcardIdx)
+      clearSelection()
+      setStealJokerMode(false)
+      return
+    }
+
+    // Demo mode
     const stolenCard = targetMeld[wildcardIdx]
     setMeldGroups((groups) =>
       groups.map((g, gi) =>
         gi === groupIndex
-          ? { ...g, melds: g.melds.map((m, mi) => mi === meldIndex ? m.map((c, ci) => ci === wildcardIdx ? { rank: selectedCard.rank, suit: selectedCard.suit } : c) : m) }
+          ? { ...g, melds: g.melds.map((m, mi) => mi === meldIndex ? m.map((c, ci) => ci === wildcardIdx ? { rank: replacement.rank, suit: replacement.suit } : c) : m) }
           : g,
       ),
     )
     setHandCards((cards) => {
-      const filtered = cards.filter((c) => c.id !== selectedCards[0].id)
+      const filtered = cards.filter((c) => c.id !== replacement.id)
       return [...filtered, createHandCard(stolenCard)]
     })
     clearSelection()
     setStealJokerMode(false)
     setShowBuyAction(false)
-    appendActivity(`Stole ${getCardDescription(stolenCard)} from ${targetGroup.player}'s meld using ${getCardDescription(selectedCard)}.`)
+    appendActivity(`Stole ${getCardDescription(stolenCard)} from ${targetGroup.player}'s meld using ${getCardDescription(replacement)}.`)
   }
 
   const handleLayoffToMeld = (groupIndex: number, meldIndex: number) => {

@@ -112,6 +112,22 @@ export function emitDiscardCard(gameCode: string, card: Card) {
   socket.emit('discard_card', { game_code: gameCode, card })
 }
 
+export function emitStealJoker(
+  gameCode: string,
+  targetPlayer: string,
+  meldIndex: number,
+  replacementCard: Card,
+  wildcardIndex: number,
+) {
+  socket.emit('steal_joker', {
+    game_code: gameCode,
+    target_player: targetPlayer,
+    meld_index: meldIndex,
+    replacement_card: replacementCard,
+    wildcard_index: wildcardIndex,
+  })
+}
+
 // ── On helpers (server → client) ─────────────────────────────────────────────
 // Each returns an unsubscribe function to use in useEffect cleanup.
 
