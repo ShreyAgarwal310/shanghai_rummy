@@ -651,3 +651,7 @@
   .profile-page { padding: 16px 14px 40px; }
   .profile-frame { display: none; }
 }
+
+.profile-page p {
+  color: #ffffff;
+}

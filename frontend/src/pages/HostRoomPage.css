@@ -1039,3 +1039,7 @@
   .host-room-seat--west       {           left: 12%; }
   .host-room-seat--north-west { top: 21%; left: 17%; }
 }
+
+.host-dialog p {
+  color: #ffffff;
+}

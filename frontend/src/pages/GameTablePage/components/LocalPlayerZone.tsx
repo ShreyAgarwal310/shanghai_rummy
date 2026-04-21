@@ -10,6 +10,7 @@ type LocalPlayerZoneProps = {
   isMyTurn: boolean
   hasLaidDown: boolean
   isLiveMode: boolean
+  stealJokerMode: boolean
   onHandCardClick: (cardId: string) => void
   onAttemptMeld: () => void
   onSubmitLayDown: () => void
@@ -18,6 +19,7 @@ type LocalPlayerZoneProps = {
   onBuyAction: () => void
   onClearSelection: () => void
   onDiscard: () => void
+  onToggleStealJoker: () => void
 }
 
 function LocalPlayerZone({
@@ -28,6 +30,7 @@ function LocalPlayerZone({
   isMyTurn,
   hasLaidDown,
   isLiveMode,
+  stealJokerMode,
   onHandCardClick,
   onAttemptMeld,
   onSubmitLayDown,
@@ -36,6 +39,7 @@ function LocalPlayerZone({
   onBuyAction,
   onClearSelection,
   onDiscard,
+  onToggleStealJoker,
 }: LocalPlayerZoneProps) {
   const hasSelection = selectedCardIds.length > 0
 
@@ -132,6 +136,14 @@ function LocalPlayerZone({
             </button>
           )}
 
+          <button
+            type="button"
+            className={`game-action-bar__btn game-action-bar__btn--steal${stealJokerMode ? ' is-active' : ''}`}
+            onClick={onToggleStealJoker}
+            data-a11y-description="Toggle steal joker mode. Select a card from your hand, then click a meld containing a wildcard to steal it."
+          >
+            {stealJokerMode ? 'Cancel Steal' : 'Steal Joker'}
+          </button>
           <button
             type="button"
             className="game-action-bar__btn game-action-bar__btn--ghost"

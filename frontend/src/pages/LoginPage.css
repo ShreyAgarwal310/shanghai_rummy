@@ -162,3 +162,11 @@
   z-index: 5;
   pointer-events: none;
 }
+
+.login-page p {
+  color: #ffffff;
+}
+
+.login-page label {
+  color: #ffffff;
+}

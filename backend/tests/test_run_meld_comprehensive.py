@@ -1,41 +1,3 @@
-"""
-Comprehensive unit tests for RunMeld (app/melds/run_meld.py).
-
-Testing strategy
-----------------
-RunMeld.is_valid() is the most algorithmically complex validator in the
-project.  It must handle five independent concerns simultaneously:
-
-  1. Size constraints  – minimum 4 cards, at least 2 non-wildcards
-  2. Suit homogeneity  – all non-wildcard cards share one suit
-  3. Sequence gaps     – internal gaps ≤ 1 (wildcards fill gap-of-2 holes)
-  4. Wildcard rules    – no two wildcards may be adjacent; slot-capacity
-                         limits how many extra wildcards can surround the run
-  5. Ace ambiguity     – Ace is rank 1 *or* rank 14 (not both in one run)
-
-We partition the input space along each axis and combine where interactions
-matter (e.g., Ace + wildcard, multiple wildcards filling gaps vs. extras).
-
-We also unit-test the three private helper methods directly to verify their
-sub-contracts in isolation, giving confidence that failures in is_valid()
-can be quickly attributed to the right sub-routine.
-
-Equivalence classes tested
---------------------------
-Size          : < 4 cards, exactly 4, > 4
-Non-wild min  : 0, 1, exactly 2, > 2
-Suit          : all same, at least one mismatch
-Gap = 1       : consecutive (no wildcards needed)
-Gap = 2       : exactly one wildcard needed to fill hole
-Gap ≥ 3       : impossible even with wildcards
-Adjacent wilds: two wildcards touching each other (invalid)
-Extra wilds   : wildcards placed at ends or non-adjacently (valid)
-Slot overflow : more extra wildcards than available non-adjacent slots
-Ace-low       : A treated as 1 (A-2-3-4)
-Ace-high      : A treated as 14 (J-Q-K-A)
-Ace-wrap      : Q-K-A-2 crosses the high/low boundary (invalid)
-"""
-
 import unittest
 
 try:
@@ -48,10 +10,7 @@ setup_test_imports()
 from app.cards.card import Card
 from app.melds.run_meld import RunMeld
 
-
-# ---------------------------------------------------------------------------
 # Helpers
-# ---------------------------------------------------------------------------
 
 def H(rank):
     """A HEARTS card with the given rank string (non-wildcard for most ranks)."""
@@ -68,9 +27,7 @@ def WILD2():
     return Card(suit="CLUBS", rank="2")
 
 
-# ---------------------------------------------------------------------------
 # 1. Size / structural constraints
-# ---------------------------------------------------------------------------
 
 class TestRunMeldSizeConstraints(unittest.TestCase):
 
@@ -109,9 +66,7 @@ class TestRunMeldSizeConstraints(unittest.TestCase):
         self.assertTrue(meld.is_valid())
 
 
-# ---------------------------------------------------------------------------
 # 2. Suit homogeneity
-# ---------------------------------------------------------------------------
 
 class TestRunMeldSuitConstraints(unittest.TestCase):
 
@@ -144,9 +99,7 @@ class TestRunMeldSuitConstraints(unittest.TestCase):
         self.assertTrue(meld.is_valid())
 
 
-# ---------------------------------------------------------------------------
 # 3. Sequence and gap logic (no wildcards)
-# ---------------------------------------------------------------------------
 
 class TestRunMeldGapsNoWildcards(unittest.TestCase):
 
@@ -170,9 +123,7 @@ class TestRunMeldGapsNoWildcards(unittest.TestCase):
         self.assertFalse(meld.is_valid())
 
 
-# ---------------------------------------------------------------------------
 # 4. Wildcard fills internal gap
-# ---------------------------------------------------------------------------
 
 class TestRunMeldWildcardFillsGap(unittest.TestCase):
 
@@ -196,9 +147,7 @@ class TestRunMeldWildcardFillsGap(unittest.TestCase):
         self.assertTrue(meld.is_valid())
 
 
-# ---------------------------------------------------------------------------
 # 5. Adjacent wildcard rule
-# ---------------------------------------------------------------------------
 
 class TestRunMeldAdjacentWildcards(unittest.TestCase):
 
@@ -228,9 +177,7 @@ class TestRunMeldAdjacentWildcards(unittest.TestCase):
         self.assertTrue(meld.is_valid())
 
 
-# ---------------------------------------------------------------------------
 # 6. Slot-capacity overflow
-# ---------------------------------------------------------------------------
 
 class TestRunMeldSlotCapacity(unittest.TestCase):
 
@@ -248,9 +195,7 @@ class TestRunMeldSlotCapacity(unittest.TestCase):
         self.assertTrue(meld.is_valid())
 
 
-# ---------------------------------------------------------------------------
 # 7. Ace ambiguity (high / low / wrap)
-# ---------------------------------------------------------------------------
 
 class TestRunMeldAceHandling(unittest.TestCase):
 
@@ -279,9 +224,7 @@ class TestRunMeldAceHandling(unittest.TestCase):
         self.assertTrue(meld.is_valid())
 
 
-# ---------------------------------------------------------------------------
 # 8. Private helpers — tested directly to confirm sub-contracts
-# ---------------------------------------------------------------------------
 
 class TestRankOptions(unittest.TestCase):
     """_rank_options maps a rank string to its possible integer values."""
