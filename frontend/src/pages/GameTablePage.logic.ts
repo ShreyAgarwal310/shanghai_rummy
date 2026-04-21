@@ -34,8 +34,12 @@ export function buildCardBacks(count: number) {
   return Array.from({ length: visibleCards }, (_, index) => `${count}-${index}`)
 }
 
-function isWildcard(card: TableCard) {
+export function isWildcard(card: TableCard) {
   return card.rank === 'JOKER' || (card.rank === '2' && card.suit === 'CLUBS')
+}
+
+export function meldHasWildcard(meld: TableCard[]): boolean {
+  return meld.some(isWildcard)
 }
 
 function getNonWildCards(cards: TableCard[]) {
@@ -163,6 +167,16 @@ export function detectMeldKind(cards: TableCard[]): MeldKind | null {
     return 'run'
   }
   return null
+}
+
+export function canReplaceWildcardInMeld(handCard: TableCard, meld: TableCard[]): number {
+  if (isWildcard(handCard)) return -1
+  for (let i = 0; i < meld.length; i++) {
+    if (!isWildcard(meld[i])) continue
+    const replaced = [...meld.slice(0, i), handCard, ...meld.slice(i + 1)]
+    if (detectMeldKind(replaced) !== null) return i
+  }
+  return -1
 }
 
 export function getCardDescription(card: TableCard) {

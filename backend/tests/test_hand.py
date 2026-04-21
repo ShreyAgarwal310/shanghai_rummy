@@ -1,28 +1,3 @@
-"""
-Unit tests for the Hand class (app/hands.py).
-
-Testing strategy
-----------------
-Hand manages a mutable collection of Card objects and exposes methods
-for adding, removing, sorting, and scoring cards.  Because it has no
-external dependencies beyond Card, we can exercise every method in
-pure isolation.
-
-Equivalence classes / partitions
----------------------------------
-1. Size state   – empty hand vs. non-empty hand
-2. add_card     – idempotent growth (each call adds exactly one card)
-3. discard_card – card present (succeeds) vs. absent (ValueError)
-4. deadwood /   – number cards (face value), face cards (10 pts),
-   calculate_   – Ace (20 pts), wildcard (50 pts), mixed hand
-   value
-5. sort_cards   – already sorted, reverse-sorted, tie broken by suit
-6. get_cards    – returns a copy (mutation isolation)
-7. is_empty     – True before any add, False after, True again after discard
-8. __len__      – tracks add and discard operations
-9. __repr__     – string form is stable and readable
-"""
-
 import unittest
 
 try:
@@ -35,10 +10,7 @@ setup_test_imports()
 from app.cards.card import Card
 from app.hands import Hand
 
-
-# ---------------------------------------------------------------------------
 # Helpers
-# ---------------------------------------------------------------------------
 
 def make_card(rank, suit="HEARTS"):
     return Card(suit=suit, rank=rank)
@@ -47,10 +19,7 @@ def make_card(rank, suit="HEARTS"):
 JOKER = Card(suit="JOKER", rank="JOKER")
 TWO_OF_CLUBS = Card(suit="CLUBS", rank="2")   # wildcard by Shanghai rules
 
-
-# ---------------------------------------------------------------------------
 # 1. Empty-hand invariants
-# ---------------------------------------------------------------------------
 
 class TestHandInitialState(unittest.TestCase):
     def setUp(self):
@@ -75,9 +44,7 @@ class TestHandInitialState(unittest.TestCase):
         self.assertEqual(repr(self.hand), "Hand([])")
 
 
-# ---------------------------------------------------------------------------
 # 2 & 7 & 8. add_card, is_empty, __len__
-# ---------------------------------------------------------------------------
 
 class TestHandAddCard(unittest.TestCase):
     def setUp(self):
@@ -108,9 +75,7 @@ class TestHandAddCard(unittest.TestCase):
         self.assertEqual(len(self.hand), 1)
 
 
-# ---------------------------------------------------------------------------
 # 3. discard_card
-# ---------------------------------------------------------------------------
 
 class TestHandDiscardCard(unittest.TestCase):
     def setUp(self):
@@ -143,9 +108,7 @@ class TestHandDiscardCard(unittest.TestCase):
             empty.discard_card(make_card("3"))
 
 
-# ---------------------------------------------------------------------------
 # 4. deadwood / calculate_value — scoring partitions
-# ---------------------------------------------------------------------------
 
 class TestHandDeadwood(unittest.TestCase):
     def _hand_with(self, *cards):
@@ -195,9 +158,7 @@ class TestHandDeadwood(unittest.TestCase):
         self.assertEqual(h.calculate_value(), h.deadwood())
 
 
-# ---------------------------------------------------------------------------
 # 5. sort_cards
-# ---------------------------------------------------------------------------
 
 class TestHandSortCards(unittest.TestCase):
     def test_sort_ascending_by_rank(self):
@@ -247,9 +208,7 @@ class TestHandSortCards(unittest.TestCase):
         self.assertEqual(ranks, ["K", "A", "JOKER"])
 
 
-# ---------------------------------------------------------------------------
 # 6. get_cards — mutation isolation
-# ---------------------------------------------------------------------------
 
 class TestHandGetCards(unittest.TestCase):
     def test_returns_list(self):
@@ -277,9 +236,7 @@ class TestHandGetCards(unittest.TestCase):
         self.assertEqual(set(h.get_cards()), set(cards))
 
 
-# ---------------------------------------------------------------------------
 # 9. __repr__
-# ---------------------------------------------------------------------------
 
 class TestHandRepr(unittest.TestCase):
     def test_empty_repr(self):

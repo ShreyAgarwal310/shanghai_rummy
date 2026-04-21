@@ -6,24 +6,28 @@ type LocalPlayerZoneProps = {
   handCards: HandCard[]
   selectedCardId: string | null
   showBuyAction: boolean
+  stealJokerMode: boolean
   onHandCardClick: (cardId: string) => void
   onAttemptMeld: () => void
   onDrawFromDeck: () => void
   onDrawFromDiscard: () => void
   onBuyAction: () => void
   onClearSelection: () => void
+  onToggleStealJoker: () => void
 }
 
 function LocalPlayerZone({
   handCards,
   selectedCardId,
   showBuyAction,
+  stealJokerMode,
   onHandCardClick,
   onAttemptMeld,
   onDrawFromDeck,
   onDrawFromDiscard,
   onBuyAction,
   onClearSelection,
+  onToggleStealJoker,
 }: LocalPlayerZoneProps) {
   return (
     <section className="local-player-zone" aria-label="Your hand and status">
@@ -81,6 +85,14 @@ function LocalPlayerZone({
             data-a11y-description="Send buy intent when buy window is open."
           >
             Buy
+          </button>
+          <button
+            type="button"
+            className={`game-action-bar__btn game-action-bar__btn--steal${stealJokerMode ? ' is-active' : ''}`}
+            onClick={onToggleStealJoker}
+            data-a11y-description="Toggle steal joker mode. Select a card from your hand, then click a meld containing a wildcard to steal it."
+          >
+            {stealJokerMode ? 'Cancel Steal' : 'Steal Joker'}
           </button>
           <button
             type="button"

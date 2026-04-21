@@ -16,6 +16,7 @@ import {
 } from './GameTablePage.mock'
 import {
   buildMeldsByType,
+  canReplaceWildcardInMeld,
   detectMeldKind,
   getCardDescription,
   getMeldLaneClassName,
@@ -49,6 +50,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [topDiscardCard, setTopDiscardCard] = useState<TableCard>(discardTopCard)
   const [showBuyAction, setShowBuyAction] = useState(false)
+  const [stealJokerMode, setStealJokerMode] = useState(false)
   const [drawIndex, setDrawIndex] = useState(0)
   const [activityFeed, setActivityFeed] = useState<string[]>(['Demo mode active. Select one card, then choose a target.'])
 
@@ -106,6 +108,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     setSelectedCardId(null)
     setTopDiscardCard(discardTopCard)
     setShowBuyAction(false)
+    setStealJokerMode(false)
     setDrawIndex(0)
   }
 
@@ -178,6 +181,45 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     clearSelection()
     setShowBuyAction(false)
     appendActivity(`Meld (${kind}): ${selectedCards.map(getCardDescription).join(', ')}.`)
+  }
+
+  const handleToggleStealJoker = () => {
+    if (isDemoGameComplete) { appendActivity('Demo complete. Press Reset Demo to continue.'); return }
+    setStealJokerMode((cur) => {
+      if (!cur) appendActivity('Steal Joker mode on. Select a card from your hand, then click a meld containing a wildcard.')
+      else appendActivity('Steal Joker mode cancelled.')
+      return !cur
+    })
+    clearSelection()
+  }
+
+  const handleStealFromMeld = (groupIndex: number, meldIndex: number) => {
+    if (isDemoGameComplete) { appendActivity('Demo complete.'); return }
+    if (!selectedCard) { appendActivity('Select a replacement card from your hand first.'); return }
+    const targetGroup = meldGroups[groupIndex]
+    const targetMeld = targetGroup?.melds[meldIndex]
+    if (!targetGroup || !targetMeld) { appendActivity('Unable to target meld.'); return }
+    const wildcardIdx = canReplaceWildcardInMeld(selectedCard, targetMeld)
+    if (wildcardIdx === -1) {
+      appendActivity(`${getCardDescription(selectedCard)} cannot replace any wildcard in that meld.`)
+      return
+    }
+    const stolenCard = targetMeld[wildcardIdx]
+    setMeldGroups((groups) =>
+      groups.map((g, gi) =>
+        gi === groupIndex
+          ? { ...g, melds: g.melds.map((m, mi) => mi === meldIndex ? m.map((c, ci) => ci === wildcardIdx ? { rank: selectedCard.rank, suit: selectedCard.suit } : c) : m) }
+          : g,
+      ),
+    )
+    setHandCards((cards) => {
+      const filtered = cards.filter((c) => c.id !== selectedCard.id)
+      return [...filtered, createHandCard(stolenCard)]
+    })
+    clearSelection()
+    setStealJokerMode(false)
+    setShowBuyAction(false)
+    appendActivity(`Stole ${getCardDescription(stolenCard)} from ${targetGroup.player}'s meld using ${getCardDescription(selectedCard)}.`)
   }
 
   const handleLayoffToMeld = (groupIndex: number, meldIndex: number) => {
@@ -543,22 +585,26 @@ function GameTablePage({ gameId }: GameTablePageProps) {
               runLaneClassName={runLaneClassName}
               selectedCardsCount={selectedCards.length}
               showBuyAction={showBuyAction}
+              stealJokerMode={stealJokerMode}
               topDiscardCard={topDiscardCard}
               onDrawFromDeck={handleDrawFromDeck}
               onDiscardPileClick={handleDiscardPileClick}
               onLayoffToMeld={handleLayoffToMeld}
+              onStealFromMeld={handleStealFromMeld}
             />
 
             <LocalPlayerZone
               handCards={handCards}
               selectedCardId={selectedCardId}
               showBuyAction={showBuyAction}
+              stealJokerMode={stealJokerMode}
               onHandCardClick={handleHandCardClick}
               onAttemptMeld={handleAttemptMeld}
               onDrawFromDeck={handleDrawFromDeck}
               onDrawFromDiscard={handleDrawFromDiscard}
               onBuyAction={handleBuyAction}
               onClearSelection={handleClearSelection}
+              onToggleStealJoker={handleToggleStealJoker}
             />
           </section>
         </div>

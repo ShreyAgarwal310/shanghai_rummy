@@ -101,7 +101,7 @@ const tableMelds: MeldGroup[] = [
     melds: [
       [
         { rank: 'Q', suit: 'HEARTS' },
-        { rank: 'Q', suit: 'CLUBS' },
+        { rank: 'JOKER', suit: 'JOKER' },
         { rank: 'Q', suit: 'DIAMONDS' },
       ],
     ],
@@ -230,6 +230,7 @@ const initialLocalHandCards: HandCard[] = [
   { id: 'h9', rank: '5', suit: 'HEARTS' },
   { id: 'h10', rank: 'K', suit: 'CLUBS' },
   { id: 'h11', rank: 'JOKER', suit: 'JOKER' },
+  { id: 'h12', rank: 'Q', suit: 'CLUBS' },
 ]
 
 export function createInitialHandCards() {

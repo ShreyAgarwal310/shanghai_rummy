@@ -36,41 +36,7 @@
 /* ══════════════════════════════════════════════
    FIXED GOLD BORDER FRAME
    ══════════════════════════════════════════════ */
-.game-table-frame {
-  position: fixed;
-  inset: 10px;
-  pointer-events: none;
-  z-index: 100;
-  border: 3px solid rgba(228, 192, 52, 0.88);
-  border-radius: 4px;
-  box-shadow:
-    0 0 0 1px rgba(228, 192, 52, 0.22),
-    0 0 18px rgba(228, 192, 52, 0.14),
-    inset 0 0 18px rgba(228, 192, 52, 0.06);
-}
-.game-table-frame::before {
-  content: '';
-  position: absolute;
-  inset: 5px;
-  border: 1px solid rgba(228, 192, 52, 0.28);
-  border-radius: 2px;
-  pointer-events: none;
-}
-.game-table-frame__corner { position: absolute; width: 52px; height: 52px; }
-.game-table-frame__corner::after { content: '◆'; position: absolute; font-size: 0.72rem; color: rgba(228, 192, 52, 0.9); }
-.game-table-frame__corner--tl { top: -3px; left: -3px;   border-top: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
-.game-table-frame__corner--tr { top: -3px; right: -3px;  border-top: 3px solid rgba(228,192,52,0.95); border-right: 3px solid rgba(228,192,52,0.95); }
-.game-table-frame__corner--bl { bottom: -3px; left: -3px;  border-bottom: 3px solid rgba(228,192,52,0.95); border-left:  3px solid rgba(228,192,52,0.95); }
-.game-table-frame__corner--br { bottom: -3px; right: -3px; border-bottom: 3px solid rgba(228,192,52,0.95); border-right: 3px solid rgba(228,192,52,0.95); }
-.game-table-frame__corner--tl::after { bottom: 4px; right: 4px; }
-.game-table-frame__corner--tr::after { bottom: 4px; left: 4px; }
-.game-table-frame__corner--bl::after { top: 4px; right: 4px; }
-.game-table-frame__corner--br::after { top: 4px; left: 4px; }
-.game-table-frame__mid { position: absolute; color: rgba(228, 192, 52, 0.88); font-size: 0.9rem; line-height: 1; }
-.game-table-frame__mid--top    { top: 0;    left: 50%;  transform: translate(-50%, -50%); }
-.game-table-frame__mid--bottom { bottom: 0; left: 50%;  transform: translate(-50%, 50%);  }
-.game-table-frame__mid--left   { top: 50%;  left: 0;    transform: translate(-50%, -50%); }
-.game-table-frame__mid--right  { top: 50%;  right: 0;   transform: translate(50%, -50%);  }
+.game-table-frame { display: none; }
 
 /* ══════════════════════════════════════════════
    SCORE BAR — full-width, tight fit for 6 players

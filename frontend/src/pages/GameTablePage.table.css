@@ -404,6 +404,18 @@
   box-shadow: 0 0 0 2px rgba(228, 192, 52, 0.1);
 }
 
+.player-melds__meld--steal-target {
+  border-color: rgba(180, 60, 220, 0.75);
+  background: rgba(140, 40, 180, 0.1);
+  box-shadow: 0 0 0 2px rgba(180, 60, 220, 0.25), 0 0 12px rgba(180, 60, 220, 0.2);
+  animation: steal-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes steal-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(180, 60, 220, 0.25), 0 0 12px rgba(180, 60, 220, 0.2); }
+  50%       { box-shadow: 0 0 0 2px rgba(200, 80, 255, 0.5),  0 0 20px rgba(200, 80, 255, 0.35); }
+}
+
 .player-melds__meld:focus-visible {
   outline: 2px solid rgba(228, 192, 52, 0.7);
   outline-offset: 2px;
@@ -539,4 +551,18 @@
   border-color: rgba(228, 192, 52, 0.18);
   color: rgba(180, 155, 80, 0.6);
   background: transparent;
+}
+
+/* Steal Joker */
+.game-action-bar__btn--steal {
+  border-color: rgba(180, 60, 220, 0.55);
+  color: rgba(220, 170, 255, 0.95);
+  background: rgba(140, 40, 180, 0.12);
+}
+.game-action-bar__btn--steal:hover { filter: brightness(1.14); }
+.game-action-bar__btn--steal.is-active {
+  border-color: rgba(200, 80, 255, 0.8);
+  color: rgba(235, 200, 255, 1);
+  background: rgba(160, 50, 210, 0.28);
+  box-shadow: 0 0 8px rgba(180, 60, 240, 0.35);
 }

@@ -1,4 +1,4 @@
-import { buildCardBacks } from '../../GameTablePage.logic'
+import { buildCardBacks, meldHasWildcard } from '../../GameTablePage.logic'
 import type { OpponentSeat, TableCard } from '../../GameTablePage.mock'
 import type { MeldsByType } from '../../GameTablePage.types'
 import PlayingCard from './PlayingCard'
@@ -10,10 +10,12 @@ type TableCenterProps = {
   runLaneClassName: string
   selectedCardsCount: number
   showBuyAction: boolean
+  stealJokerMode: boolean
   topDiscardCard: TableCard
   onDrawFromDeck: () => void
   onDiscardPileClick: () => void
   onLayoffToMeld: (groupIndex: number, meldIndex: number) => void
+  onStealFromMeld: (groupIndex: number, meldIndex: number) => void
 }
 
 function TableCenter({
@@ -23,10 +25,12 @@ function TableCenter({
   runLaneClassName,
   selectedCardsCount,
   showBuyAction,
+  stealJokerMode,
   topDiscardCard,
   onDrawFromDeck,
   onDiscardPileClick,
   onLayoffToMeld,
+  onStealFromMeld,
 }: TableCenterProps) {
   return (
     <>
@@ -57,29 +61,33 @@ function TableCenter({
               {meldsByType.sets.length === 0 ? (
                 <p className="table-meld-lane__empty">No sets on table.</p>
               ) : (
-                meldsByType.sets.map((entry) => (
-                  <article key={`set-${entry.groupIndex}-${entry.meldIndex}`} className="meld-entry">
-                    <div className="meld-entry__top">
-                      <p className="meld-entry__owner">{entry.player}</p>
-                      <p className="meld-entry__meta">Set {entry.meldIndex + 1}</p>
-                    </div>
-                    <button
-                      type="button"
-                      className={`player-melds__meld ${selectedCardsCount > 0 ? 'player-melds__meld--active-target' : ''}`}
-                      onClick={() => onLayoffToMeld(entry.groupIndex, entry.meldIndex)}
-                      data-a11y-description={`Lay off selected cards onto ${entry.player}'s set meld ${entry.meldIndex + 1}. Backend validates this action.`}
-                    >
-                      {entry.cards.map((card, cardIndex) => (
-                        <PlayingCard
-                          key={`${entry.player}-${entry.meldIndex}-${card.rank}-${card.suit}-${cardIndex}`}
-                          card={card}
-                          size="meld"
-                          className="player-melds__card"
-                        />
-                      ))}
-                    </button>
-                  </article>
-                ))
+                meldsByType.sets.map((entry) => {
+                  const hasWild = meldHasWildcard(entry.cards)
+                  const isStealTarget = stealJokerMode && hasWild
+                  return (
+                    <article key={`set-${entry.groupIndex}-${entry.meldIndex}`} className="meld-entry">
+                      <div className="meld-entry__top">
+                        <p className="meld-entry__owner">{entry.player}</p>
+                        <p className="meld-entry__meta">Set {entry.meldIndex + 1}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className={`player-melds__meld ${isStealTarget ? 'player-melds__meld--steal-target' : selectedCardsCount > 0 ? 'player-melds__meld--active-target' : ''}`}
+                        onClick={() => stealJokerMode ? onStealFromMeld(entry.groupIndex, entry.meldIndex) : onLayoffToMeld(entry.groupIndex, entry.meldIndex)}
+                        data-a11y-description={isStealTarget ? `Steal a wildcard from ${entry.player}'s set meld ${entry.meldIndex + 1}.` : `Lay off selected cards onto ${entry.player}'s set meld ${entry.meldIndex + 1}. Backend validates this action.`}
+                      >
+                        {entry.cards.map((card, cardIndex) => (
+                          <PlayingCard
+                            key={`${entry.player}-${entry.meldIndex}-${card.rank}-${card.suit}-${cardIndex}`}
+                            card={card}
+                            size="meld"
+                            className="player-melds__card"
+                          />
+                        ))}
+                      </button>
+                    </article>
+                  )
+                })
               )}
             </div>
           </section>
@@ -119,29 +127,33 @@ function TableCenter({
               {meldsByType.runs.length === 0 ? (
                 <p className="table-meld-lane__empty">No runs on table.</p>
               ) : (
-                meldsByType.runs.map((entry) => (
-                  <article key={`run-${entry.groupIndex}-${entry.meldIndex}`} className="meld-entry">
-                    <div className="meld-entry__top">
-                      <p className="meld-entry__owner">{entry.player}</p>
-                      <p className="meld-entry__meta">Run {entry.meldIndex + 1}</p>
-                    </div>
-                    <button
-                      type="button"
-                      className={`player-melds__meld ${selectedCardsCount > 0 ? 'player-melds__meld--active-target' : ''}`}
-                      onClick={() => onLayoffToMeld(entry.groupIndex, entry.meldIndex)}
-                      data-a11y-description={`Lay off selected cards onto ${entry.player}'s run meld ${entry.meldIndex + 1}. Backend validates this action.`}
-                    >
-                      {entry.cards.map((card, cardIndex) => (
-                        <PlayingCard
-                          key={`${entry.player}-${entry.meldIndex}-${card.rank}-${card.suit}-${cardIndex}`}
-                          card={card}
-                          size="meld"
-                          className="player-melds__card"
-                        />
-                      ))}
-                    </button>
-                  </article>
-                ))
+                meldsByType.runs.map((entry) => {
+                  const hasWild = meldHasWildcard(entry.cards)
+                  const isStealTarget = stealJokerMode && hasWild
+                  return (
+                    <article key={`run-${entry.groupIndex}-${entry.meldIndex}`} className="meld-entry">
+                      <div className="meld-entry__top">
+                        <p className="meld-entry__owner">{entry.player}</p>
+                        <p className="meld-entry__meta">Run {entry.meldIndex + 1}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className={`player-melds__meld ${isStealTarget ? 'player-melds__meld--steal-target' : selectedCardsCount > 0 ? 'player-melds__meld--active-target' : ''}`}
+                        onClick={() => stealJokerMode ? onStealFromMeld(entry.groupIndex, entry.meldIndex) : onLayoffToMeld(entry.groupIndex, entry.meldIndex)}
+                        data-a11y-description={isStealTarget ? `Steal a wildcard from ${entry.player}'s run meld ${entry.meldIndex + 1}.` : `Lay off selected cards onto ${entry.player}'s run meld ${entry.meldIndex + 1}. Backend validates this action.`}
+                      >
+                        {entry.cards.map((card, cardIndex) => (
+                          <PlayingCard
+                            key={`${entry.player}-${entry.meldIndex}-${card.rank}-${card.suit}-${cardIndex}`}
+                            card={card}
+                            size="meld"
+                            className="player-melds__card"
+                          />
+                        ))}
+                      </button>
+                    </article>
+                  )
+                })
               )}
             </div>
           </section>
