@@ -1,32 +1,7 @@
 """
-In-memory game session store and helpers.
+in-memory game session store and helpers
+all mutable state lives here so the handlers stay stateless
 
-All mutable state lives here so handlers stay stateless.
-
-Session shape:
-{
-    game_code: str,
-    host_name: str,
-    phase: "lobby" | "draw" | "play" | "game_over",
-    round_number: int,          # 1-indexed; 0 = not started
-    contract: Contract | None,
-    deck: Deck | None,
-    discard_pile: DiscardPile | None,
-    current_player_idx: int,
-    total_scores: {player_name: int},
-    melds_on_table: {
-        player_name: [{"type": "set"|"run", "cards": [Card, ...]}]
-    },
-    players: [
-        {
-            name: str,
-            sid: str | None,    # None when disconnected
-            hand: Hand,
-            has_laid_down: bool,
-            score: int,
-        }
-    ],
-}
 """
 
 import random

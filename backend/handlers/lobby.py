@@ -29,8 +29,8 @@ def register(sio):
     @sio.event
     async def create_game(sid, data):
         """
-        Client emits:  { player_name: str }
-        Server emits:  game_created { game_code, player_name }  → creator
+        client send: player_name as a string
+        server sends the created game with paramters of game code and  the player name. attributes of the creator
         """
         player_name = (data.get("player_name") or "").strip()
         if not player_name:
@@ -107,11 +107,10 @@ def register(sio):
     @sio.event
     async def rejoin_game(sid, data):
         """
-        Client emits:  { game_code: str, player_name: str }
-        Called after a page reload mid-game. Re-enters the socket room and
-        sends the full game state back to the rejoining player.
-        Server emits:  game_state  → rejoining player only
-        Server emits:  player_reconnected { player_name }  → room
+        client sends game code and player as a string. the full game state is back to the rejoining player
+
+        the server will emit the game state to the rejoining player only and the player name for the reconnected player
+        in their room
         """
         game_code = (data.get("game_code") or "").strip().upper()
         player_name = (data.get("player_name") or "").strip()
@@ -133,7 +132,7 @@ def register(sio):
         sid_to_game[sid] = game_code
         await sio.enter_room(sid, game_code)
 
-        # Send full game state to the rejoining player
+        # sending full state to returning player
         await sio.emit(
             "game_state",
             build_player_view(session, player_name),
@@ -149,10 +148,9 @@ def register(sio):
     @sio.event
     async def rejoin_lobby(sid, data):
         """
-        Client emits:  { game_code: str, player_name: str }
-        Called after a page reload so the new socket re-enters the room.
-        Updates the player's sid and emits the current player list back.
-        Server emits:  player_joined { player_name, players: [str] }  → room
+        client sends the game code and player name as a string
+        it updates the player's sid and emits the current player list back
+        the server will send back that the player joined in players as a string to the room
         """
         game_code = (data.get("game_code") or "").strip().upper()
         player_name = (data.get("player_name") or "").strip()
@@ -181,10 +179,9 @@ def register(sio):
     @sio.event
     async def start_game(sid, data):
         """
-        Client emits:  { game_code: str }
-        Only the host can call this. Requires 2–6 players.
-        Server emits:  game_started { round_number, contract }  → room
-        Then sends:    game_state  → each player individually
+        client sends the game code as string. 
+        the server will emit that the game has stated with the parameters of round_number and contract.
+        it will then send the game state to each player
         """
         game_code = (data.get("game_code") or "").strip().upper()
         if game_code not in games:
