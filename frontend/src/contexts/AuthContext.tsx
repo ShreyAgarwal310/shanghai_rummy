@@ -24,6 +24,7 @@ type AuthContextValue = {
   signUp: (credentials: SignUpCredentials) => Promise<string | null>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
+  changePassword: (newPassword: string) => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -170,6 +171,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return null
   }
 
+  const changePassword = async (newPassword: string) => {
+    if (!supabase) {
+      throw new Error('Supabase is not configured.')
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    if (error) {
+      throw error
+    }
+  }
+
   const signOut = async () => {
     if (!supabase) {
       return
@@ -196,6 +208,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signUp,
         signOut,
         refreshProfile,
+        changePassword,
       }}
     >
       {children}
