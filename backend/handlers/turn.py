@@ -127,6 +127,30 @@ async def _advance_turn(sio, session: dict, game_code: str) -> None:
 def register(sio):
 
     @sio.event
+    async def rejoin_game(sid, data):
+        game_code = (data.get("game_code") or "").strip().upper()
+        player_name = (data.get("player_name") or "").strip()
+
+        if game_code not in games:
+            return await sio.emit("error", {"message": "Game not found"}, to=sid)
+
+        session = games[game_code]
+        player = next((p for p in session["players"] if p["name"] == player_name), None)
+        if player is None:
+            return await sio.emit("error", {"message": "Player not in this game"}, to=sid)
+
+        from session_manager import sid_to_game
+        player["sid"] = sid
+        sid_to_game[sid] = game_code
+        await sio.enter_room(sid, game_code)
+
+        await sio.emit("game_state", build_player_view(session, player_name), to=sid)
+
+        current = get_current_player(session)
+        if current["name"] == player_name:
+            _cancel_bot_task(game_code)
+
+    @sio.event
     async def draw_card(sid, data):
         """
         the client sends the game code as a string, the source is the deck and discard
