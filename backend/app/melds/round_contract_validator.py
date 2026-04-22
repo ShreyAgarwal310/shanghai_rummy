@@ -1,11 +1,11 @@
 from typing import List, Optional                                                                                                                          
                                                                                                                                                              
-  try:                                                                                                                                                       
+try:                                                                                                                                                       
       from app.melds.meld import Meld
       from app.melds.set_meld import SetMeld                                                                                                                 
       from app.melds.run_meld import RunMeld
       from app.rules.contract import Contract                                                                                                                
-  except ModuleNotFoundError:
+except ModuleNotFoundError:
       import sys
       from pathlib import Path                                                                                                                               
       sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -15,7 +15,7 @@ from typing import List, Optional
       from app.rules.contract import Contract                                                                                                                
   
                                                                                                                                                              
-  class StagedMeldArea:
+class StagedMeldArea:
       """
       Holds melds a player has staged before committing to lay down.
       Knows the contract for the current round and can report whether                                                                                        
