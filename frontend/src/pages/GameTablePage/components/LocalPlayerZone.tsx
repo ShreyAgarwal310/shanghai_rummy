@@ -1,12 +1,20 @@
-import type { HandCard } from '../../GameTablePage.mock'
+import type { HandCard, TableCard } from '../../GameTablePage.mock'
 import { getCardDescription } from '../../GameTablePage.logic'
 import PlayingCard from './PlayingCard'
+
+type PendingMeld = { type: 'set' | 'run'; cards: TableCard[] }
+
+type ContractRequirements = {
+  requiredSets: number
+  requiredRuns: number
+}
 
 type LocalPlayerZoneProps = {
   handCards: HandCard[]
   selectedCardIds: string[]
   showBuyAction: boolean
-  pendingMeldCount: number
+  pendingMelds: PendingMeld[]
+  contract: ContractRequirements
   isMyTurn: boolean
   hasLaidDown: boolean
   isLiveMode: boolean
@@ -22,11 +30,18 @@ type LocalPlayerZoneProps = {
   onToggleStealJoker: () => void
 }
 
+function isContractSatisfied(pendingMelds: PendingMeld[], contract: ContractRequirements): boolean {
+  const stagedSets = pendingMelds.filter((m) => m.type === 'set').length
+  const stagedRuns = pendingMelds.filter((m) => m.type === 'run').length
+  return stagedSets >= contract.requiredSets && stagedRuns >= contract.requiredRuns
+}
+
 function LocalPlayerZone({
   handCards,
   selectedCardIds,
   showBuyAction,
-  pendingMeldCount,
+  pendingMelds,
+  contract,
   isMyTurn,
   hasLaidDown,
   isLiveMode,
@@ -42,6 +57,9 @@ function LocalPlayerZone({
   onToggleStealJoker,
 }: LocalPlayerZoneProps) {
   const hasSelection = selectedCardIds.length > 0
+  const pendingMeldCount = pendingMelds.length
+  const contractMet = pendingMeldCount > 0 && isContractSatisfied(pendingMelds, contract)
+
 
   return (
     <section className="local-player-zone" aria-label="Your hand and status">
@@ -90,7 +108,7 @@ function LocalPlayerZone({
             Draw Discard
           </button>
 
-          {/* Meld / lay-down */}
+          {/* Stage Meld — hidden once laid down in live mode */}
           {(!isLiveMode || !hasLaidDown) && (
             <button
               type="button"
