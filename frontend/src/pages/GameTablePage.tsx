@@ -950,7 +950,8 @@ function GameTablePage({ gameId }: GameTablePageProps) {
               handCards={handCards}
               selectedCardIds={selectedCardIds}
               showBuyAction={showBuyAction}
-              pendingMeldCount={pendingMelds.length}
+              pendingMelds={pendingMelds}
+              contract={contractRequirements}
               isMyTurn={isLiveMode ? isMyTurn : true}
               hasLaidDown={hasLaidDown}
               isLiveMode={isLiveMode}
