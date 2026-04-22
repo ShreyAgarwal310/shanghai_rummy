@@ -171,6 +171,8 @@ def register(sio):
             return await sio.emit("error", {"message": "Not in draw phase"}, to=sid)
         if source not in ("deck", "discard"):
             return await sio.emit("error", {"message": "source must be 'deck' or 'discard'"}, to=sid)
+        if source == "discard" and current["has_laid_down"]:
+            return await sio.emit("error", {"message": "You cannot draw from the discard pile after completing your contract"}, to=sid)
 
         _cancel_bot_task(game_code)
 
