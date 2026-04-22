@@ -60,8 +60,6 @@ function LocalPlayerZone({
   const pendingMeldCount = pendingMelds.length
   const contractMet = pendingMeldCount > 0 && isContractSatisfied(pendingMelds, contract)
 
-  // Show the Lay Down button whenever melds are staged and the player hasn't laid down yet
-  const showLayDown = pendingMeldCount > 0 && !hasLaidDown
 
   return (
     <section className="local-player-zone" aria-label="Your hand and status">
