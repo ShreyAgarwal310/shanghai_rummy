@@ -1,5 +1,6 @@
 import type { CardRank, CardSuit, MeldGroup, TableCard } from './GameTablePage.mock'
 import type { MeldDisplayEntry, MeldKind, MeldsByType } from './GameTablePage.types'
+import type { GameState } from '../services/socketService'
 
 export const suitSymbols: Record<CardSuit, string> = {
   CLUBS: '♣',
@@ -214,6 +215,15 @@ export function buildMeldsByType(meldGroups: MeldGroup[]): MeldsByType {
   })
 
   return { sets, runs }
+}
+
+export function applyMeldLaid(state: GameState, playerName: string): GameState {
+  return {
+    ...state,
+    players: state.players.map((p) =>
+      p.name === playerName ? { ...p, has_laid_down: true } : p,
+    ),
+  }
 }
 
 export function getMeldLaneClassName(meldCount: number) {

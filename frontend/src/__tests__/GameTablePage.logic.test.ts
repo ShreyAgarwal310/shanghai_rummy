@@ -40,7 +40,9 @@ import {
   getCardDescription,
   buildMeldsByType,
   getMeldLaneClassName,
+  applyMeldLaid,
 } from '../pages/GameTablePage.logic'
+import type { GameState } from '../services/socketService'
 
 // Helpers
 
@@ -457,5 +459,64 @@ describe('getMeldLaneClassName', () => {
 
   it('returns ultra class for more than 6 melds', () => {
     expect(getMeldLaneClassName(10)).toBe('table-meld-lane table-meld-lane--ultra')
+  })
+})
+
+// applyMeldLaid
+
+function makeState(players: { name: string; has_laid_down: boolean }[]): GameState {
+  return {
+    phase: 'play',
+    round_number: 1,
+    contract: { required_sets: 2, required_runs: 0 },
+    current_player: players[0]?.name ?? null,
+    players: players.map((p) => ({
+      name: p.name,
+      card_count: 5,
+      has_laid_down: p.has_laid_down,
+      total_score: 0,
+      connected: true,
+    })),
+    discard_top: null,
+    deck_size: 40,
+    melds_on_table: {},
+    total_scores: {},
+  }
+}
+
+describe('applyMeldLaid', () => {
+  it('sets has_laid_down to true for the named player', () => {
+    const state = makeState([{ name: 'Alice', has_laid_down: false }])
+    const next = applyMeldLaid(state, 'Alice')
+    expect(next.players[0].has_laid_down).toBe(true)
+  })
+
+  it('does not mutate other players', () => {
+    const state = makeState([
+      { name: 'Alice', has_laid_down: false },
+      { name: 'Bob', has_laid_down: false },
+    ])
+    const next = applyMeldLaid(state, 'Alice')
+    expect(next.players[1].has_laid_down).toBe(false)
+  })
+
+  it('preserves all other state fields unchanged', () => {
+    const state = makeState([{ name: 'Alice', has_laid_down: false }])
+    const next = applyMeldLaid(state, 'Alice')
+    expect(next.phase).toBe(state.phase)
+    expect(next.round_number).toBe(state.round_number)
+    expect(next.deck_size).toBe(state.deck_size)
+  })
+
+  it('is a no-op for an unrecognised player name', () => {
+    const state = makeState([{ name: 'Alice', has_laid_down: false }])
+    const next = applyMeldLaid(state, 'Charlie')
+    expect(next.players[0].has_laid_down).toBe(false)
+  })
+
+  it('is idempotent — applying twice leaves has_laid_down true', () => {
+    const state = makeState([{ name: 'Alice', has_laid_down: false }])
+    const next = applyMeldLaid(applyMeldLaid(state, 'Alice'), 'Alice')
+    expect(next.players[0].has_laid_down).toBe(true)
   })
 })
