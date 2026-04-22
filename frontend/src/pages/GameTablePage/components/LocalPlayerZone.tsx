@@ -1,12 +1,20 @@
-import type { HandCard } from '../../GameTablePage.mock'
+import type { HandCard, TableCard } from '../../GameTablePage.mock'
 import { getCardDescription } from '../../GameTablePage.logic'
 import PlayingCard from './PlayingCard'
+
+type PendingMeld = { type: 'set' | 'run'; cards: TableCard[] }
+
+type ContractRequirements = {
+  requiredSets: number
+  requiredRuns: number
+}
 
 type LocalPlayerZoneProps = {
   handCards: HandCard[]
   selectedCardIds: string[]
   showBuyAction: boolean
-  pendingMeldCount: number
+  pendingMelds: PendingMeld[]
+  contract: ContractRequirements
   isMyTurn: boolean
   hasLaidDown: boolean
   isLiveMode: boolean
@@ -22,11 +30,18 @@ type LocalPlayerZoneProps = {
   onToggleStealJoker: () => void
 }
 
+function isContractSatisfied(pendingMelds: PendingMeld[], contract: ContractRequirements): boolean {
+  const stagedSets = pendingMelds.filter((m) => m.type === 'set').length
+  const stagedRuns = pendingMelds.filter((m) => m.type === 'run').length
+  return stagedSets >= contract.requiredSets && stagedRuns >= contract.requiredRuns
+}
+
 function LocalPlayerZone({
   handCards,
   selectedCardIds,
   showBuyAction,
-  pendingMeldCount,
+  pendingMelds,
+  contract,
   isMyTurn,
   hasLaidDown,
   isLiveMode,
@@ -42,6 +57,11 @@ function LocalPlayerZone({
   onToggleStealJoker,
 }: LocalPlayerZoneProps) {
   const hasSelection = selectedCardIds.length > 0
+  const pendingMeldCount = pendingMelds.length
+  const contractMet = pendingMeldCount > 0 && isContractSatisfied(pendingMelds, contract)
+
+  // Show the Lay Down button whenever melds are staged and the player hasn't laid down yet
+  const showLayDown = pendingMeldCount > 0 && !hasLaidDown
 
   return (
     <section className="local-player-zone" aria-label="Your hand and status">
@@ -90,7 +110,7 @@ function LocalPlayerZone({
             Draw Discard
           </button>
 
-          {/* Meld / lay-down */}
+          {/* Stage Meld — hidden once laid down in live mode */}
           {(!isLiveMode || !hasLaidDown) && (
             <button
               type="button"
@@ -102,16 +122,25 @@ function LocalPlayerZone({
             </button>
           )}
 
-          {isLiveMode && pendingMeldCount > 0 && (
-            <button
-              type="button"
-              className="game-action-bar__btn game-action-bar__btn--primary"
-              onClick={onSubmitLayDown}
-              data-a11y-description="Submit all staged melds to the server."
-            >
-              Submit Lay Down ({pendingMeldCount})
-            </button>
-          )}
+          {/* Lay Down — visible whenever melds are staged; enabled only when contract is met */}
+          <button
+  type="button"
+  className="game-action-bar__btn game-action-bar__btn--primary"
+  onClick={onSubmitLayDown}
+  disabled={!contractMet || pendingMeldCount === 0 || hasLaidDown}
+  title={
+    hasLaidDown
+      ? 'You have already laid down'
+      : pendingMeldCount === 0
+      ? 'Stage at least one meld first'
+      : !contractMet
+      ? `Need ${contract.requiredSets} set(s) and ${contract.requiredRuns} run(s)`
+      : 'Lay down your melds'
+  }
+  data-a11y-description="Submit all staged melds to the table."
+>
+  Lay Down ({pendingMeldCount})
+</button>
 
           {/* Discard */}
           {isLiveMode ? (

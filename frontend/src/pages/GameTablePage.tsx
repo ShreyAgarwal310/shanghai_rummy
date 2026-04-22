@@ -324,6 +324,20 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     [selectedCards],
   )
 
+  // ── Contract requirements (drives Lay Down enabled state) ─
+  const contractRequirements = useMemo(() => {
+    if (isLiveMode && liveState.contract) {
+      return {
+        requiredSets: liveState.contract.required_sets,
+        requiredRuns: liveState.contract.required_runs,
+      }
+    }
+    return {
+      requiredSets: currentDemoRound.requiredSets,
+      requiredRuns: currentDemoRound.requiredRuns,
+    }
+  }, [isLiveMode, liveState, currentDemoRound])
+
   // ── Helpers ───────────────────────────────────────────────
   const clearSelection = () => setSelectedCardIds([])
 
@@ -444,37 +458,45 @@ function GameTablePage({ gameId }: GameTablePageProps) {
       return
     }
 
-    // Demo mode
-    setMeldGroups((groups) => {
-      const idx = groups.findIndex((g) => g.player === 'You')
-      if (idx < 0) return [{ player: 'You', melds: [selectedTableCards] }, ...groups]
-      return groups.map((g, i) =>
-        i === idx ? { ...g, melds: [...g.melds, selectedTableCards] } : g,
-      )
-    })
+    // Demo mode — also stage rather than immediately commit to the table
+    setPendingMelds((prev) => [...prev, { type: kind, cards: selectedTableCards }])
     removeSelectedCardsFromHand(selectedCards)
     clearSelection()
     setShowBuyAction(false)
-    appendActivity(`Meld (${kind}): ${selectedCards.map(getCardDescription).join(', ')}.`)
+    appendActivity(`Staged ${kind}: ${selectedCards.map(getCardDescription).join(', ')}.`)
   }
 
- const handleSubmitLayDown = () => {
-  if (pendingMelds.length === 0) return
-  emitLayDown(gameCode, pendingMelds)
-}
-
-const handleToggleStealJoker = () => {
-  if (isDemoGameComplete) {
-    appendActivity('Demo complete. Press Reset Demo to continue.')
-    return
+  const handleSubmitLayDown = () => {
+    if (pendingMelds.length === 0) return
+    if (isLiveMode) {
+      emitLayDown(gameCode, pendingMelds)
+      return
+    }
+    // Demo mode — commit staged melds to the table
+    setMeldGroups((groups) => {
+      const newMelds = pendingMelds.map((m) => m.cards)
+      const idx = groups.findIndex((g) => g.player === 'You')
+      if (idx < 0) return [{ player: 'You', melds: newMelds }, ...groups]
+      return groups.map((g, i) =>
+        i === idx ? { ...g, melds: [...g.melds, ...newMelds] } : g,
+      )
+    })
+    setPendingMelds([])
+    appendActivity(`Laid down ${pendingMelds.length} meld(s).`)
   }
-  setStealJokerMode((cur) => {
-    if (!cur) appendActivity('Steal Joker mode on...')
-    else appendActivity('Steal Joker mode cancelled.')
-    return !cur
-  })
-  clearSelection()
-}
+
+  const handleToggleStealJoker = () => {
+    if (isDemoGameComplete) {
+      appendActivity('Demo complete. Press Reset Demo to continue.')
+      return
+    }
+    setStealJokerMode((cur) => {
+      if (!cur) appendActivity('Steal Joker mode on...')
+      else appendActivity('Steal Joker mode cancelled.')
+      return !cur
+    })
+    clearSelection()
+  }
 
   const handleStealFromMeld = (groupIndex: number, meldIndex: number) => {
     if (isDemoGameComplete) { appendActivity('Demo complete.'); return }
@@ -928,7 +950,8 @@ const handleToggleStealJoker = () => {
               handCards={handCards}
               selectedCardIds={selectedCardIds}
               showBuyAction={showBuyAction}
-              pendingMeldCount={pendingMelds.length}
+              pendingMelds={pendingMelds}
+              contract={contractRequirements}
               isMyTurn={isLiveMode ? isMyTurn : true}
               hasLaidDown={hasLaidDown}
               isLiveMode={isLiveMode}
