@@ -22,11 +22,9 @@
 .host-page__back {
   position: fixed;
   top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 30px;
   z-index: 20;
-  
-  /* Matches your pill-style "Leaderboard" buttons */
+
   padding: 10px 25px;
   border-radius: 50px;
   font-family: var(--font-display);
@@ -43,7 +41,7 @@
 .host-page__back:hover {
   background: rgba(212, 175, 55, 0.1);
   border-color: var(--gold-bright);
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateY(-2px);
 }
 
 /* ══════════════════════════════════════════════
