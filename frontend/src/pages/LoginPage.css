@@ -130,6 +130,22 @@
   box-shadow: 0 15px 30px rgba(0,0,0,0.6);
 }
 
+.login-page__forgot-btn {
+  display: block;
+  margin: 0.75rem auto 0;
+  background: none;
+  border: none;
+  color: rgba(212, 175, 55, 0.7);
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.login-page__forgot-btn:hover {
+  color: var(--gold-bright);
+}
+
 /* Form Inputs */
 .login-page__field input {
   width: 100%;

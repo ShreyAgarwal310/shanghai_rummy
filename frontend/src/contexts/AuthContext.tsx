@@ -25,6 +25,7 @@ type AuthContextValue = {
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
   changePassword: (newPassword: string) => Promise<void>
+  forgotPassword: (email: string) => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -138,6 +139,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
       throw new Error('Supabase is not configured.')
     }
 
+    const { data: existingEmail } = await supabase
+      .from('profiles')
+      .select('id')
+      .ilike('email', email.trim())
+      .maybeSingle()
+
+    if (existingEmail) {
+      throw new Error('An account with that email already exists.')
+    }
+
+    const { data: existingName } = await supabase
+      .from('profiles')
+      .select('id')
+      .ilike('display_name', displayName.trim())
+      .maybeSingle()
+
+    if (existingName) {
+      throw new Error('That display name is already taken.')
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -169,6 +190,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     return null
+  }
+
+  const forgotPassword = async (email: string) => {
+    if (!supabase) {
+      throw new Error('Supabase is not configured.')
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/profile`,
+    })
+    if (error) {
+      throw error
+    }
   }
 
   const changePassword = async (newPassword: string) => {
@@ -209,6 +243,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signOut,
         refreshProfile,
         changePassword,
+        forgotPassword,
       }}
     >
       {children}
