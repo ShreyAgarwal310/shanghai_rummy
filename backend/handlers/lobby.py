@@ -156,3 +156,30 @@ def register(sio):
 
         from handlers.turn import _schedule_bot_if_needed
         _schedule_bot_if_needed(sio, session, game_code)
+
+    @sio.event
+    async def rejoin_lobby(sid, data):
+        game_code = (data.get("game_code") or "").strip().upper()
+        player_name = (data.get("player_name") or "").strip()
+
+        if game_code not in games:
+            return await sio.emit("error", {"message": "Game not found"}, to=sid)
+
+        session = games[game_code]
+
+        if session["phase"] != "lobby":
+            return await sio.emit("error", {"message": "Game already in progress"}, to=sid)
+
+        player = next((p for p in session["players"] if p["name"] == player_name), None)
+        if player is None:
+            return await sio.emit("error", {"message": "Player not in this game"}, to=sid)
+
+        player["sid"] = sid
+        sid_to_game[sid] = game_code
+        await sio.enter_room(sid, game_code)
+
+        await sio.emit(
+            "player_joined",
+            {"player_name": player_name, "players": [p["name"] for p in session["players"]]},
+            room=game_code,
+        )
