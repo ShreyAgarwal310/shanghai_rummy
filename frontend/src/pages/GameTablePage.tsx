@@ -18,6 +18,7 @@ import {
   type TableCard,
 } from './GameTablePage.mock'
 import {
+  applyMeldLaid,
   buildMeldsByType,
   canReplaceWildcardInMeld,
   detectMeldKind,
@@ -209,16 +210,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
         }
         return [...prev, { player: player_name, melds: newMelds }]
       })
-      setLiveState((prev) =>
-        prev
-          ? {
-              ...prev,
-              players: prev.players.map((p) =>
-                p.name === player_name ? { ...p, has_laid_down: true } : p,
-              ),
-            }
-          : prev,
-      )
+      setLiveState((prev) => prev ? applyMeldLaid(prev, player_name) : prev)
       setPendingMelds([])
       appendActivity(`${player_name} laid down ${melds.length} meld(s).`)
     })
