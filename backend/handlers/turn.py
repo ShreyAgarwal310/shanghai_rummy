@@ -3,12 +3,125 @@ In-game turn events: draw_card, lay_down, add_to_meld, discard_card.
 Also handles round-over and game-over logic.
 """
 
+import asyncio
+
 from app.melds.run_meld import RunMeld
 from app.melds.set_meld import SetMeld
 from app.rules.contract import CONTRACTS
 from app.rules.rules_engine import RulesEngine
 from serializers import build_player_view, card_to_dict, dict_to_card, hand_to_list
 from session_manager import games, get_current_player, init_round
+
+# Seconds before the bot plays for an idle connected player
+INACTIVITY_TIMEOUT = 30
+# Seconds before the bot plays for a disconnected player
+DISCONNECTED_DELAY = 3
+
+# game_code -> pending asyncio.Task
+bot_tasks: dict[str, asyncio.Task] = {}
+
+
+def _cancel_bot_task(game_code: str) -> None:
+    task = bot_tasks.pop(game_code, None)
+    if task and not task.done():
+        task.cancel()
+
+
+def _schedule_bot_if_needed(sio, session: dict, game_code: str) -> None:
+    _cancel_bot_task(game_code)
+    current = get_current_player(session)
+    delay = DISCONNECTED_DELAY if current["sid"] is None else INACTIVITY_TIMEOUT
+    bot_tasks[game_code] = asyncio.create_task(
+        _bot_play_after_delay(sio, game_code, delay)
+    )
+
+
+async def _bot_play_after_delay(sio, game_code: str, delay: float) -> None:
+    await asyncio.sleep(delay)
+    await _bot_play(sio, game_code)
+
+
+async def _bot_play(sio, game_code: str) -> None:
+    if game_code not in games:
+        return
+    session = games[game_code]
+    if session["phase"] not in ("draw", "play"):
+        return
+
+    current = get_current_player(session)
+    print(f"[bot] playing for {current['name']} in {game_code}")
+
+    if session["phase"] == "draw":
+        if not session["deck"].is_empty():
+            card = session["deck"].draw()
+        elif not session["discard_pile"].is_empty():
+            card = session["discard_pile"].take_top_card()
+        else:
+            # No cards to draw — skip straight to discard
+            session["phase"] = "play"
+            await _bot_discard(sio, session, game_code)
+            return
+
+        current["hand"].add_card(card)
+        session["phase"] = "play"
+        discard_top = session["discard_pile"].top_card()
+
+        await sio.emit(
+            "card_drawn",
+            {
+                "player_name": current["name"],
+                "source": "deck",
+                "card": None,
+                "deck_size": len(session["deck"]),
+                "discard_top": card_to_dict(discard_top) if discard_top else None,
+            },
+            room=game_code,
+        )
+
+    await _bot_discard(sio, session, game_code)
+
+
+async def _bot_discard(sio, session: dict, game_code: str) -> None:
+    current = get_current_player(session)
+    hand_cards = current["hand"].get_cards()
+
+    if not hand_cards:
+        await _advance_turn(sio, session, game_code)
+        return
+
+    card = hand_cards[0]
+    current["hand"].discard_card(card)
+    session["discard_pile"].add_card(card)
+    discard_top = session["discard_pile"].top_card()
+
+    await sio.emit(
+        "card_discarded",
+        {
+            "player_name": current["name"],
+            "card": card_to_dict(card),
+            "discard_top": card_to_dict(discard_top) if discard_top else None,
+            "deck_size": len(session["deck"]),
+        },
+        room=game_code,
+    )
+
+    if RulesEngine.can_go_out(current["hand"], current["has_laid_down"]):
+        await _end_round(sio, session, game_code)
+        return
+
+    await _advance_turn(sio, session, game_code)
+
+
+async def _advance_turn(sio, session: dict, game_code: str) -> None:
+    session["current_player_idx"] = (session["current_player_idx"] + 1) % len(session["players"])
+    session["phase"] = "draw"
+    next_player = get_current_player(session)
+    await sio.emit(
+        "turn_started",
+        {"current_player": next_player["name"], "phase": "draw"},
+        room=game_code,
+    )
+    _schedule_bot_if_needed(sio, session, game_code)
 
 
 def register(sio):
@@ -34,6 +147,8 @@ def register(sio):
             return await sio.emit("error", {"message": "Not in draw phase"}, to=sid)
         if source not in ("deck", "discard"):
             return await sio.emit("error", {"message": "source must be 'deck' or 'discard'"}, to=sid)
+
+        _cancel_bot_task(game_code)
 
         if source == "deck":
             if session["deck"].is_empty():
@@ -335,16 +450,7 @@ def register(sio):
             await _end_round(sio, session, game_code)
             return
 
-        # Advance to next player
-        session["current_player_idx"] = (session["current_player_idx"] + 1) % len(session["players"])
-        session["phase"] = "draw"
-
-        next_player = get_current_player(session)
-        await sio.emit(
-            "turn_started",
-            {"current_player": next_player["name"], "phase": "draw"},
-            room=game_code,
-        )
+        await _advance_turn(sio, session, game_code)
 
 
 async def _end_round(sio, session: dict, game_code: str) -> None:
@@ -391,3 +497,4 @@ async def _end_round(sio, session: dict, game_code: str) -> None:
         for p in session["players"]:
             if p["sid"]:
                 await sio.emit("game_state", build_player_view(session, p["name"]), to=p["sid"])
+        _schedule_bot_if_needed(sio, session, game_code)

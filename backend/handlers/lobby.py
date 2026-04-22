@@ -4,7 +4,7 @@ Lobby events: create_game, join_game, start_game, connect, disconnect.
 
 from app.hands import Hand
 from serializers import build_player_view
-from session_manager import games, sid_to_game, generate_game_code, init_round
+from session_manager import games, sid_to_game, generate_game_code, get_current_player, init_round
 
 
 def register(sio):
@@ -20,11 +20,21 @@ def register(sio):
         if not game_code or game_code not in games:
             return
         session = games[game_code]
+
+        disconnected_name = None
         for p in session["players"]:
             if p["sid"] == sid:
                 p["sid"] = None
+                disconnected_name = p["name"]
                 await sio.emit("player_disconnected", {"player_name": p["name"]}, room=game_code)
                 break
+
+        # If it's the disconnected player's turn, hand off to the bot immediately
+        if disconnected_name and session["phase"] in ("draw", "play"):
+            from handlers.turn import _schedule_bot_if_needed
+            current = get_current_player(session)
+            if current["name"] == disconnected_name:
+                _schedule_bot_if_needed(sio, session, game_code)
 
     @sio.event
     async def create_game(sid, data):
@@ -105,78 +115,6 @@ def register(sio):
         )
 
     @sio.event
-    async def rejoin_game(sid, data):
-        """
-        client sends game code and player as a string. the full game state is back to the rejoining player
-
-        the server will emit the game state to the rejoining player only and the player name for the reconnected player
-        in their room
-        """
-        game_code = (data.get("game_code") or "").strip().upper()
-        player_name = (data.get("player_name") or "").strip()
-
-        if game_code not in games:
-            return await sio.emit("error", {"message": "Game not found"}, to=sid)
-
-        session = games[game_code]
-
-        if session["phase"] == "lobby":
-            return await sio.emit("error", {"message": "Game has not started yet"}, to=sid)
-
-        player = next((p for p in session["players"] if p["name"] == player_name), None)
-        if player is None:
-            return await sio.emit("error", {"message": "Player not in this game"}, to=sid)
-
-        # Update sid and re-enter the socket room
-        player["sid"] = sid
-        sid_to_game[sid] = game_code
-        await sio.enter_room(sid, game_code)
-
-        # sending full state to returning player
-        await sio.emit(
-            "game_state",
-            build_player_view(session, player_name),
-            to=sid,
-        )
-
-        await sio.emit(
-            "player_reconnected",
-            {"player_name": player_name},
-            room=game_code,
-        )
-
-    @sio.event
-    async def rejoin_lobby(sid, data):
-        """
-        client sends the game code and player name as a string
-        it updates the player's sid and emits the current player list back
-        the server will send back that the player joined in players as a string to the room
-        """
-        game_code = (data.get("game_code") or "").strip().upper()
-        player_name = (data.get("player_name") or "").strip()
-
-        if game_code not in games:
-            return await sio.emit("error", {"message": "Game not found"}, to=sid)
-
-        session = games[game_code]
-        player = next((p for p in session["players"] if p["name"] == player_name), None)
-
-        if player is None:
-            return await sio.emit("error", {"message": "Player not in this game"}, to=sid)
-
-        # Update sid and re-enter the socket room
-        player["sid"] = sid
-        sid_to_game[sid] = game_code
-        await sio.enter_room(sid, game_code)
-
-        # Send current player list to everyone in the room
-        await sio.emit(
-            "player_joined",
-            {"player_name": player_name, "players": [p["name"] for p in session["players"]]},
-            room=game_code,
-        )
-
-    @sio.event
     async def start_game(sid, data):
         """
         client sends the game code as string. 
@@ -215,3 +153,6 @@ def register(sio):
         for p in session["players"]:
             if p["sid"]:
                 await sio.emit("game_state", build_player_view(session, p["name"]), to=p["sid"])
+
+        from handlers.turn import _schedule_bot_if_needed
+        _schedule_bot_if_needed(sio, session, game_code)
