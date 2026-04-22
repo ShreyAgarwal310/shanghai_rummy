@@ -12,7 +12,7 @@ import type { AccessibilityPreferences } from '../services/accessibilityService'
 import './ProfilePage.css'
 
 function ProfilePage() {
-  const { user, profile, loading, isConfigured, errorMessage, refreshProfile, signOut } = useAuth()
+  const { user, profile, loading, isConfigured, errorMessage, refreshProfile, signOut, changePassword } = useAuth()
   const [displayName, setDisplayName] = useState('')
   const [preferredName, setPreferredName] = useState('')
   const [bio, setBio] = useState('')
@@ -22,6 +22,11 @@ function ProfilePage() {
   const [saveMessage, setSaveMessage] = useState('')
   const [saveError, setSaveError] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const objectUrlRef = useRef<string | null>(null)
@@ -141,6 +146,34 @@ function ProfilePage() {
       setSaveError(nextError instanceof Error ? nextError.message : 'Unable to save your profile.')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleChangePassword = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setPasswordMessage('')
+    setPasswordError('')
+
+    if (newPassword.length < 6) {
+      setPasswordError('Password must be at least 6 characters.')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match.')
+      return
+    }
+
+    setIsChangingPassword(true)
+    try {
+      await changePassword(newPassword)
+      setPasswordMessage('Password updated successfully.')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : 'Unable to update password.')
+    } finally {
+      setIsChangingPassword(false)
     }
   }
 
@@ -401,6 +434,48 @@ function ProfilePage() {
           {saveMessage ? <p className="profile-page__save-message">{saveMessage}</p> : null}
           {saveError ? <p className="profile-page__save-message">{saveError}</p> : null}
           {errorMessage && !saveError ? <p className="profile-page__save-message">{errorMessage}</p> : null}
+        </form>
+
+        <form className="profile-page__form" onSubmit={handleChangePassword}>
+          <section className="profile-card profile-card--full">
+            <h2 className="profile-card__title">Security</h2>
+
+            <label className="profile-field">
+              <span>New Password</span>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                placeholder="Enter new password"
+                autoComplete="new-password"
+              />
+            </label>
+
+            <label className="profile-field">
+              <span>Confirm Password</span>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="Confirm new password"
+                autoComplete="new-password"
+              />
+            </label>
+
+            <footer className="profile-page__actions">
+              <button
+                type="submit"
+                className="profile-card__button profile-card__button--primary"
+                disabled={isChangingPassword}
+                data-a11y-description="Update your account password."
+              >
+                {isChangingPassword ? 'Updating...' : 'Change Password'}
+              </button>
+            </footer>
+
+            {passwordMessage ? <p className="profile-page__save-message">{passwordMessage}</p> : null}
+            {passwordError ? <p className="profile-page__save-message">{passwordError}</p> : null}
+          </section>
         </form>
       </section>
     </main>
