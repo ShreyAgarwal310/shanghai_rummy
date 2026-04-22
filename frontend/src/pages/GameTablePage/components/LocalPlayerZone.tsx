@@ -30,18 +30,18 @@ type LocalPlayerZoneProps = {
   onToggleStealJoker: () => void
 }
 
-function isContractSatisfied(pendingMelds: PendingMeld[], contract: ContractRequirements): boolean {
-  const stagedSets = pendingMelds.filter((m) => m.type === 'set').length
-  const stagedRuns = pendingMelds.filter((m) => m.type === 'run').length
-  return stagedSets >= contract.requiredSets && stagedRuns >= contract.requiredRuns
-}
+// function isContractSatisfied(pendingMelds: PendingMeld[], contract: ContractRequirements): boolean {
+//   const stagedSets = pendingMelds.filter((m) => m.type === 'set').length
+//   const stagedRuns = pendingMelds.filter((m) => m.type === 'run').length
+//   return stagedSets >= contract.requiredSets && stagedRuns >= contract.requiredRuns
+// }
 
 function LocalPlayerZone({
   handCards,
   selectedCardIds,
   showBuyAction,
   pendingMelds,
-  contract,
+  // contract,
   isMyTurn,
   hasLaidDown,
   isLiveMode,
@@ -58,7 +58,7 @@ function LocalPlayerZone({
 }: LocalPlayerZoneProps) {
   const hasSelection = selectedCardIds.length > 0
   const pendingMeldCount = pendingMelds.length
-  const contractMet = pendingMeldCount > 0 && isContractSatisfied(pendingMelds, contract)
+  // const contractMet = pendingMeldCount > 0 && isContractSatisfied(pendingMelds, contract)
 
 
   return (
