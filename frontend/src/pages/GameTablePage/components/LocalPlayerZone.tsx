@@ -102,14 +102,15 @@ function LocalPlayerZone({
             </button>
           )}
 
-          {isLiveMode && pendingMeldCount > 0 && (
+          {isLiveMode && !hasLaidDown && (
             <button
               type="button"
               className="game-action-bar__btn game-action-bar__btn--primary"
               onClick={onSubmitLayDown}
+              disabled={pendingMeldCount === 0}
               data-a11y-description="Submit all staged melds to the server."
             >
-              Submit Lay Down ({pendingMeldCount})
+              Lay Down {pendingMeldCount > 0 ? `(${pendingMeldCount})` : ''}
             </button>
           )}
 

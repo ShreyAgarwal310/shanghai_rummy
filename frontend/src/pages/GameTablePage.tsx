@@ -928,7 +928,7 @@ const handleToggleStealJoker = () => {
               handCards={handCards}
               selectedCardIds={selectedCardIds}
               showBuyAction={showBuyAction}
-              pendingMeldCount={pendingMelds.length}
+              pendingMeldCount={pendingMelds.reduce((s, m) => s + m.cards.length, 0)}
               isMyTurn={isLiveMode ? isMyTurn : true}
               hasLaidDown={hasLaidDown}
               isLiveMode={isLiveMode}
