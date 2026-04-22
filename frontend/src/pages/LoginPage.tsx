@@ -4,10 +4,10 @@ import { useAuth } from '../hooks/useAuth'
 import { navigateTo } from '../utils/navigate'
 import './LoginPage.css'
 
-type AuthMode = 'signin' | 'signup'
+type AuthMode = 'signin' | 'signup' | 'forgot'
 
 function LoginPage() {
-  const { signIn, signUp, loading, isConfigured, errorMessage, user } = useAuth()
+  const { signIn, signUp, forgotPassword, loading, isConfigured, errorMessage, user } = useAuth()
   const [mode, setMode] = useState<AuthMode>('signin')
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
@@ -43,6 +43,12 @@ function LoginPage() {
         return
       }
 
+      if (mode === 'forgot') {
+        await forgotPassword(email)
+        setStatusMessage('Password reset email sent. Check your inbox.')
+        return
+      }
+
       const nextMessage = await signUp({ email, password, displayName })
       setStatusMessage(nextMessage ?? 'Account created. You are signed in and can finish your profile now.')
       if (!nextMessage) {
@@ -71,26 +77,28 @@ function LoginPage() {
           Sign in to save your profile and connect your scores to the leaderboard.
         </p>
 
-        <div className="login-page__mode-switch" role="tablist" aria-label="Authentication mode">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'signin'}
-            className={`login-page__mode-btn ${mode === 'signin' ? 'is-active' : ''}`}
-            onClick={() => setMode('signin')}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'signup'}
-            className={`login-page__mode-btn ${mode === 'signup' ? 'is-active' : ''}`}
-            onClick={() => setMode('signup')}
-          >
-            Create Account
-          </button>
-        </div>
+        {mode !== 'forgot' ? (
+          <div className="login-page__mode-switch" role="tablist" aria-label="Authentication mode">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'signin'}
+              className={`login-page__mode-btn ${mode === 'signin' ? 'is-active' : ''}`}
+              onClick={() => { setMode('signin'); setSubmitError(''); setStatusMessage('') }}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'signup'}
+              className={`login-page__mode-btn ${mode === 'signup' ? 'is-active' : ''}`}
+              onClick={() => { setMode('signup'); setSubmitError(''); setStatusMessage('') }}
+            >
+              Create Account
+            </button>
+          </div>
+        ) : null}
 
         <form className="login-page__form" onSubmit={handleSubmit}>
           {mode === 'signup' ? (
@@ -118,22 +126,44 @@ function LoginPage() {
             />
           </label>
 
-          <label className="login-page__field">
-            <span>Password</span>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 6 characters"
-              autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-              minLength={6}
-              required
-            />
-          </label>
+          {mode !== 'forgot' ? (
+            <label className="login-page__field">
+              <span>Password</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="At least 6 characters"
+                autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+                minLength={6}
+                required
+              />
+            </label>
+          ) : null}
 
           <button type="submit" className="login-page__submit-btn" disabled={disabled}>
-            {submitting ? 'Working...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+            {submitting ? 'Working...' : mode === 'signin' ? 'Sign In' : mode === 'forgot' ? 'Send Reset Link' : 'Create Account'}
           </button>
+
+          {mode === 'signin' ? (
+            <button
+              type="button"
+              className="login-page__forgot-btn"
+              onClick={() => { setMode('forgot'); setSubmitError(''); setStatusMessage('') }}
+            >
+              Forgot your password?
+            </button>
+          ) : null}
+
+          {mode === 'forgot' ? (
+            <button
+              type="button"
+              className="login-page__forgot-btn"
+              onClick={() => { setMode('signin'); setSubmitError(''); setStatusMessage('') }}
+            >
+              ← Back to Sign In
+            </button>
+          ) : null}
         </form>
 
         {submitError ? <p className="login-page__message login-page__message--error">{submitError}</p> : null}
