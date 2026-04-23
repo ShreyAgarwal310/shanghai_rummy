@@ -373,9 +373,6 @@ def register(sio):
             return await sio.emit("error", {"message": "It is not your turn"}, to=sid)
         if session["phase"] != "play":
             return await sio.emit("error", {"message": "Not in play phase"}, to=sid)
-        if not current["has_laid_down"]:
-            return await sio.emit("error", {"message": "Lay down your contract before stealing a joker"}, to=sid)
-
         target_melds = session["melds_on_table"].get(target_name)
         if target_melds is None:
             return await sio.emit("error", {"message": f"No melds found for player {target_name!r}"}, to=sid)
