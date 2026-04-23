@@ -500,6 +500,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     if (livePhase !== 'play') { appendActivity('Draw a card first.'); return }
     if (selectedCards.length !== 1) { appendActivity('Select exactly one card to discard.'); return }
     const [card] = selectedCards
+    setPendingMelds([])
     emitDiscardCard(gameCode, { rank: card.rank, suit: card.suit })
   }
 
