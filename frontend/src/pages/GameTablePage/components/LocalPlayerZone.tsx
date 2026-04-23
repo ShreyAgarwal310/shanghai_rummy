@@ -1,3 +1,19 @@
+import { useState, useMemo } from 'react'
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import type { HandCard, TableCard } from '../../GameTablePage.mock'
 import { getCardDescription } from '../../GameTablePage.logic'
 import PlayingCard from './PlayingCard'
@@ -30,11 +46,51 @@ type LocalPlayerZoneProps = {
   onToggleStealJoker: () => void
 }
 
-// function isContractSatisfied(pendingMelds: PendingMeld[], contract: ContractRequirements): boolean {
-//   const stagedSets = pendingMelds.filter((m) => m.type === 'set').length
-//   const stagedRuns = pendingMelds.filter((m) => m.type === 'run').length
-//   return stagedSets >= contract.requiredSets && stagedRuns >= contract.requiredRuns
-// }
+const RANK_ORDER: Record<string, number> = {
+  '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8,
+  '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14, 'JOKER': 15,
+}
+const SUIT_ORDER: Record<string, number> = {
+  CLUBS: 0, DIAMONDS: 1, HEARTS: 2, SPADES: 3, JOKER: 4,
+}
+
+type SortableCardProps = {
+  card: HandCard
+  selected: boolean
+  onHandCardClick: (id: string) => void
+}
+
+function SortableCard({ card, selected, onHandCardClick }: SortableCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: card.id })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.35 : 1,
+    zIndex: isDragging ? 999 : undefined,
+    position: 'relative',
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`local-player-zone__card${isDragging ? ' is-dragging' : ''}`}
+      {...attributes}
+      {...listeners}
+    >
+      <PlayingCard
+        card={card}
+        size="hand"
+        interactive
+        selected={selected}
+        onClick={() => onHandCardClick(card.id)}
+        description={`Hand card ${getCardDescription(card)}. Click to select, drag to reorder.`}
+      />
+    </div>
+  )
+}
 
 function LocalPlayerZone({
   handCards,
@@ -56,37 +112,120 @@ function LocalPlayerZone({
   onDiscard,
   onToggleStealJoker,
 }: LocalPlayerZoneProps) {
+  // Store only the display order (IDs). displayCards is derived purely via useMemo
+  // so it updates in the same render as any handCards change — no setState-during-render
+  // or useEffect timing issues.
+  const [cardOrder, setCardOrder] = useState<string[]>(() => handCards.map((c) => c.id))
+
+  const handById = useMemo(() => new Map(handCards.map((c) => [c.id, c])), [handCards])
+
+  const displayCards = useMemo(() => {
+    const filtered = cardOrder.filter((id) => handById.has(id))
+    const filteredSet = new Set(filtered)
+    const added = handCards.filter((c) => !filteredSet.has(c.id)).map((c) => c.id)
+    return [...filtered, ...added].map((id) => handById.get(id)!)
+  }, [cardOrder, handById, handCards])
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+  )
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      setCardOrder((order) => {
+        const oldIndex = order.indexOf(active.id as string)
+        const newIndex = order.indexOf(over.id as string)
+        return oldIndex >= 0 && newIndex >= 0 ? arrayMove(order, oldIndex, newIndex) : order
+      })
+    }
+  }
+
+  function sortBySuit() {
+    setCardOrder(
+      [...displayCards]
+        .sort((a, b) => {
+          const s = SUIT_ORDER[a.suit] - SUIT_ORDER[b.suit]
+          return s !== 0 ? s : RANK_ORDER[a.rank] - RANK_ORDER[b.rank]
+        })
+        .map((c) => c.id),
+    )
+  }
+
+  function sortByRank() {
+    setCardOrder(
+      [...displayCards]
+        .sort((a, b) => {
+          const r = RANK_ORDER[a.rank] - RANK_ORDER[b.rank]
+          return r !== 0 ? r : SUIT_ORDER[a.suit] - SUIT_ORDER[b.suit]
+        })
+        .map((c) => c.id),
+    )
+  }
+
   const hasSelection = selectedCardIds.length > 0
   const pendingMeldCount = pendingMelds.length
-  // const contractMet = pendingMeldCount > 0 && isContractSatisfied(pendingMelds, contract)
-
 
   return (
     <section className="local-player-zone" aria-label="Your hand and status">
       <header className="local-player-zone__header">
         <h2>Your Hand</h2>
-        <p>{handCards.length} cards</p>
+        <p>{displayCards.length} cards</p>
         {isLiveMode && (
           <p style={{ fontSize: '0.75rem', opacity: 0.7 }}>
             {isMyTurn ? '● Your turn' : '○ Waiting...'}
           </p>
         )}
+        <div className="local-player-zone__sort-btns">
+          <button
+            type="button"
+            className="local-player-zone__sort-btn"
+            onClick={sortBySuit}
+            title="Sort by suit"
+          >
+            Sort Suit
+          </button>
+          <button
+            type="button"
+            className="local-player-zone__sort-btn"
+            onClick={sortByRank}
+            title="Sort by rank"
+          >
+            Sort Rank
+          </button>
+        </div>
       </header>
 
-      <div className="local-player-zone__hand">
-        {handCards.map((card) => (
-          <PlayingCard
-            key={card.id}
-            card={card}
-            size="hand"
-            className="local-player-zone__card"
-            interactive
-            selected={selectedCardIds.includes(card.id)}
-            onClick={() => onHandCardClick(card.id)}
-            description={`Hand card ${getCardDescription(card)}. Click to select.`}
-          />
-        ))}
-      </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <div className="local-player-zone__hand">
+          <SortableContext items={displayCards.map((c) => c.id)} strategy={horizontalListSortingStrategy}>
+            {displayCards.map((card) => (
+              <SortableCard
+                key={card.id}
+                card={card}
+                selected={selectedCardIds.includes(card.id)}
+                onHandCardClick={onHandCardClick}
+              />
+            ))}
+          </SortableContext>
+
+          {pendingMelds.length > 0 && (
+            <>
+              <div className="local-player-zone__staged-divider" aria-hidden="true" />
+              {pendingMelds.map((meld, i) => (
+                <div key={i} className="staged-meld-group">
+                  <p className="staged-meld-group__label">{meld.type}</p>
+                  <div className="staged-meld-group__cards">
+                    {meld.cards.map((card, j) => (
+                      <PlayingCard key={`${i}-${j}`} card={card} size="hand" />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </DndContext>
 
       <section className="game-action-bar" aria-label="Action controls">
         <div className="game-action-bar__buttons">
