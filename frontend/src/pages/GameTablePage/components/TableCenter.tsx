@@ -46,7 +46,7 @@ function TableCenter({
               ))}
             </div>
             <p className="opponent-seat__meta">
-              {seat.cardCount} cards | Score {seat.score}
+              Score {seat.score}
             </p>
           </li>
         ))}

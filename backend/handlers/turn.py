@@ -24,7 +24,7 @@ from serializers import build_player_view, card_to_dict, dict_to_card, hand_to_l
 from session_manager import games, get_current_player, init_round
 
 # Seconds before the bot plays for an idle connected player
-INACTIVITY_TIMEOUT = 30
+INACTIVITY_TIMEOUT = 90
 # Seconds before the bot plays for a disconnected player
 DISCONNECTED_DELAY = 3
 
