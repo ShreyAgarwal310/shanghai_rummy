@@ -48,7 +48,7 @@ function getNonWildCards(cards: TableCard[]) {
 }
 
 export function validateSetMeld(cards: TableCard[]) {
-  if (cards.length < 3) {
+  if (cards.length < 3 || cards.length > 4) {
     return false
   }
 
@@ -162,11 +162,34 @@ export function validateRunMeld(cards: TableCard[]) {
 
 const RANK_VALUE: Partial<Record<string, number>> = {
   '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8,
-  '9': 9, '10': 10, J: 11, Q: 12, K: 13, A: 14, JOKER: 15,
+  '9': 9, '10': 10, J: 11, Q: 12, K: 13, A: 14,
 }
 
 export function sortRunCards(cards: TableCard[]): TableCard[] {
-  return [...cards].sort((a, b) => (RANK_VALUE[a.rank] ?? 15) - (RANK_VALUE[b.rank] ?? 15))
+  const naturals = cards
+    .filter((c) => !isWildcard(c))
+    .sort((a, b) => (RANK_VALUE[a.rank] ?? 0) - (RANK_VALUE[b.rank] ?? 0))
+  const wilds = cards.filter(isWildcard)
+
+  if (wilds.length === 0) return naturals
+
+  // Insert each wild into the first gap of size 2 it can fill; extras go at end
+  const result: TableCard[] = []
+  let wildIdx = 0
+  for (let i = 0; i < naturals.length; i++) {
+    result.push(naturals[i])
+    if (i < naturals.length - 1 && wildIdx < wilds.length) {
+      const curr = RANK_VALUE[naturals[i].rank] ?? 0
+      const next = RANK_VALUE[naturals[i + 1].rank] ?? 0
+      if (next - curr === 2) {
+        result.push(wilds[wildIdx++])
+      }
+    }
+  }
+  while (wildIdx < wilds.length) {
+    result.push(wilds[wildIdx++])
+  }
+  return result
 }
 
 export function detectMeldKind(cards: TableCard[]): MeldKind | null {
