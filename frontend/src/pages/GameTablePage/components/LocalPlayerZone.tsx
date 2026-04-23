@@ -133,11 +133,12 @@ function LocalPlayerZone({
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (over && active.id !== over.id) {
-      setCardOrder((order) => {
-        const oldIndex = order.indexOf(active.id as string)
-        const newIndex = order.indexOf(over.id as string)
-        return oldIndex >= 0 && newIndex >= 0 ? arrayMove(order, oldIndex, newIndex) : order
-      })
+      const ids = displayCards.map((c) => c.id)
+      const oldIndex = ids.indexOf(active.id as string)
+      const newIndex = ids.indexOf(over.id as string)
+      if (oldIndex >= 0 && newIndex >= 0) {
+        setCardOrder(arrayMove(ids, oldIndex, newIndex))
+      }
     }
   }
 

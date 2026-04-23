@@ -212,7 +212,7 @@ export function buildMeldsByType(meldGroups: MeldGroup[]): MeldsByType {
         meldIndex,
         player: group.player,
         kind,
-        cards: meld,
+        cards: kind === 'run' ? sortRunCards(meld) : meld,
       }
 
       if (kind === 'set') {

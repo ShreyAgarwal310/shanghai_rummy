@@ -156,6 +156,9 @@ function GameTablePage({ gameId }: GameTablePageProps) {
 
   // Pending melds staged locally before submitting lay_down
   const [pendingMelds, setPendingMelds] = useState<{ type: 'set' | 'run'; cards: TableCard[] }[]>([])
+  // Ref so the socket handler (closed over on mount) can always see the current staged cards
+  const pendingMeldsRef = useRef(pendingMelds)
+  useEffect(() => { pendingMeldsRef.current = pendingMelds }, [pendingMelds])
 
   // Sidebar / dropdowns
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -183,24 +186,74 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     })
 
     const offHand = onHandUpdated(({ hand }) => {
-      setHandCards(toHandCards(hand))
+      setHandCards((prev) => {
+        // Count how many of each rank+suit are currently staged so we can
+        // exclude them from the server's hand (the server still holds them
+        // until lay_down is submitted).
+        const stagedCounts = new Map<string, number>()
+        for (const meld of pendingMeldsRef.current) {
+          for (const card of meld.cards) {
+            const key = `${card.rank}-${card.suit}`
+            stagedCounts.set(key, (stagedCounts.get(key) ?? 0) + 1)
+          }
+        }
+
+        // Strip staged cards from the server's hand before diffing.
+        const unstaged = hand.filter((c) => {
+          const key = `${c.rank}-${c.suit}`
+          const remaining = stagedCounts.get(key) ?? 0
+          if (remaining > 0) { stagedCounts.set(key, remaining - 1); return false }
+          return true
+        })
+
+        // Reuse existing card objects (stable IDs) for cards already in hand.
+        const pool = new Map<string, HandCard[]>()
+        for (const c of prev) {
+          const key = `${c.rank}-${c.suit}`
+          const bucket = pool.get(key) ?? []
+          bucket.push(c)
+          pool.set(key, bucket)
+        }
+        return unstaged.map((c) => {
+          const key = `${c.rank}-${c.suit}`
+          const bucket = pool.get(key)
+          if (bucket && bucket.length > 0) return bucket.shift()!
+          return {
+            id: `${c.rank}-${c.suit}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            rank: c.rank as CardRank,
+            suit: c.suit as CardSuit,
+          }
+        })
+      })
       setSelectedCardIds([])
     })
 
-    const offDrawn = onCardDrawn(({ player_name, source, discard_top }) => {
+    const offDrawn = onCardDrawn(({ player_name, source, discard_top, deck_size, card_counts }) => {
       if (discard_top) setTopDiscardCard(discard_top as TableCard)
-      // Backend phase is now "play" — update liveState so discard guard passes
-      setLiveState((prev) => (prev ? { ...prev, phase: 'play' } : prev))
+      setLiveState((prev) => prev ? {
+        ...prev,
+        phase: 'play',
+        deck_size,
+        players: prev.players.map((p) =>
+          card_counts?.[p.name] !== undefined ? { ...p, card_count: card_counts[p.name] } : p
+        ),
+      } : prev)
       if (player_name !== myName) appendActivity(`${player_name} drew from ${source}.`)
     })
 
-    const offDiscarded = onCardDiscarded(({ player_name, card, discard_top }) => {
+    const offDiscarded = onCardDiscarded(({ player_name, card, discard_top, card_counts }) => {
       setTopDiscardCard(discard_top as TableCard)
       setShowBuyAction(false)
+      setLiveState((prev) => prev ? {
+        ...prev,
+        players: prev.players.map((p) =>
+          card_counts?.[p.name] !== undefined ? { ...p, card_count: card_counts[p.name] } : p
+        ),
+      } : prev)
       appendActivity(`${player_name} discarded ${getCardDescription(card as TableCard)}.`)
     })
 
-    const offMeldLaid = onMeldLaid(({ player_name, melds }) => {
+    const offMeldLaid = onMeldLaid(({ player_name, melds, card_counts }) => {
       setMeldGroups((prev) => {
         const newMelds = melds.map((m) => m.cards as TableCard[])
         const existing = prev.find((g) => g.player === player_name)
@@ -211,12 +264,21 @@ function GameTablePage({ gameId }: GameTablePageProps) {
         }
         return [...prev, { player: player_name, melds: newMelds }]
       })
-      setLiveState((prev) => prev ? applyMeldLaid(prev, player_name) : prev)
+      setLiveState((prev) => {
+        if (!prev) return prev
+        const withLaidDown = applyMeldLaid(prev, player_name)
+        return {
+          ...withLaidDown,
+          players: withLaidDown.players.map((p) =>
+            card_counts?.[p.name] !== undefined ? { ...p, card_count: card_counts[p.name] } : p
+          ),
+        }
+      })
       setPendingMelds([])
       appendActivity(`${player_name} laid down ${melds.length} meld(s).`)
     })
 
-    const offMeldUpdated = onMeldUpdated(({ target_player, meld_index, meld }) => {
+    const offMeldUpdated = onMeldUpdated(({ target_player, meld_index, meld, card_counts }) => {
       setMeldGroups((prev) =>
         prev.map((g) =>
           g.player === target_player
@@ -224,6 +286,14 @@ function GameTablePage({ gameId }: GameTablePageProps) {
             : g,
         ),
       )
+      if (card_counts) {
+        setLiveState((prev) => prev ? {
+          ...prev,
+          players: prev.players.map((p) =>
+            card_counts[p.name] !== undefined ? { ...p, card_count: card_counts[p.name] } : p
+          ),
+        } : prev)
+      }
     })
 
     const offTurn = onTurnStarted(({ current_player }) => {
@@ -944,6 +1014,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
               showBuyAction={showBuyAction}
               stealJokerMode={stealJokerMode}
               topDiscardCard={topDiscardCard}
+              deckSize={liveState?.deck_size ?? 74}
               onDrawFromDeck={handleDrawFromDeck}
               onDiscardPileClick={handleDiscardPileClick}
               onLayoffToMeld={handleLayoffToMeld}
