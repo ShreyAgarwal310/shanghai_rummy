@@ -567,11 +567,14 @@ function GameTablePage({ gameId }: GameTablePageProps) {
       return
     }
     setStealJokerMode((cur) => {
-      if (!cur) appendActivity('Steal Joker mode on...')
-      else appendActivity('Steal Joker mode cancelled.')
+      if (!cur) {
+        appendActivity('Steal Joker mode on — select a replacement card, then click a meld.')
+      } else {
+        appendActivity('Steal Joker mode cancelled.')
+        clearSelection()
+      }
       return !cur
     })
-    clearSelection()
   }
 
   const handleStealFromMeld = (groupIndex: number, meldIndex: number) => {
@@ -589,9 +592,11 @@ function GameTablePage({ gameId }: GameTablePageProps) {
 
     if (isLiveMode) {
       if (!isMyTurn || livePhase !== 'play') { appendActivity('Not your turn.'); return }
+      const stolenCard = targetMeld[wildcardIdx]
       emitStealJoker(gameCode, targetGroup.player, meldIndex, { rank: replacement.rank, suit: replacement.suit }, wildcardIdx)
       clearSelection()
       setStealJokerMode(false)
+      appendActivity(`Stealing ${getCardDescription(stolenCard as TableCard)} from ${targetGroup.player}'s meld using ${getCardDescription(replacement)}.`)
       return
     }
 
