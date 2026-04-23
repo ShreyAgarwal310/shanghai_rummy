@@ -518,7 +518,6 @@ function GameTablePage({ gameId }: GameTablePageProps) {
 
     if (isLiveMode) {
       if (!isMyTurn || livePhase !== 'play') { appendActivity('Not your turn.'); return }
-      if (!hasLaidDown) { appendActivity('Lay down your contract first.'); return }
       emitStealJoker(gameCode, targetGroup.player, meldIndex, { rank: replacement.rank, suit: replacement.suit }, wildcardIdx)
       clearSelection()
       setStealJokerMode(false)
