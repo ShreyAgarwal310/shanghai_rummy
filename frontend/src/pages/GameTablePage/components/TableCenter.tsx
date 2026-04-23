@@ -12,6 +12,7 @@ type TableCenterProps = {
   showBuyAction: boolean
   stealJokerMode: boolean
   topDiscardCard: TableCard
+  deckSize: number
   onDrawFromDeck: () => void
   onDiscardPileClick: () => void
   onLayoffToMeld: (groupIndex: number, meldIndex: number) => void
@@ -27,6 +28,7 @@ function TableCenter({
   showBuyAction,
   stealJokerMode,
   topDiscardCard,
+  deckSize,
   onDrawFromDeck,
   onDiscardPileClick,
   onLayoffToMeld,
@@ -102,7 +104,7 @@ function TableCenter({
               >
                 <p className="table-pile__label">Deck</p>
                 <div className="table-pile__card table-pile__card--back" aria-hidden="true" />
-                <p className="table-pile__meta">74 cards left</p>
+                <p className="table-pile__meta">{deckSize} cards left</p>
               </button>
 
               <button

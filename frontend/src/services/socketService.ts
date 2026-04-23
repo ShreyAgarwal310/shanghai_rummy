@@ -161,18 +161,20 @@ export const onCardDrawn = (cb: (data: {
   card: Card | null      // null for deck draws (private)
   deck_size: number
   discard_top: Card | null
+  card_counts: Record<string, number>
 }) => void) => on('card_drawn', cb)
 
 export const onHandUpdated = (cb: (data: { hand: Card[] }) => void) =>
   on('hand_updated', cb)
 
-export const onMeldLaid = (cb: (data: { player_name: string; melds: Meld[] }) => void) =>
+export const onMeldLaid = (cb: (data: { player_name: string; melds: Meld[]; card_counts: Record<string, number> }) => void) =>
   on('meld_laid', cb)
 
 export const onMeldUpdated = (cb: (data: {
   target_player: string
   meld_index: number
   meld: Meld
+  card_counts?: Record<string, number>
 }) => void) => on('meld_updated', cb)
 
 export const onCardDiscarded = (cb: (data: {
@@ -180,6 +182,7 @@ export const onCardDiscarded = (cb: (data: {
   card: Card
   discard_top: Card
   deck_size: number
+  card_counts: Record<string, number>
 }) => void) => on('card_discarded', cb)
 
 // round

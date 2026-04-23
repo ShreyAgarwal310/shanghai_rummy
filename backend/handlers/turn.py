@@ -7,6 +7,17 @@ import asyncio
 
 from app.melds.run_meld import RunMeld
 from app.melds.set_meld import SetMeld
+
+_RANK_ORDER = {
+    "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8,
+    "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "A": 14, "JOKER": 15,
+}
+
+def _sort_run(cards):
+    return sorted(cards, key=lambda c: _RANK_ORDER.get(str(c.rank), 15))
+
+def _card_counts(session):
+    return {p["name"]: len(p["hand"]) for p in session["players"]}
 from app.rules.contract import CONTRACTS
 from app.rules.rules_engine import RulesEngine
 from serializers import build_player_view, card_to_dict, dict_to_card, hand_to_list
@@ -74,6 +85,7 @@ async def _bot_play(sio, game_code: str) -> None:
                 "card": None,
                 "deck_size": len(session["deck"]),
                 "discard_top": card_to_dict(discard_top) if discard_top else None,
+                "card_counts": _card_counts(session),
             },
             room=game_code,
         )
@@ -101,6 +113,7 @@ async def _bot_discard(sio, session: dict, game_code: str) -> None:
             "card": card_to_dict(card),
             "discard_top": card_to_dict(discard_top) if discard_top else None,
             "deck_size": len(session["deck"]),
+            "card_counts": _card_counts(session),
         },
         room=game_code,
     )
@@ -200,6 +213,7 @@ def register(sio):
                 "card": public_card,
                 "deck_size": len(session["deck"]),
                 "discard_top": card_to_dict(discard_top) if discard_top else None,
+                "card_counts": _card_counts(session),
             },
             room=game_code,
         )
@@ -263,8 +277,9 @@ def register(sio):
                 current["hand"].discard_card(card)
 
         for meld_type, obj in typed_melds:
+            cards = _sort_run(obj.cards) if meld_type == "run" else list(obj.cards)
             session["melds_on_table"][current["name"]].append(
-                {"type": meld_type, "cards": list(obj.cards)}
+                {"type": meld_type, "cards": cards}
             )
 
         current["has_laid_down"] = True
@@ -274,9 +289,10 @@ def register(sio):
             {
                 "player_name": current["name"],
                 "melds": [
-                    {"type": t, "cards": [card_to_dict(c) for c in obj.cards]}
+                    {"type": t, "cards": [card_to_dict(c) for c in (_sort_run(obj.cards) if t == "run" else obj.cards)]}
                     for t, obj in typed_melds
                 ],
+                "card_counts": _card_counts(session),
             },
             room=game_code,
         )
@@ -332,6 +348,9 @@ def register(sio):
         if not combined_meld.is_valid():
             return await sio.emit("error", {"message": "Adding those cards does not produce a valid meld"}, to=sid)
 
+        if meld_type == "run":
+            combined_cards = _sort_run(combined_cards)
+
         for card in new_cards:
             current["hand"].discard_card(card)
         existing["cards"] = combined_cards
@@ -342,6 +361,7 @@ def register(sio):
                 "target_player": target_name,
                 "meld_index": meld_index,
                 "meld": {"type": meld_type, "cards": [card_to_dict(c) for c in combined_cards]},
+                "card_counts": _card_counts(session),
             },
             room=game_code,
         )
@@ -353,9 +373,8 @@ def register(sio):
         the client sends the game_code, target player, meld index, replacement card, and wildcard index
         replace a wildcard in a table meld with a natural card from your hand
         the stolen wild card shld move to the current hand
-        only allowed in play phase after laying down your own meld
 
-        the server emits the meld updates and 
+        the server emits the meld updates and
         the hand updated (player only)
         """
         game_code = (data.get("game_code") or "").strip().upper()
@@ -464,6 +483,7 @@ def register(sio):
                 "card": card_to_dict(card),
                 "discard_top": card_to_dict(card),
                 "deck_size": len(session["deck"]),
+                "card_counts": _card_counts(session),
             },
             room=game_code,
         )
