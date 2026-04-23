@@ -24,6 +24,7 @@ import {
   detectMeldKind,
   getCardDescription,
   getMeldLaneClassName,
+  sortRunCards,
   validateRunMeld,
   validateSetMeld,
 } from './GameTablePage.logic'
@@ -449,11 +450,13 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     const kind = detectMeldKind(selectedTableCards)
     if (!kind) { appendActivity('Invalid meld: must form a legal set or run.'); return }
 
+    const orderedCards = kind === 'run' ? sortRunCards(selectedTableCards) : selectedTableCards
+
     if (isLiveMode) {
       if (!isMyTurn || livePhase !== 'play') { appendActivity('Not your turn to meld.'); return }
       if (hasLaidDown) { appendActivity('Already laid down — click a table meld to add cards.'); return }
       // Stage the meld locally
-      setPendingMelds((prev) => [...prev, { type: kind, cards: selectedTableCards }])
+      setPendingMelds((prev) => [...prev, { type: kind, cards: orderedCards }])
       removeSelectedCardsFromHand(selectedCards)
       clearSelection()
       appendActivity(`Staged ${kind}: ${selectedCards.map(getCardDescription).join(', ')}.`)
@@ -461,7 +464,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     }
 
     // Demo mode — also stage rather than immediately commit to the table
-    setPendingMelds((prev) => [...prev, { type: kind, cards: selectedTableCards }])
+    setPendingMelds((prev) => [...prev, { type: kind, cards: orderedCards }])
     removeSelectedCardsFromHand(selectedCards)
     clearSelection()
     setShowBuyAction(false)

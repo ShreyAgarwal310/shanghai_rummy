@@ -480,7 +480,92 @@
 .local-player-zone__hand::-webkit-scrollbar-track { background: transparent; }
 .local-player-zone__hand::-webkit-scrollbar-thumb { background: rgba(228, 192, 52, 0.2); border-radius: 3px; }
 
-.local-player-zone__card { flex: 0 0 auto; }
+.local-player-zone__card { flex: 0 0 auto; cursor: grab; }
+.local-player-zone__card:active { cursor: grabbing; }
+.local-player-zone__card.is-dragging { cursor: grabbing; }
+
+.local-player-zone__staged-divider {
+  flex: 0 0 1px;
+  align-self: stretch;
+  margin: 4px 10px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(228, 192, 52, 0.5) 20%,
+    rgba(228, 192, 52, 0.5) 80%,
+    transparent
+  );
+}
+
+@keyframes staged-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(228, 192, 52, 0.12),
+      0 0 14px rgba(228, 192, 52, 0.18),
+      inset 0 0 10px rgba(228, 192, 52, 0.04);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(228, 192, 52, 0.22),
+      0 0 26px rgba(228, 192, 52, 0.32),
+      inset 0 0 14px rgba(228, 192, 52, 0.08);
+  }
+}
+
+.staged-meld-group {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px 8px;
+  border: 1px solid rgba(228, 192, 52, 0.48);
+  border-radius: 10px;
+  background: rgba(228, 192, 52, 0.04);
+  animation: staged-glow-pulse 2.6s ease-in-out infinite;
+}
+
+.staged-meld-group + .staged-meld-group { margin-left: 6px; }
+
+.staged-meld-group__label {
+  margin: 0;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(228, 192, 52, 0.75);
+  font-family: 'Playfair Display', 'Merriweather', serif;
+}
+
+.staged-meld-group__cards {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.local-player-zone__sort-btns {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.local-player-zone__sort-btn {
+  background: transparent;
+  border: 1px solid rgba(228, 192, 52, 0.4);
+  border-radius: 5px;
+  color: rgba(228, 192, 52, 0.8);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.local-player-zone__sort-btn:hover {
+  border-color: rgba(228, 192, 52, 0.6);
+  color: rgba(228, 192, 52, 0.9);
+}
 
 /* ── Action bar ── */
 .game-action-bar {
