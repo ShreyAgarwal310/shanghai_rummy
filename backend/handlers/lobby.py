@@ -29,6 +29,14 @@ def register(sio):
                 await sio.emit("player_disconnected", {"player_name": p["name"]}, room=game_code)
                 break
 
+        # If no players remain connected, cancel bots and remove the game
+        if not any(p["sid"] is not None for p in session["players"]):
+            from handlers.turn import _cancel_bot_task
+            _cancel_bot_task(game_code)
+            games.pop(game_code, None)
+            print(f"[disconnect] all players gone — removed game {game_code}")
+            return
+
         # If it's the disconnected player's turn, hand off to the bot immediately
         if disconnected_name and session["phase"] in ("draw", "play"):
             from handlers.turn import _schedule_bot_if_needed

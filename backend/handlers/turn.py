@@ -40,6 +40,10 @@ def _cancel_bot_task(game_code: str) -> None:
 
 def _schedule_bot_if_needed(sio, session: dict, game_code: str) -> None:
     _cancel_bot_task(game_code)
+    if not any(p["sid"] is not None for p in session["players"]):
+        # No connected players — abandon the game silently
+        games.pop(game_code, None)
+        return
     current = get_current_player(session)
     delay = DISCONNECTED_DELAY if current["sid"] is None else INACTIVITY_TIMEOUT
     bot_tasks[game_code] = asyncio.create_task(
