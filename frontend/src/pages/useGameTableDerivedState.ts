@@ -60,11 +60,12 @@ export function useGameTableDerivedState({
   const yourScoreRow = displayScoreRows.find((row) => row.player === 'You') ?? displayScoreRows[0]
 
   const pinnedScoreRows = useMemo(() => {
+    if (displayScoreRows.length === 0) return []
     const leader = displayScoreRows[0]
     const second = displayScoreRows[1]
     const rows: ScoreRow[] = [leader]
     if (second && second.player !== leader.player) rows.push(second)
-    if (!rows.some((row) => row.player === yourScoreRow.player)) rows.push(yourScoreRow)
+    if (yourScoreRow && !rows.some((row) => row.player === yourScoreRow.player)) rows.push(yourScoreRow)
     return rows
   }, [displayScoreRows, yourScoreRow])
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import HomePage from './pages/HomePage'
 import HostPage from './pages/HostPage'
 import HostRoomPage from './pages/HostRoomPage'
@@ -12,45 +12,50 @@ import StatsPage from './pages/StatsPage'
 import { applyAccessibilityPreferences, getAccessibilityPreferences } from './services/accessibilityService'
 
 function App() {
+  const [path, setPath] = useState(window.location.pathname)
+
   useEffect(() => {
     applyAccessibilityPreferences(getAccessibilityPreferences())
+    const onPopState = () => setPath(window.location.pathname)
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
   }, [])
 
-  if (window.location.pathname.startsWith('/host/game/')) {
-    const gameId = window.location.pathname.replace('/host/game/', '')
+  if (path.startsWith('/host/game/')) {
+    const gameId = path.replace('/host/game/', '')
     return <HostRoomPage gameId={gameId} />
   }
 
-  if (window.location.pathname === '/host') {
+  if (path === '/host') {
     return <HostPage />
   }
 
-  if (window.location.pathname === '/join') {
+  if (path === '/join') {
     return <JoinPage />
   }
 
-  if (window.location.pathname.startsWith('/game/')) {
-    const gameId = window.location.pathname.replace('/game/', '') || 'demo-table'
+  if (path.startsWith('/game/')) {
+    const gameId = path.replace('/game/', '') || 'demo-table'
     return <GameTablePage gameId={gameId} />
   }
 
-  if (window.location.pathname === '/rules') {
+  if (path === '/rules') {
     return <RulesPage />
   }
 
-  if (window.location.pathname === '/stats') {
+  if (path === '/stats') {
     return <StatsPage />
   }
 
-  if (window.location.pathname === '/login') {
+  if (path === '/login') {
     return <LoginPage />
   }
 
-  if (window.location.pathname === '/profile') {
+  if (path === '/profile') {
     return <ProfilePage />
   }
 
-  if (window.location.pathname === '/leaderboard') {
+  if (path === '/leaderboard') {
     return <LeaderboardPage />
   }
 
