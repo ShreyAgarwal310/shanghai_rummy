@@ -220,6 +220,7 @@ const rulesBookPages: RulesBookPage[] = [
         <p className="rules-book__callout">
           If Joker replacement is enabled, the exact natural card can replace a Joker in a meld, then that Joker may be
           reused immediately if rules allow.
+          <strong> However, you may only steal a Joker if you have already laid down your own contract.</strong>
         </p>
       </>
     ),
