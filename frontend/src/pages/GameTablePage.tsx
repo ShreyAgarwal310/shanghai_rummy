@@ -624,10 +624,11 @@ function GameTablePage({ gameId }: GameTablePageProps) {
     if (selectedCards.length === 0) { appendActivity('Select a card first, then click a meld.'); return }
 
     if (isLiveMode) {
-      if (!isMyTurn || livePhase !== 'play') { appendActivity('Not your turn.'); return }
+      if (!isMyTurn) { appendActivity('Not your turn.'); return }
+      if (livePhase !== 'play') { appendActivity('Draw a card before laying off.'); return }
       if (!hasLaidDown) { appendActivity('Lay down your contract first.'); return }
       const targetGroup = meldGroups[groupIndex]
-      if (!targetGroup) return
+      if (!targetGroup) { appendActivity('Meld target not found.'); return }
       emitAddToMeld(gameCode, targetGroup.player, meldIndex, selectedTableCards)
       clearSelection()
       return

@@ -65,7 +65,7 @@ function TableCenter({
               ) : (
                 meldsByType.sets.map((entry) => {
                   const hasWild = meldHasWildcard(entry.cards)
-                  const isStealTarget = stealJokerMode && hasWild
+                  const isStealTarget = stealJokerMode && hasWild && entry.cards.length <= 4
                   return (
                     <article key={`set-${entry.groupIndex}-${entry.meldIndex}`} className="meld-entry">
                       <div className="meld-entry__top">
@@ -131,7 +131,7 @@ function TableCenter({
               ) : (
                 meldsByType.runs.map((entry) => {
                   const hasWild = meldHasWildcard(entry.cards)
-                  const isStealTarget = stealJokerMode && hasWild
+                  const isStealTarget = stealJokerMode && hasWild && entry.cards.length <= 4
                   return (
                     <article key={`run-${entry.groupIndex}-${entry.meldIndex}`} className="meld-entry">
                       <div className="meld-entry__top">

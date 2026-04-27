@@ -424,9 +424,11 @@ def register(sio):
         if not stolen_card.is_wildcard:
             return await sio.emit("error", {"message": "Target card is not a wildcard"}, to=sid)
 
-        new_cards = list(meld_cards)
-        new_cards[wildcard_index] = replacement_card
         meld_type = existing["type"]
+        if len(meld_cards) > 4:
+            return await sio.emit("error", {"message": f"Cannot steal from a {meld_type} with more than 4 cards"}, to=sid)
+
+        new_cards = list(meld_cards)
         test_meld = SetMeld(new_cards) if meld_type == "set" else RunMeld(new_cards)
         if not test_meld.is_valid():
             return await sio.emit("error", {"message": "Replacement does not produce a valid meld"}, to=sid)
