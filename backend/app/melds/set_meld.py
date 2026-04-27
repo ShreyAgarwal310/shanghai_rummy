@@ -27,8 +27,7 @@ except ModuleNotFoundError:
 
 class SetMeld(Meld):
     def is_valid(self) -> bool:
-        # A set is 3–4 cards (one per suit), with at least 2 non-wild cards.
-        if len(self.cards) < 3 or len(self.cards) > 4:
+        if len(self.cards) < 3:
             return False
         if len(self.non_wild_cards) < 2:
             return False
