@@ -48,7 +48,7 @@ function getNonWildCards(cards: TableCard[]) {
 }
 
 export function validateSetMeld(cards: TableCard[]) {
-  if (cards.length < 3 || cards.length > 4) {
+  if (cards.length < 3) {
     return false
   }
 
