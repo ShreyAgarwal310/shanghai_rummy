@@ -29,8 +29,9 @@ def register(sio):
                 await sio.emit("player_disconnected", {"player_name": p["name"]}, room=game_code)
                 break
 
-        # If no players remain connected, cancel bots and remove the game
-        if not any(p["sid"] is not None for p in session["players"]):
+        # If no players remain connected during an active game, cancel bots and remove it.
+        # In lobby phase we leave the game open — players reconnect via rejoin_lobby.
+        if session["phase"] not in ("lobby",) and not any(p["sid"] is not None for p in session["players"]):
             from handlers.turn import _cancel_bot_task
             _cancel_bot_task(game_code)
             games.pop(game_code, None)
