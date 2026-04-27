@@ -7,6 +7,7 @@ import type { GameState } from '../services/socketService'
 type UseGameTableDerivedStateParams = {
   currentDemoRound: (typeof demoRounds)[number]
   handCards: HandCard[]
+  isDemoMode: boolean
   isDemoGameComplete: boolean
   isLiveMode: boolean
   isMyTurn: boolean
@@ -20,6 +21,7 @@ type UseGameTableDerivedStateParams = {
 export function useGameTableDerivedState({
   currentDemoRound,
   handCards,
+  isDemoMode,
   isDemoGameComplete,
   isLiveMode,
   isMyTurn,
@@ -29,18 +31,20 @@ export function useGameTableDerivedState({
   myName,
   selectedCardIds,
 }: UseGameTableDerivedStateParams) {
-  const displayContractText = isLiveMode ? toContractText(liveState?.contract ?? null) : currentDemoRound.contractText
-  const displayRoundNumber = isLiveMode ? liveState?.round_number ?? 1 : currentDemoRound.roundNumber
-  const displayTotalRounds = isLiveMode ? 10 : demoRounds.length
+  const displayContractText = isDemoMode
+    ? currentDemoRound.contractText
+    : toContractText(liveState?.contract ?? null)
+  const displayRoundNumber = isDemoMode ? currentDemoRound.roundNumber : liveState?.round_number ?? 1
+  const displayTotalRounds = isDemoMode ? demoRounds.length : 10
 
   const displayOpponents = useMemo(
-    () => (isLiveMode && liveState ? toOpponentSeats(liveState.players, myName) : demoOpponentSeats),
-    [isLiveMode, liveState, myName],
+    () => (isDemoMode ? demoOpponentSeats : liveState ? toOpponentSeats(liveState.players, myName) : []),
+    [isDemoMode, liveState, myName],
   )
 
   const displayScoreRows = useMemo(
-    () => (isLiveMode && liveState ? toScoreRows(liveState.total_scores, myName) : demoScoreRows),
-    [isLiveMode, liveState, myName],
+    () => (isDemoMode ? demoScoreRows : liveState ? toScoreRows(liveState.total_scores, myName) : []),
+    [isDemoMode, liveState, myName],
   )
 
   const finalLeaderboardRows = useMemo(
@@ -78,7 +82,7 @@ export function useGameTableDerivedState({
   )
 
   const contractRequirements = useMemo(() => {
-    if (isLiveMode && liveState?.contract) {
+    if (!isDemoMode && liveState?.contract) {
       return {
         requiredSets: liveState.contract.required_sets,
         requiredRuns: liveState.contract.required_runs,
@@ -88,10 +92,10 @@ export function useGameTableDerivedState({
       requiredSets: currentDemoRound.requiredSets,
       requiredRuns: currentDemoRound.requiredRuns,
     }
-  }, [currentDemoRound, isLiveMode, liveState])
+  }, [currentDemoRound, isDemoMode, liveState])
 
   const requirementLines = useMemo(() => {
-    if (isLiveMode && liveState?.contract) {
+    if (!isDemoMode && liveState?.contract) {
       const lines: string[] = []
       if (liveState.contract.required_sets > 0) lines.push(`${liveState.contract.required_sets}× Set of 3+`)
       if (liveState.contract.required_runs > 0) lines.push(`${liveState.contract.required_runs}× Run of 4+`)
@@ -102,15 +106,17 @@ export function useGameTableDerivedState({
     if (currentDemoRound.requiredSets > 0) lines.push(`${currentDemoRound.requiredSets}× Set of ${currentDemoRound.setSize}`)
     if (currentDemoRound.requiredRuns > 0) lines.push(`${currentDemoRound.requiredRuns}× Run of ${currentDemoRound.runSize}`)
     return lines
-  }, [currentDemoRound, isLiveMode, liveState])
+  }, [currentDemoRound, isDemoMode, liveState])
 
   const turnLabel = isDemoGameComplete
     ? 'Game Complete'
-    : isLiveMode
+    : isDemoMode
+      ? 'Your Turn'
+      : isLiveMode
       ? isMyTurn
         ? `Your Turn (${livePhase})`
         : `${liveState?.current_player ?? '...'}'s Turn`
-      : 'Your Turn'
+      : 'Connecting...'
 
   return {
     contractRequirements,

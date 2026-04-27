@@ -100,6 +100,7 @@ export function useGameTablePageController(gameId: string) {
   } = useGameTableDerivedState({
     currentDemoRound,
     handCards,
+    isDemoMode: isDemo,
     isDemoGameComplete,
     isLiveMode,
     isMyTurn,
@@ -158,7 +159,8 @@ export function useGameTablePageController(gameId: string) {
       appendActivity('Demo complete. Press Reset to continue.')
       return
     }
-    if (isLiveMode) {
+    if (!isDemo) {
+      if (!isLiveMode) return void appendActivity('Connecting to game...')
       if (!isMyTurn) return void appendActivity('Not your turn.')
       if (livePhase !== 'draw') return void appendActivity('You have already drawn this turn.')
       emitDrawCard(gameCode, 'deck')
@@ -176,7 +178,8 @@ export function useGameTablePageController(gameId: string) {
       appendActivity('Demo complete. Press Reset to continue.')
       return
     }
-    if (isLiveMode) {
+    if (!isDemo) {
+      if (!isLiveMode) return void appendActivity('Connecting to game...')
       if (!isMyTurn) return void appendActivity('Not your turn.')
       if (livePhase !== 'draw') return void appendActivity('You have already drawn this turn.')
       emitDrawCard(gameCode, 'discard')
@@ -188,7 +191,8 @@ export function useGameTablePageController(gameId: string) {
 
   const handleDiscardPileClick = () => {
     if (isDemoGameComplete) return void appendActivity('Demo complete. Press Reset to continue.')
-    if (isLiveMode) {
+    if (!isDemo) {
+      if (!isLiveMode) return void appendActivity('Connecting to game...')
       if (!isMyTurn) return void appendActivity('Not your turn.')
       if (livePhase === 'draw') return void handleDrawFromDiscard()
       if (selectedCards.length !== 1) return void appendActivity('Select exactly one card to discard.')
@@ -206,7 +210,8 @@ export function useGameTablePageController(gameId: string) {
   }
 
   const handleDiscard = () => {
-    if (!isLiveMode) return
+    if (isDemo) return
+    if (!isLiveMode) return void appendActivity('Connecting to game...')
     if (!isMyTurn) return void appendActivity('Not your turn.')
     if (livePhase !== 'play') return void appendActivity('Draw a card first.')
     if (selectedCards.length !== 1) return void appendActivity('Select exactly one card to discard.')
@@ -233,7 +238,8 @@ export function useGameTablePageController(gameId: string) {
     if (!kind) return void appendActivity('Invalid meld: must form a legal set or run.')
 
     const orderedCards = kind === 'run' ? sortRunCards(selectedTableCards) : selectedTableCards
-    if (isLiveMode) {
+    if (!isDemo) {
+      if (!isLiveMode) return void appendActivity('Connecting to game...')
       if (!isMyTurn || livePhase !== 'play') return void appendActivity('Not your turn to meld.')
       if (hasLaidDown) return void appendActivity('Already laid down — click a table meld to add cards.')
     }
@@ -247,7 +253,8 @@ export function useGameTablePageController(gameId: string) {
 
   const handleSubmitLayDown = () => {
     if (pendingMelds.length === 0) return
-    if (isLiveMode) {
+    if (!isDemo) {
+      if (!isLiveMode) return void appendActivity('Connecting to game...')
       emitLayDown(gameCode, pendingMelds)
       return
     }
@@ -291,7 +298,8 @@ export function useGameTablePageController(gameId: string) {
     }
 
     const stolenCard = targetMeld[wildcardIndex]
-    if (isLiveMode) {
+    if (!isDemo) {
+      if (!isLiveMode) return void appendActivity('Connecting to game...')
       if (!isMyTurn || livePhase !== 'play') return void appendActivity('Not your turn.')
       emitStealJoker(
         gameCode,
@@ -335,7 +343,8 @@ export function useGameTablePageController(gameId: string) {
     if (isDemoGameComplete) return void appendActivity('Demo complete.')
     if (selectedCards.length === 0) return void appendActivity('Select a card first, then click a meld.')
 
-    if (isLiveMode) {
+    if (!isDemo) {
+      if (!isLiveMode) return void appendActivity('Connecting to game...')
       if (!isMyTurn) return void appendActivity('Not your turn.')
       if (livePhase !== 'play') return void appendActivity('Draw a card before laying off.')
       if (!hasLaidDown) return void appendActivity('Lay down your contract first.')
@@ -441,6 +450,7 @@ export function useGameTablePageController(gameId: string) {
     handCards,
     hasLaidDown,
     isDemoGameComplete,
+    isDemoMode: isDemo,
     isDenseMeldPreview,
     isFinalDemoRound,
     isLiveMode,

@@ -24,7 +24,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
       </div>
 
       <GameTableSidebar
-        isLiveMode={controller.isLiveMode}
+        isLiveMode={!controller.isDemoMode}
         displayRoundNumber={controller.displayRoundNumber}
         displayContractText={controller.displayContractText}
         requirementLines={controller.requirementLines}
@@ -62,7 +62,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
       </div>
 
       <GameTableHeader
-        isLiveMode={controller.isLiveMode}
+        isLiveMode={!controller.isDemoMode}
         currentDemoRound={controller.currentDemoRound}
         demoRounds={controller.demoRounds}
         demoRoundIndex={controller.demoRoundIndex}
@@ -107,9 +107,9 @@ function GameTablePage({ gameId }: GameTablePageProps) {
               showBuyAction={controller.showBuyAction}
               pendingMelds={controller.pendingMelds}
               contract={controller.contractRequirements}
-              isMyTurn={controller.isLiveMode ? controller.isMyTurn : true}
+              isMyTurn={controller.isDemoMode ? true : controller.isMyTurn}
               hasLaidDown={controller.hasLaidDown}
-              isLiveMode={controller.isLiveMode}
+              isLiveMode={!controller.isDemoMode}
               stealJokerMode={controller.stealJokerMode}
               onHandCardClick={controller.handleHandCardClick}
               onAttemptMeld={controller.handleAttemptMeld}
@@ -131,7 +131,7 @@ function GameTablePage({ gameId }: GameTablePageProps) {
         demoRunnerUp={controller.demoRunnerUp}
         totalRounds={controller.displayTotalRounds}
         finalContractText={
-          controller.isLiveMode
+          !controller.isDemoMode
             ? controller.displayContractText
             : controller.demoRounds[controller.demoRounds.length - 1].contractText
         }
