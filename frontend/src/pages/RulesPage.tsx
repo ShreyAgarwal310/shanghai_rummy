@@ -1,6 +1,26 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import './RulesPage.css'
+import TutPage1 from '../assets/TutPage1.png'
+import TutPage2 from '../assets/TutPage2.png'
+import TutPage3 from '../assets/TutPage3.png'
+import TutPage4 from '../assets/TutPage4.png'
+import TutPage5 from '../assets/TutPage5.png'
+import TutPage6 from '../assets/TutPage6.png'
+import TutPage7 from '../assets/TutPage7.png'
+import TutPage8 from '../assets/TutPage8.png'
+import TutPage9 from '../assets/TutPage9.png'
+import TutPage10 from '../assets/TutPage10.png'
+import TutPage11 from '../assets/TutPage11.png'
+import TutPage12 from '../assets/TutPage12.png'
+import TutPage13 from '../assets/TutPage13.png'
+import TutPage14 from '../assets/TutPage14.png'
+import TutPage15 from '../assets/TutPage15.png'
+import TutPage16 from '../assets/TutPage16.png'
+import TutPage17 from '../assets/TutPage17.png'
+import TutPage18 from '../assets/TutPage18.png'
+import TutPage19 from '../assets/TutPage19.png'
+import TutPage20 from '../assets/TutPage20.png'
 
 type RulesBookPage = {
   title: string
@@ -169,32 +189,6 @@ const rulesBookPages: RulesBookPage[] = [
     ),
   },
   {
-    title: 'Buy Rules',
-    subtitle: 'How out-of-turn discard grabs are handled',
-    tip: 'Buying can be powerful, but each buy increases hand size pressure for later discard timing.',
-    content: (
-      <>
-        <p>A buy is an out-of-turn request for the latest discard after the active player passes on it.</p>
-        <ol className="rules-book__steps">
-          <li>Discard appears on top of pile.</li>
-          <li>Eligible players request a buy during the buy window.</li>
-          <li>Priority resolves by table order/rules.</li>
-          <li>Winning player takes discard and draws required penalty card(s).</li>
-        </ol>
-        <div className="rules-book__spotlight">
-          <h3>Example</h3>
-          <p>
-            Player A discards a card you need. You request a buy, receive that discard, then draw the penalty card from
-            stock.
-          </p>
-        </div>
-        <p className="rules-book__callout">
-          Buy limits and windows can differ by variant. This app resolves buy conflicts and legality on the backend.
-        </p>
-      </>
-    ),
-  },
-  {
     title: 'Melds, Runs, and Jokers',
     subtitle: 'Building legal combinations',
     tip: 'Keep flexible middles for runs (like 6-7-8) and avoid locking too many wilds early.',
@@ -306,7 +300,6 @@ const rulesBookPages: RulesBookPage[] = [
         <p>Shanghai Rummy varies by table. Common differences include:</p>
         <ul className="rules-book__split-list">
           <li>Number of rounds (often 7 or 10)</li>
-          <li>Buy limits per player per round</li>
           <li>Wild-card restrictions per meld</li>
           <li>Whether final contract requires no discard to go out</li>
           <li>Ace handling in runs (high-only vs flexible)</li>
@@ -326,6 +319,8 @@ const rulesBookPages: RulesBookPage[] = [
 function RulesPage() {
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [flipClass, setFlipClass] = useState('')
+  const [tutorialOpen, setTutorialOpen] = useState(true)
+  const [tutSlide, setTutSlide] = useState(0)
   const searchParams = new URLSearchParams(window.location.search)
   const requestedReturnPath = searchParams.get('returnTo')
   const backDestination = requestedReturnPath && requestedReturnPath.startsWith('/game/') ? requestedReturnPath : '/'
@@ -357,6 +352,9 @@ function RulesPage() {
     if (isLastPage) return
     flipTo(currentPageIndex + 1, 'next')
   }
+
+  const tutorialSlides = [TutPage1, TutPage2, TutPage3, TutPage4, TutPage5, TutPage6, TutPage7, TutPage8, TutPage9,
+    TutPage10, TutPage11, TutPage12, TutPage13, TutPage14, TutPage15, TutPage16, TutPage17, TutPage18, TutPage19, TutPage20]
 
   return (
     <main className="rules-page" aria-label="Rules and Tips">
@@ -445,6 +443,21 @@ function RulesPage() {
         </section>
         </div>
       </div>
+      {tutorialOpen && (
+  <div className="tutorial-overlay">
+    <div className="tutorial-modal">
+      <img src={tutorialSlides[tutSlide]} alt={`Tutorial page ${tutSlide + 1}`} className="tutorial-slide" />
+      <div className="tutorial-controls">
+        <button onClick={() => setTutSlide(i => i - 1)} disabled={tutSlide === 0} className="tutorial-btn">←</button>
+        <span className="tutorial-counter">{tutSlide + 1} / {tutorialSlides.length}</span>
+        <button onClick={() => setTutSlide(i => i + 1)} disabled={tutSlide === tutorialSlides.length - 1} className="tutorial-btn">→</button>
+      </div>
+      <button className="tutorial-skip" onClick={() => { setTutorialOpen(false); setTutSlide(0); }}>
+        Skip Tutorial ✕
+      </button>
+    </div>
+  </div>
+)}
     </main>
   )
 }
