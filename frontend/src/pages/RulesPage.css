@@ -650,3 +650,69 @@
   .rules-book__legend-item { grid-template-columns: 1fr; gap: 1px; }
   .rules-book__split-list { columns: 1; }
 }
+
+/* ══ TUTORIAL OVERLAY ══ */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tutorial-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(20, 8, 4, 0.92);
+  border: 2px solid rgba(228, 192, 52, 0.75);
+  border-radius: 8px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.8);
+  max-width: 90vw;
+}
+.tutorial-slide {
+  max-height: 65vh;
+  max-width: 78vw;
+  border-radius: 4px;
+  object-fit: contain;
+}
+.tutorial-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.tutorial-btn {
+  border: 1px solid rgba(125, 12, 12, 0.62);
+  border-radius: 6px;
+  min-width: 48px;
+  min-height: 36px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(245, 222, 165, 0.97);
+  background: linear-gradient(180deg, rgba(150,18,18,0.9) 0%, rgba(90,8,8,0.95) 100%);
+  cursor: pointer;
+}
+.tutorial-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.tutorial-counter {
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  color: rgba(228, 192, 52, 0.85);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  min-width: 56px;
+  text-align: center;
+}
+.tutorial-skip {
+  background: transparent;
+  border: 1px solid rgba(228, 192, 52, 0.4);
+  border-radius: 6px;
+  color: rgba(228, 192, 52, 0.75);
+  font-family: 'Playfair Display', 'Merriweather', serif;
+  font-size: 0.88rem;
+  padding: 6px 16px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+}
+.tutorial-skip:hover { background: rgba(228,192,52,0.08); color: rgba(228,192,52,1); }
