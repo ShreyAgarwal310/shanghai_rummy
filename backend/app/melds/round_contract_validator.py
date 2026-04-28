@@ -91,3 +91,5 @@ class StagedMeldArea:
               "runs_complete": self.runs_complete,                                                                                                           
               "meets_contract": self.meets_contract(),                                                                                                       
           }
+      
+      
